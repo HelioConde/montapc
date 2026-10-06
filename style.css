@@ -682,3 +682,26 @@ input,select,button{max-width:100%;min-width:0}
     height:68px;
   }
 }
+
+
+/* Capture-driven refinement — round 2 (2026-10-06) */
+@media(max-width:650px){
+  .hero{gap:18px;padding-top:18px;padding-bottom:22px}
+  .hero h1{font-size:clamp(32px,10.2vw,40px);line-height:1.02;letter-spacing:-1.8px}
+  .hero-copy{max-width:34ch;margin-top:14px;font-size:14px;line-height:1.55}
+  .hero-card{padding:14px;border-radius:15px}
+  .planner-grid{gap:12px}
+  .planner-panel,.result-panel{border-radius:15px}
+  .planner-panel{padding:17px}
+  .result-panel{padding:17px}
+  .field{margin:12px 0}
+  .result-empty{min-height:220px;padding:18px 12px}
+  .result-empty h2{margin-top:12px;font-size:20px}
+  .result-empty p{max-width:32ch;font-size:11px;line-height:1.5}
+  .empty-checks{margin-top:12px}
+  .saved-section{padding-top:28px}
+}
+@media(min-width:901px){
+  .planner-grid{gap:18px}
+  .result-panel{padding:26px}
+}
