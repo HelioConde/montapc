@@ -1,27 +1,31 @@
 {
   "url": "https://helioconde.github.io/montapc/",
-  "generatedAt": "2026-10-06T12:36:53.836Z",
-  "commitSha": "55af838b7782c62fc71eccdea2c08ac9a854b4e1",
+  "generatedAt": "2026-10-06T15:42:41.662Z",
+  "commitSha": "7a27e375346b8e2cf591ad898de87bc534c09d60",
   "captures": [
     {
       "profile": "desktop",
       "emptyFile": "latest-desktop.png",
       "buildFile": "latest-desktop-build.png",
+      "englishBuildFile": "latest-desktop-build-en.png",
       "viewport": {
         "width": 1440,
         "height": 1000
       },
-      "title": "MontaPC — Monte um PC compatível por orçamento"
+      "title": "MontaPC — Monte um PC compatível por orçamento",
+      "smokeTest": "passed"
     },
     {
       "profile": "mobile",
       "emptyFile": "latest-mobile.png",
       "buildFile": "latest-mobile-build.png",
+      "englishBuildFile": "latest-mobile-build-en.png",
       "viewport": {
         "width": 390,
         "height": 844
       },
-      "title": "MontaPC — Monte um PC compatível por orçamento"
+      "title": "MontaPC — Monte um PC compatível por orçamento",
+      "smokeTest": "passed"
     }
   ]
 }
