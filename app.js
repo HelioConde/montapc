@@ -207,6 +207,31 @@ function componentTypeMark(type) {
   }[type] || 'PC';
 }
 
+function localComponentImage(item) {
+  const type = item?.component_type || '';
+  if (type === 'cpu') return 'img/assets/cpu.png';
+  if (type === 'motherboard') return 'img/assets/motherboard.png';
+  if (type === 'gpu') return 'img/assets/gpu.png';
+  if (type === 'memory') return 'img/assets/ram.png';
+  if (type === 'psu') return 'img/assets/psu.png';
+  if (type === 'case') return 'img/assets/case.png';
+  if (type === 'cooler') {
+    return item?.specs?.cooler_type === 'aio' ? 'img/assets/aio-cooler.png' : 'img/assets/cpu-cooler.png';
+  }
+  if (type === 'storage') {
+    const interfaceName = String(item?.specs?.interface || '').toLowerCase();
+    return interfaceName.includes('sata') && !interfaceName.includes('nvme')
+      ? 'img/assets/ssd-sata.png'
+      : 'img/assets/ssd-nvme.png';
+  }
+  return 'img/assets/pc-light.png';
+}
+
+function componentImage(item) {
+  const remote = String(item?.image_url || '');
+  return remote.startsWith('https://') ? remote : localComponentImage(item);
+}
+
 function componentHighlights(item) {
   const specs = item?.specs || {};
   const strengths = [];
@@ -276,9 +301,7 @@ function renderCatalogExplorer() {
   catalogGrid.innerHTML = items.length
     ? visibleItems.map(item =>
         '<article class="catalog-card">' +
-          (String(item.image_url || '').startsWith('https://')
-            ? '<img class="catalog-card-image" src="' + escapeHtml(item.image_url) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">'
-            : '<div class="catalog-card-image catalog-card-placeholder" aria-hidden="true">' + escapeHtml(componentTypeMark(item.component_type)) + '</div>') +
+          '<img class="catalog-card-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">' +
           '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
           '<strong>' + escapeHtml(item.brand + ' ' + item.model) + '</strong>' +
           '<div class="part-meta">' + componentMeta(item, item.component_type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>' +
@@ -307,9 +330,7 @@ async function openComponentDialog(id) {
   const highlights = componentHighlights(item);
 
   componentDialogBody.innerHTML =
-    (String(item.image_url || '').startsWith('https://')
-      ? '<img class="component-hero-image" src="' + escapeHtml(item.image_url) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">'
-      : '') +
+    '<img class="component-hero-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">' +
     '<div class="component-detail-summary">' +
       '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
       '<strong>' + escapeHtml(formatMoney(item.price_cents)) + '</strong>' +
@@ -1062,12 +1083,14 @@ function renderParts() {
 
     const selected = parts[type];
     return '<article class="part-row">' +
-      '<div class="part-label"><span>' + escapeHtml(typeLabel(type)) + '</span>' +
+      '<div class="part-label">' +
+        (selected ? '<img class="part-type-image" src="' + escapeHtml(componentImage(selected)) + '" alt="" aria-hidden="true" loading="lazy">' : '') +
+        '<div class="part-label-copy"><span>' + escapeHtml(typeLabel(type)) + '</span>' +
         '<strong>' + (selected ? escapeHtml(selected.brand + ' ' + selected.model) : t('part.notSelected', { type: typeLabel(type) })) + '</strong>' +
         (selected && componentMeta(selected, type).length
           ? '<div class="part-meta">' + componentMeta(selected, type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>'
           : '') +
-        '<small>' + (selected ? escapeHtml(formatMoney(selected.price_cents)) : t('part.choose')) + '</small></div>' +
+        '<small>' + (selected ? escapeHtml(formatMoney(selected.price_cents)) : t('part.choose')) + '</small></div></div>' +
       '<select data-part="' + type + '">' +
         (type === 'cooler' ? '<option value="">' + escapeHtml(t('part.noSeparateCooler')) + '</option>' : '') +
         options.map(item => '<option value="' + escapeHtml(item.id) + '"' + (selectedId === item.id ? ' selected' : '') + '>' +
