@@ -26,6 +26,8 @@ const compatibilityList = document.querySelector('#compatibility-list');
 const recommendationInsights = document.querySelector('#recommendation-insights');
 const saveBuildButton = document.querySelector('#save-build');
 const savedBuilds = document.querySelector('#saved-builds');
+const comparePanel = document.querySelector('#compare-panel');
+const compareContent = document.querySelector('#compare-content');
 const syncStatus = document.querySelector('#sync-status');
 const accountOpen = document.querySelector('#account-open');
 const accountDialog = document.querySelector('#account-dialog');
@@ -43,6 +45,7 @@ let currentBuild = null;
 let currentUser = null;
 let cloudBuilds = [];
 let cloudLoading = false;
+let compareSelection = [];
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, char => ({
@@ -665,19 +668,81 @@ function renderSavedBuilds() {
   const builds = visibleSavedBuilds().map(normalizeSavedBuild)
     .sort((a,b) => b.updatedAt - a.updatedAt);
 
+  compareSelection = compareSelection.filter(id => builds.some(build => build.id === id)).slice(0, 2);
+
   savedBuilds.innerHTML = builds.length
     ? builds.map(build =>
-      '<article class="saved-card">' +
+      '<article class="saved-card' + (compareSelection.includes(build.id) ? ' selected-for-compare' : '') + '">' +
         '<div><strong>' + escapeHtml(build.name) + '</strong>' +
         '<span>' + escapeHtml(settingsLabel(build.settings)) + '</span></div>' +
         '<div class="saved-values"><span>' + escapeHtml(formatMoney(build.totalCents)) + '</span>' +
         '<small class="' + (build.compatibilityStatus === 'compatible' ? 'status-ok' : 'status-warn') + '">' +
           (build.compatibilityStatus === 'compatible' ? t('result.compatible') : t('saved.review')) + '</small></div>' +
-        '<div class="saved-actions"><button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.open')) + '</button>' +
+        '<div class="saved-actions"><button class="button ghost" type="button" data-compare="' + escapeHtml(build.id) + '">' + escapeHtml(t('compare.select')) + '</button>' +
+        '<button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.open')) + '</button>' +
         '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.delete')) + '</button></div>' +
       '</article>'
     ).join('')
     : '<div class="saved-empty"><strong>' + escapeHtml(t('saved.emptyTitle')) + '</strong><span>' + escapeHtml(t('saved.emptyCopy')) + '</span></div>';
+
+  renderComparison();
+}
+
+
+function comparePartName(build, type) {
+  const item = component(type, build.selection?.[type]);
+  return item ? item.brand + ' ' + item.model : '—';
+}
+
+function renderComparison() {
+  if (!comparePanel || !compareContent) return;
+  const builds = visibleSavedBuilds().map(normalizeSavedBuild)
+    .filter(build => compareSelection.includes(build.id));
+
+  comparePanel.hidden = builds.length === 0;
+
+  if (builds.length !== 2) {
+    compareContent.innerHTML = '<div class="compare-placeholder">' + escapeHtml(t('compare.needTwo')) + '</div>';
+    return;
+  }
+
+  const [a, b] = builds;
+  const rows = [
+    [t('compare.price'), formatMoney(a.totalCents), formatMoney(b.totalCents)],
+    [t('compare.cpu'), comparePartName(a, 'cpu'), comparePartName(b, 'cpu')],
+    [t('compare.gpu'), comparePartName(a, 'gpu'), comparePartName(b, 'gpu')],
+    [t('compare.memory'), comparePartName(a, 'memory'), comparePartName(b, 'memory')],
+    [t('compare.storage'), comparePartName(a, 'storage'), comparePartName(b, 'storage')],
+    [t('compare.psu'), comparePartName(a, 'psu'), comparePartName(b, 'psu')],
+    [t('compare.platform'),
+      [component('cpu', a.selection?.cpu)?.socket, component('memory', a.selection?.memory)?.specs?.memory_type].filter(Boolean).join(' · ') || '—',
+      [component('cpu', b.selection?.cpu)?.socket, component('memory', b.selection?.memory)?.specs?.memory_type].filter(Boolean).join(' · ') || '—'],
+    [t('compare.headroom'),
+      formatMoney(a.budgetCents - a.totalCents),
+      formatMoney(b.budgetCents - b.totalCents)]
+  ];
+
+  compareContent.innerHTML =
+    '<div class="compare-grid compare-grid-head"><span></span><strong>' + escapeHtml(a.name) + '</strong><strong>' + escapeHtml(b.name) + '</strong></div>' +
+    rows.map(row =>
+      '<div class="compare-grid"><span>' + escapeHtml(row[0]) + '</span><div>' + escapeHtml(row[1]) + '</div><div>' + escapeHtml(row[2]) + '</div></div>'
+    ).join('') +
+    '<div class="compare-verdict">' +
+      escapeHtml(a.totalCents === b.totalCents
+        ? t('compare.noDifference')
+        : t('compare.betterValue') + ': ' + (a.totalCents < b.totalCents ? a.name : b.name)) +
+    '</div>';
+}
+
+function toggleCompare(id) {
+  if (compareSelection.includes(id)) {
+    compareSelection = compareSelection.filter(value => value !== id);
+  } else if (compareSelection.length < 2) {
+    compareSelection.push(id);
+  } else {
+    compareSelection = [compareSelection[1], id];
+  }
+  renderSavedBuilds();
 }
 
 function purposeString(settings) {
@@ -1047,6 +1112,12 @@ nameForm.addEventListener('submit', async event => {
 });
 
 savedBuilds.addEventListener('click', async event => {
+  const compare = event.target.closest('[data-compare]');
+  if (compare) {
+    toggleCompare(compare.dataset.compare);
+    return;
+  }
+
   const open = event.target.closest('[data-open]');
   if (open) {
     openSavedBuild(open.dataset.open);
@@ -1066,6 +1137,11 @@ savedBuilds.addEventListener('click', async event => {
   } finally {
     remove.disabled = false;
   }
+});
+
+document.querySelector('#compare-clear')?.addEventListener('click', () => {
+  compareSelection = [];
+  renderSavedBuilds();
 });
 
 accountOpen.addEventListener('click', () => accountDialog.showModal());
