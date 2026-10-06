@@ -426,12 +426,29 @@ function renderCompatibility() {
   badge.textContent = state.ok ? t('result.compatible') : t('result.review');
   badge.className = 'compatibility-badge ' + (state.ok ? 'ok' : 'error');
 
-  compatibilityList.innerHTML = state.checks.map(check =>
+  const passed = state.checks.filter(check => check.level === 'ok' && check.ok);
+  const issues = state.checks.filter(check => !(check.level === 'ok' && check.ok));
+  const renderCheck = check =>
     '<div class="compatibility-item ' + check.level + '">' +
       '<span>' + (check.level === 'ok' ? '✓' : check.level === 'warning' ? '!' : '×') + '</span>' +
       '<p>' + escapeHtml(check.text) + '</p>' +
-    '</div>'
-  ).join('');
+    '</div>';
+
+  const summaryText = issues.length
+    ? t('compat.summaryMixed', { ok: passed.length, issues: issues.length })
+    : t('compat.summaryOk', { count: passed.length });
+
+  compatibilityList.innerHTML =
+    '<div class="compatibility-summary ' + (issues.length ? 'has-issues' : 'all-ok') + '">' +
+      '<strong>' + escapeHtml(summaryText) + '</strong>' +
+      (issues.length ? issues.map(renderCheck).join('') : '') +
+      (passed.length
+        ? '<details class="compatibility-details">' +
+            '<summary>' + escapeHtml(t('compat.details')) + '</summary>' +
+            '<div class="compatibility-details-list">' + passed.map(renderCheck).join('') + '</div>' +
+          '</details>'
+        : '') +
+    '</div>';
 
   saveBuildButton.disabled = !state.ok;
   document.querySelector('#build-psu').textContent = state.requiredPsu + ' W';
