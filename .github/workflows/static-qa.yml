@@ -20,12 +20,20 @@ jobs:
           test -f ads.js
           test -f i18n.js
           test -f scripts/capture-site.mjs
+          test -f manifest.webmanifest
+          test -f sw.js
+          test -f pwa.js
+          test -f robots.txt
+          test -f sitemap.xml
+          test -f icon.svg
           node --check app.js
           node --check supabase-config.js
           node --check ads-config.js
           node --check ads.js
           node --check i18n.js
           node --check scripts/capture-site.mjs
+          node --check sw.js
+          node --check pwa.js
           grep -qi '<title' index.html
           grep -qi 'name="description"' index.html
           grep -qi 'rel="canonical"' index.html
@@ -35,6 +43,11 @@ jobs:
           grep -qi 'src="ads.js"' index.html
           grep -qi 'src="i18n.js"' index.html
           grep -q 'id="language-select"' index.html
+          grep -q 'id="compare-panel"' index.html
+          grep -q 'rel="manifest"' index.html
+          grep -q 'application/ld+json' index.html
+          grep -q 'pwa.js' index.html
+          grep -q 'sitemap.xml' robots.txt
           grep -q "'pt-BR'" i18n.js
           grep -q "'en'" i18n.js
           grep -q 'enabled: false' ads-config.js
