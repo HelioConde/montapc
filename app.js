@@ -1,17 +1,22 @@
 const supabaseClient = window.IDEIAS_SUPABASE?.client || null;
+const i18n = window.MONTAPC_I18N;
+const t = (key, vars) => i18n?.t(key, vars) ?? key;
 const LOCAL_KEY = 'montapc-builds-v2';
 
 const TYPE_ORDER = ['cpu','motherboard','gpu','memory','storage','psu','case','cooler'];
-const TYPE_LABELS = {
-  cpu: 'Processador',
-  motherboard: 'Placa-mãe',
-  gpu: 'Placa de vídeo',
-  memory: 'Memória',
-  storage: 'Armazenamento',
-  psu: 'Fonte',
-  case: 'Gabinete',
-  cooler: 'Cooler'
+const TYPE_KEYS = {
+  cpu: 'type.cpu',
+  motherboard: 'type.motherboard',
+  gpu: 'type.gpu',
+  memory: 'type.memory',
+  storage: 'type.storage',
+  psu: 'type.psu',
+  case: 'type.case',
+  cooler: 'type.cooler'
 };
+function typeLabel(type) {
+  return t(TYPE_KEYS[type] || type);
+}
 
 const plannerForm = document.querySelector('#planner-form');
 const resultEmpty = document.querySelector('#result-empty');
@@ -58,7 +63,8 @@ function isUuid(value) {
 }
 
 function formatMoney(cents) {
-  return (Number(cents || 0) / 100).toLocaleString('pt-BR', {
+  const locale = i18n?.locale === 'en' ? 'en-US' : 'pt-BR';
+  return (Number(cents || 0) / 100).toLocaleString(locale, {
     style: 'currency',
     currency: 'BRL',
     maximumFractionDigits: 0
@@ -138,15 +144,15 @@ function compatibility(build = currentBuild) {
   const push = (ok, text, level = ok ? 'ok' : 'error') => checks.push({ ok, text, level });
 
   for (const type of ['cpu','motherboard','gpu','memory','storage','psu','case']) {
-    if (!parts[type]) push(false, TYPE_LABELS[type] + ' não selecionado.');
+    if (!parts[type]) push(false, t('part.notSelected', { type: typeLabel(type) }));
   }
 
   if (parts.cpu && parts.motherboard) {
     push(
       parts.cpu.socket === parts.motherboard.socket,
       parts.cpu.socket === parts.motherboard.socket
-        ? `Socket ${parts.cpu.socket}: processador e placa-mãe combinam.`
-        : `Socket incompatível: CPU ${parts.cpu.socket || '—'} e placa-mãe ${parts.motherboard.socket || '—'}.`
+        ? t('compat.socketOk', { socket: parts.cpu.socket })
+        : t('compat.socketError', { cpu: parts.cpu.socket || '—', board: parts.motherboard.socket || '—' })
     );
   }
 
@@ -156,8 +162,8 @@ function compatibility(build = currentBuild) {
     push(
       boardMemory === ramMemory,
       boardMemory === ramMemory
-        ? `Memória ${ramMemory}: compatível com a placa-mãe.`
-        : `Memória incompatível: placa-mãe usa ${boardMemory || 'outro padrão'} e o kit é ${ramMemory || 'desconhecido'}.`
+        ? t('compat.memoryOk', { memory: ramMemory })
+        : t('compat.memoryError', { board: boardMemory || '—', ram: ramMemory || '—' })
     );
   }
 
@@ -167,8 +173,8 @@ function compatibility(build = currentBuild) {
     push(
       supported.includes(formFactor),
       supported.includes(formFactor)
-        ? `Gabinete aceita placa-mãe ${formFactor}.`
-        : `Gabinete não declara suporte ao formato ${formFactor || 'da placa-mãe'}.`
+        ? t('compat.caseBoardOk', { form: formFactor })
+        : t('compat.caseBoardError', { form: formFactor || '—' })
     );
   }
 
@@ -180,9 +186,9 @@ function compatibility(build = currentBuild) {
       !known || gpuLength <= maxGpu,
       known
         ? (gpuLength <= maxGpu
-          ? `GPU de referência (${gpuLength} mm) cabe no limite do gabinete (${maxGpu} mm).`
-          : `GPU de referência (${gpuLength} mm) excede o limite do gabinete (${maxGpu} mm).`)
-        : 'Dimensão da GPU ou gabinete não informada; confirme o SKU antes da compra.',
+          ? t('compat.gpuFit', { gpu: gpuLength, max: maxGpu })
+          : t('compat.gpuTooLong', { gpu: gpuLength, max: maxGpu }))
+        : t('compat.gpuUnknown'),
       known ? (gpuLength <= maxGpu ? 'ok' : 'error') : 'warning'
     );
   }
@@ -190,15 +196,15 @@ function compatibility(build = currentBuild) {
   if (parts.cpu) {
     const coolerIncluded = Boolean(parts.cpu.specs?.cooler_included);
     if (!coolerIncluded && !parts.cooler) {
-      push(false, 'Este processador exige cooler separado.', 'error');
+      push(false, t('compat.coolerRequired'), 'error');
     }
     if (parts.cooler) {
       const sockets = Array.isArray(parts.cooler.specs?.supported_sockets) ? parts.cooler.specs.supported_sockets : [];
       push(
         sockets.includes(parts.cpu.socket),
         sockets.includes(parts.cpu.socket)
-          ? `Cooler suporta o socket ${parts.cpu.socket}.`
-          : `Cooler não declara suporte ao socket ${parts.cpu.socket}.`
+          ? t('compat.coolerSocketOk', { socket: parts.cpu.socket })
+          : t('compat.coolerSocketError', { socket: parts.cpu.socket })
       );
 
       if (parts.case) {
@@ -208,13 +214,13 @@ function compatibility(build = currentBuild) {
           push(
             height <= maxHeight,
             height <= maxHeight
-              ? `Cooler de ${height} mm cabe no limite de ${maxHeight} mm do gabinete.`
-              : `Cooler de ${height} mm é mais alto que o limite de ${maxHeight} mm do gabinete.`
+              ? t('compat.coolerFit', { height, max: maxHeight })
+              : t('compat.coolerTooTall', { height, max: maxHeight })
           );
         }
       }
     } else if (coolerIncluded) {
-      push(true, 'Processador inclui solução de refrigeração no catálogo de referência.', 'ok');
+      push(true, t('compat.coolerIncluded'), 'ok');
     }
   }
 
@@ -224,8 +230,8 @@ function compatibility(build = currentBuild) {
     push(
       available >= required,
       available >= required
-        ? `Fonte de ${available} W atende a recomendação calculada de ${required} W.`
-        : `Fonte insuficiente: ${available} W para uma recomendação de pelo menos ${required} W.`
+        ? t('compat.psuOk', { available, required })
+        : t('compat.psuError', { available, required })
     );
   }
 
@@ -371,15 +377,15 @@ function settingsFromForm() {
 }
 
 function settingsLabel(settings) {
-  const usage = { gaming:'Jogos', work:'Produtividade', mixed:'Uso misto' }[settings.usage] || settings.usage;
-  const strategy = { balanced:'Equilíbrio', fps:'Mais FPS', upgrade:'Upgrades', economy:'Economia' }[settings.strategy] || settings.strategy;
+  const usage = t('settings.usage.' + settings.usage);
+  const strategy = t('settings.strategy.' + settings.strategy);
   return `${usage} · ${settings.resolution} · ${strategy}`;
 }
 
 function renderCompatibility() {
   const state = compatibility(currentBuild);
   const badge = document.querySelector('#compatibility-badge');
-  badge.textContent = state.ok ? 'Compatível' : 'Revisar conflitos';
+  badge.textContent = state.ok ? t('result.compatible') : t('result.review');
   badge.className = 'compatibility-badge ' + (state.ok ? 'ok' : 'error');
 
   compatibilityList.innerHTML = state.checks.map(check =>
@@ -407,19 +413,19 @@ function renderParts() {
 
     if (type === 'cooler' && cpuHasCooler && !selectedId) {
       return '<article class="part-row">' +
-        '<div class="part-label"><span>Cooler</span><strong>Incluso com o processador</strong><small>Sem custo adicional no catálogo</small></div>' +
-        '<select data-part="cooler"><option value="" selected>Usar cooler incluso</option>' +
+        '<div class="part-label"><span>' + escapeHtml(typeLabel('cooler')) + '</span><strong>' + escapeHtml(t('part.includedCooler')) + '</strong><small>' + escapeHtml(t('part.includedCoolerNote')) + '</small></div>' +
+        '<select data-part="cooler"><option value="" selected>' + escapeHtml(t('part.useIncludedCooler')) + '</option>' +
         options.map(item => '<option value="' + escapeHtml(item.id) + '">' + escapeHtml(optionLabel(item)) + '</option>').join('') +
         '</select></article>';
     }
 
     const selected = parts[type];
     return '<article class="part-row">' +
-      '<div class="part-label"><span>' + escapeHtml(TYPE_LABELS[type]) + '</span>' +
-        '<strong>' + (selected ? escapeHtml(selected.brand + ' ' + selected.model) : 'Não selecionado') + '</strong>' +
-        '<small>' + (selected ? escapeHtml(formatMoney(selected.price_cents)) : 'Escolha uma peça') + '</small></div>' +
+      '<div class="part-label"><span>' + escapeHtml(typeLabel(type)) + '</span>' +
+        '<strong>' + (selected ? escapeHtml(selected.brand + ' ' + selected.model) : t('part.notSelected', { type: typeLabel(type) })) + '</strong>' +
+        '<small>' + (selected ? escapeHtml(formatMoney(selected.price_cents)) : t('part.choose')) + '</small></div>' +
       '<select data-part="' + type + '">' +
-        (type === 'cooler' ? '<option value="">Sem cooler separado</option>' : '') +
+        (type === 'cooler' ? '<option value="">' + escapeHtml(t('part.noSeparateCooler')) + '</option>' : '') +
         options.map(item => '<option value="' + escapeHtml(item.id) + '"' + (selectedId === item.id ? ' selected' : '') + '>' +
           escapeHtml(optionLabel(item)) + '</option>').join('') +
       '</select></article>';
@@ -439,7 +445,7 @@ function renderBuild() {
 
   resultEmpty.hidden = true;
   buildResult.hidden = false;
-  document.querySelector('#build-title').textContent = currentBuild.name || 'PC recomendado';
+  document.querySelector('#build-title').textContent = currentBuild.name || t('result.recommended');
   document.querySelector('#build-subtitle').textContent = settingsLabel(currentBuild.settings);
   document.querySelector('#build-total').textContent = formatMoney(currentBuild.totalCents);
   document.querySelector('#build-budget').textContent = formatMoney(currentBuild.budgetCents);
@@ -454,7 +460,7 @@ function renderBuild() {
 function normalizeSavedBuild(build) {
   return {
     id: build.id || makeUuid(),
-    name: build.name || 'Minha build',
+    name: build.name || t('saved.defaultName'),
     budgetCents: Number(build.budgetCents || 0),
     totalCents: Number(build.totalCents || buildTotal(build.selection || {})),
     compatibilityStatus: build.compatibilityStatus || 'pending',
@@ -481,12 +487,12 @@ function renderSavedBuilds() {
         '<span>' + escapeHtml(settingsLabel(build.settings)) + '</span></div>' +
         '<div class="saved-values"><span>' + escapeHtml(formatMoney(build.totalCents)) + '</span>' +
         '<small class="' + (build.compatibilityStatus === 'compatible' ? 'status-ok' : 'status-warn') + '">' +
-          (build.compatibilityStatus === 'compatible' ? 'Compatível' : 'Revisar') + '</small></div>' +
-        '<div class="saved-actions"><button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">Abrir</button>' +
-        '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">Excluir</button></div>' +
+          (build.compatibilityStatus === 'compatible' ? t('result.compatible') : t('saved.review')) + '</small></div>' +
+        '<div class="saved-actions"><button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">" + escapeHtml(t('saved.open')) + "</button>' +
+        '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">" + escapeHtml(t('saved.delete')) + "</button></div>' +
       '</article>'
     ).join('')
-    : '<div class="saved-empty"><strong>Nenhuma build salva ainda.</strong><span>Gere uma configuração e salve quando gostar do resultado.</span></div>';
+    : '<div class="saved-empty"><strong>' + escapeHtml(t('saved.emptyTitle')) + '</strong><span>' + escapeHtml(t('saved.emptyCopy')) + '</span></div>';
 }
 
 function purposeString(settings) {
