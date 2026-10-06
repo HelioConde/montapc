@@ -488,8 +488,8 @@ function renderSavedBuilds() {
         '<div class="saved-values"><span>' + escapeHtml(formatMoney(build.totalCents)) + '</span>' +
         '<small class="' + (build.compatibilityStatus === 'compatible' ? 'status-ok' : 'status-warn') + '">' +
           (build.compatibilityStatus === 'compatible' ? t('result.compatible') : t('saved.review')) + '</small></div>' +
-        '<div class="saved-actions"><button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">" + escapeHtml(t('saved.open')) + "</button>' +
-        '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">" + escapeHtml(t('saved.delete')) + "</button></div>' +
+        '<div class="saved-actions"><button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.open')) + '</button>' +
+        '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.delete')) + '</button></div>' +
       '</article>'
     ).join('')
     : '<div class="saved-empty"><strong>' + escapeHtml(t('saved.emptyTitle')) + '</strong><span>' + escapeHtml(t('saved.emptyCopy')) + '</span></div>';
@@ -580,7 +580,7 @@ async function loadCloudBuilds() {
 
   if (buildError) {
     cloudLoading = false;
-    accountMessage.textContent = 'Não foi possível carregar suas builds.';
+    accountMessage.textContent = t('auth.loadBuildsError');
     updateAccountUi();
     return;
   }
@@ -595,7 +595,7 @@ async function loadCloudBuilds() {
       .in('build_id', buildIds);
     if (error) {
       cloudLoading = false;
-      accountMessage.textContent = 'As builds foram carregadas, mas faltaram itens.';
+      accountMessage.textContent = t('auth.loadItemsError');
       updateAccountUi();
       return;
     }
@@ -707,7 +707,7 @@ async function migrateLegacyRequests() {
       const generated = generateBestBuild(settings).build;
       if (!generated) continue;
       generated.id = makeUuid();
-      generated.name = 'Build migrada · ' + settings.resolution;
+      generated.name = t('saved.migrated') + ' · ' + settings.resolution;
       generated.createdAt = Number(entry.time || Date.now());
       generated.updatedAt = generated.createdAt;
       migrated.push(generated);
@@ -720,29 +720,29 @@ async function migrateLegacyRequests() {
 
 function authErrorText(error) {
   const message = String(error?.message || '').toLowerCase();
-  if (message.includes('invalid login credentials')) return 'E-mail ou senha incorretos.';
-  if (message.includes('email not confirmed')) return 'Confirme seu e-mail antes de entrar.';
-  if (message.includes('already registered')) return 'Este e-mail já possui conta.';
-  if (message.includes('password should be at least')) return 'Use uma senha com pelo menos 8 caracteres.';
-  return 'Não foi possível concluir. Confira os dados e tente novamente.';
+  if (message.includes('invalid login credentials')) return t('auth.invalid');
+  if (message.includes('email not confirmed')) return t('auth.confirmEmail');
+  if (message.includes('already registered')) return t('auth.registered');
+  if (message.includes('password should be at least')) return t('auth.password');
+  return t('auth.generic');
 }
 
 function updateAccountUi() {
   accountOpen.disabled = !supabaseClient;
-  accountOpen.textContent = currentUser ? 'Minha conta' : 'Entrar / sincronizar';
+  accountOpen.textContent = currentUser ? t('header.myAccount') : t('header.account');
 
   if (!catalog.length) {
-    syncStatus.textContent = 'Catálogo indisponível';
+    syncStatus.textContent = t('status.catalogUnavailable');
   } else if (currentUser) {
-    syncStatus.textContent = cloudLoading ? 'Sincronizando…' : 'Nuvem · ' + (currentUser.email || 'conectado');
+    syncStatus.textContent = cloudLoading ? t('status.syncing') : t('status.cloud', { user: currentUser.email || t('account.connectedFallback') });
   } else {
-    syncStatus.textContent = 'Catálogo carregado · modo local';
+    syncStatus.textContent = t('status.local');
   }
 
   accountForm.hidden = Boolean(currentUser) || !supabaseClient;
   accountProfile.hidden = !currentUser;
   if (currentUser) {
-    document.querySelector('#account-email').textContent = currentUser.email || 'Conta conectada';
+    document.querySelector('#account-email').textContent = currentUser.email || t('account.connectedFallback');
     importLocalButton.hidden = readLocal().length === 0;
   }
 }
@@ -753,7 +753,7 @@ async function importLocalBuilds() {
   if (!local.length) return;
 
   importLocalButton.disabled = true;
-  accountMessage.textContent = 'Importando builds deste dispositivo…';
+  accountMessage.textContent = t('auth.importing');
   try {
     for (const build of local) {
       await saveCloudBuild({
@@ -763,11 +763,11 @@ async function importLocalBuilds() {
     }
     localStorage.removeItem(LOCAL_KEY);
     await loadCloudBuilds();
-    accountMessage.textContent = 'Importação concluída.';
+    accountMessage.textContent = t('auth.imported');
     importLocalButton.hidden = true;
   } catch (error) {
     console.error(error);
-    accountMessage.textContent = 'Não foi possível importar tudo. Os dados locais foram preservados.';
+    accountMessage.textContent = t('auth.importError');
   } finally {
     importLocalButton.disabled = false;
   }
@@ -790,14 +790,14 @@ async function loadCatalog() {
 plannerForm.addEventListener('submit', event => {
   event.preventDefault();
   if (!catalog.length) {
-    showToast('O catálogo ainda não foi carregado.');
+    showToast(t('toast.catalogLoading'));
     return;
   }
 
   const settings = settingsFromForm();
   const result = generateBestBuild(settings);
   if (!result.build) {
-    showToast('Não encontramos uma combinação compatível no catálogo.');
+    showToast(t('toast.noCompatible'));
     return;
   }
 
@@ -806,9 +806,9 @@ plannerForm.addEventListener('submit', event => {
   renderBuild();
 
   if (!result.withinBudget) {
-    showToast('O orçamento ficou abaixo da configuração compatível mais barata do catálogo.');
+    showToast(t('toast.belowBudget'));
   } else {
-    showToast('Configuração gerada.');
+    showToast(t('toast.generated'));
   }
 });
 
@@ -831,7 +831,7 @@ document.querySelector('#reset-build').addEventListener('click', () => {
 saveBuildButton.addEventListener('click', () => {
   if (!currentBuild || !compatibility(currentBuild).ok) return;
   nameForm.elements.name.value = currentBuild.name || `PC ${currentBuild.settings.resolution} · ${formatMoney(currentBuild.totalCents)}`;
-  nameMessage.textContent = currentUser ? 'Será salvo na sua conta.' : 'Será salvo neste dispositivo.';
+  nameMessage.textContent = currentUser ? t('build.cloudSave') : t('build.localSave');
   nameDialog.showModal();
   window.setTimeout(() => nameForm.elements.name.select(), 30);
 });
@@ -846,16 +846,16 @@ nameForm.addEventListener('submit', async event => {
   if (!currentBuild || !nameForm.reportValidity()) return;
   const submit = nameForm.querySelector('[type="submit"]');
   submit.disabled = true;
-  nameMessage.textContent = currentUser ? 'Salvando na nuvem…' : 'Salvando…';
+  nameMessage.textContent = currentUser ? t('build.savingCloud') : t('build.saving');
   try {
     await persistCurrentBuild(nameForm.elements.name.value);
     nameDialog.close();
-    showToast('Build salva.');
+    showToast(t('toast.saved'));
   } catch (error) {
     console.error(error);
     nameMessage.textContent = error.message === 'incompatible'
-      ? 'Resolva os conflitos de compatibilidade antes de salvar.'
-      : 'Não foi possível salvar a build.';
+      ? t('build.incompatibleSave')
+      : t('build.saveError');
   } finally {
     submit.disabled = false;
   }
@@ -870,14 +870,14 @@ savedBuilds.addEventListener('click', async event => {
 
   const remove = event.target.closest('[data-delete]');
   if (!remove) return;
-  if (!window.confirm('Excluir esta build salva?')) return;
+  if (!window.confirm(t('confirm.delete'))) return;
   remove.disabled = true;
   try {
     await deleteSavedBuild(remove.dataset.delete);
-    showToast('Build excluída.');
+    showToast(t('toast.deleted'));
   } catch (error) {
     console.error(error);
-    showToast('Não foi possível excluir.');
+    showToast(t('toast.deleteError'));
   } finally {
     remove.disabled = false;
   }
@@ -894,14 +894,14 @@ accountForm.addEventListener('submit', async event => {
   if (!supabaseClient) return;
   const submit = accountForm.querySelector('[type="submit"]');
   submit.disabled = true;
-  accountMessage.textContent = 'Entrando…';
+  accountMessage.textContent = t('auth.signingIn');
   try {
     const { error } = await supabaseClient.auth.signInWithPassword({
       email: accountForm.elements.email.value.trim(),
       password: accountForm.elements.password.value
     });
     if (error) throw error;
-    accountMessage.textContent = 'Conta conectada.';
+    accountMessage.textContent = t('auth.connected');
   } catch (error) {
     accountMessage.textContent = authErrorText(error);
   } finally {
@@ -914,18 +914,18 @@ document.querySelector('#sign-up').addEventListener('click', async () => {
   const email = accountForm.elements.email.value.trim();
   const password = accountForm.elements.password.value;
   if (!email || password.length < 8) {
-    accountMessage.textContent = 'Informe um e-mail e uma senha com pelo menos 8 caracteres.';
+    accountMessage.textContent = t('auth.fillCredentials');
     return;
   }
   const button = document.querySelector('#sign-up');
   button.disabled = true;
-  accountMessage.textContent = 'Criando conta…';
+  accountMessage.textContent = t('auth.creating');
   try {
     const { data, error } = await supabaseClient.auth.signUp({ email, password });
     if (error) throw error;
     accountMessage.textContent = data.session
-      ? 'Conta criada e conectada.'
-      : 'Conta criada. Confirme seu e-mail e depois entre.';
+      ? t('auth.createdConnected')
+      : t('auth.createdConfirm');
   } catch (error) {
     accountMessage.textContent = authErrorText(error);
   } finally {
@@ -937,7 +937,7 @@ document.querySelector('#reset-password').addEventListener('click', async () => 
   if (!supabaseClient) return;
   const email = accountForm.elements.email.value.trim();
   if (!email) {
-    accountMessage.textContent = 'Informe seu e-mail primeiro.';
+    accountMessage.textContent = t('auth.enterEmail');
     return;
   }
   try {
@@ -945,7 +945,7 @@ document.querySelector('#reset-password').addEventListener('click', async () => 
       redirectTo: window.location.href.split('#')[0]
     });
     if (error) throw error;
-    accountMessage.textContent = 'Se o e-mail estiver cadastrado, enviaremos um link de recuperação.';
+    accountMessage.textContent = t('auth.resetSent');
   } catch (error) {
     accountMessage.textContent = authErrorText(error);
   }
@@ -954,7 +954,7 @@ document.querySelector('#reset-password').addEventListener('click', async () => 
 document.querySelector('#sign-out').addEventListener('click', async () => {
   if (!supabaseClient) return;
   const { error } = await supabaseClient.auth.signOut();
-  accountMessage.textContent = error ? 'Não foi possível sair.' : 'Você saiu da conta.';
+  accountMessage.textContent = error ? t('auth.signOutError') : t('auth.signedOut');
 });
 
 importLocalButton.addEventListener('click', importLocalBuilds);
@@ -984,12 +984,18 @@ async function initAuth() {
 
   const { data, error } = await supabaseClient.auth.getSession();
   if (error) {
-    accountMessage.textContent = 'Não foi possível verificar sua sessão. O modo local continua disponível.';
+    accountMessage.textContent = t('auth.sessionError');
     renderSavedBuilds();
     return;
   }
   setSession(data.session);
 }
+
+document.addEventListener('montapc:languagechange', () => {
+  updateAccountUi();
+  renderBuild();
+  renderSavedBuilds();
+});
 
 async function init() {
   updateAccountUi();
@@ -1004,9 +1010,9 @@ async function init() {
   } catch (error) {
     console.error(error);
     document.querySelector('#catalog-count').textContent = '0';
-    syncStatus.textContent = 'Falha ao carregar catálogo';
+    syncStatus.textContent = t('status.catalogUnavailable');
     document.querySelector('#generate-build').disabled = true;
-    showToast('Não foi possível carregar o catálogo do MontaPC.');
+    showToast(t('toast.catalogError'));
   }
 
   await initAuth();
