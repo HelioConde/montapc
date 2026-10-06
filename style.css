@@ -476,3 +476,11 @@ input,select,button{max-width:100%;min-width:0}
 @media(max-width:650px){
   .catalog-selected-badge{top:8px;right:8px}
 }
+
+.performance-scroll{position:relative;min-width:0}
+.performance-swipe-hint{display:none}
+@media(max-width:650px){
+  .performance-scroll{overflow:hidden}
+  .performance-scroll::after{content:'';position:absolute;top:0;right:0;width:34px;height:100%;pointer-events:none;background:linear-gradient(90deg,transparent,#fbfcfdee)}
+  .performance-swipe-hint{display:block;margin-top:6px;color:var(--muted);font-size:8px;font-weight:700;text-align:right}
+}
