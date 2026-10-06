@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f7f8">
+  <meta name="description" content="Monte um PC por orçamento, compare componentes e veja explicações de compatibilidade entre as peças.">
+  <meta property="og:title" content="MontaPC — Monte um PC compatível por orçamento">
+  <meta property="og:description" content="Escolha orçamento, uso e resolução para gerar uma configuração e validar a compatibilidade das peças.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://helioconde.github.io/montapc/">
+  <link rel="canonical" href="https://helioconde.github.io/montapc/">
+  <title>MontaPC — Monte um PC compatível por orçamento</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./">MontaPC<span>.</span></a>
+      <div class="top-actions">
+        <span id="sync-status" class="sync-status" role="status">Carregando catálogo…</span>
+        <button id="account-open" class="button ghost" type="button">Entrar / sincronizar</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">MONTADOR E VERIFICADOR DE COMPATIBILIDADE</p>
+          <h1>Monte pelo orçamento.<br><span>Entenda por que combina.</span></h1>
+          <p class="hero-copy">O MontaPC cruza socket, tipo de memória, potência da fonte e espaço do gabinete para explicar os conflitos antes de você comprar.</p>
+        </div>
+        <aside class="hero-card">
+          <span>Catálogo inicial</span>
+          <strong id="catalog-count">—</strong>
+          <small>peças de referência</small>
+        </aside>
+      </section>
+
+      <section class="planner-grid">
+        <section class="panel planner-panel">
+          <div class="panel-head">
+            <div><p class="eyebrow">1 · PERFIL</p><h2>O que você quer montar?</h2></div>
+          </div>
+          <form id="planner-form">
+            <label class="field">
+              <span>Orçamento máximo</span>
+              <div class="money-input"><span>R$</span><input name="budget" type="number" min="1500" max="100000" step="100" value="5000" required></div>
+            </label>
+
+            <div class="form-grid">
+              <label class="field">
+                <span>Uso principal</span>
+                <select name="usage">
+                  <option value="gaming" selected>Jogos</option>
+                  <option value="work">Trabalho / produtividade</option>
+                  <option value="mixed">Uso misto</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Resolução alvo</span>
+                <select name="resolution">
+                  <option value="1080p">1080p</option>
+                  <option value="1440p" selected>1440p</option>
+                  <option value="4k">4K</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Prioridade</span>
+              <select name="strategy">
+                <option value="balanced" selected>Equilíbrio geral</option>
+                <option value="fps">Mais desempenho em jogos</option>
+                <option value="upgrade">Mais espaço para upgrades</option>
+                <option value="economy">Economizar o máximo possível</option>
+              </select>
+            </label>
+
+            <button id="generate-build" class="button primary full" type="submit">Montar melhor configuração</button>
+            <p class="fine-print">Os valores do catálogo são <strong>estimativas internas de referência</strong>, não preços ao vivo de lojas.</p>
+          </form>
+        </section>
+
+        <section class="panel result-panel">
+          <div id="result-empty" class="result-empty">
+            <span class="empty-icon">▦</span>
+            <h2>Sua configuração aparece aqui</h2>
+            <p>Defina orçamento e objetivo. O MontaPC procura a combinação compatível com melhor equilíbrio dentro do catálogo atual.</p>
+          </div>
+
+          <div id="build-result" hidden>
+            <div class="result-top">
+              <div>
+                <p class="eyebrow">2 · CONFIGURAÇÃO</p>
+                <h2 id="build-title">PC recomendado</h2>
+                <p id="build-subtitle" class="result-subtitle"></p>
+              </div>
+              <span id="compatibility-badge" class="compatibility-badge">Compatível</span>
+            </div>
+
+            <div class="budget-summary">
+              <article><span>Total estimado</span><strong id="build-total">R$ 0</strong></article>
+              <article><span>Orçamento</span><strong id="build-budget">R$ 0</strong></article>
+              <article><span>Margem</span><strong id="build-margin">R$ 0</strong></article>
+              <article><span>Fonte recomendada</span><strong id="build-psu">—</strong></article>
+            </div>
+
+            <div id="compatibility-list" class="compatibility-list"></div>
+
+            <div class="parts-heading">
+              <div><h3>Peças selecionadas</h3><p>Troque qualquer item para testar outra combinação.</p></div>
+            </div>
+            <div id="parts-list" class="parts-list"></div>
+
+            <div class="result-actions">
+              <button id="reset-build" class="button ghost" type="button">Gerar outra</button>
+              <button id="save-build" class="button primary" type="button">Salvar build</button>
+            </div>
+
+            <p class="price-warning">Preços e dimensões são referências do catálogo para validar o fluxo. Confirme o SKU, medidas e preço da loja antes da compra.</p>
+          </div>
+        </section>
+      </section>
+
+      <aside class="ad-slot" data-ad-slot="afterBuilder" hidden aria-label="Publicidade"></aside>
+
+      <section class="saved-section">
+        <div class="section-heading">
+          <div><p class="eyebrow">MINHAS CONFIGURAÇÕES</p><h2>Builds salvas</h2></div>
+          <p>Entre na conta para sincronizar em outros dispositivos.</p>
+        </div>
+        <div id="saved-builds" class="saved-builds"></div>
+        <aside class="ad-slot compact" data-ad-slot="beforeSavedBuilds" hidden aria-label="Publicidade"></aside>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <strong>MontaPC</strong>
+      <span>Compatibilidade explicável primeiro; links afiliados só serão exibidos quando houver integração e sempre serão identificados.</span>
+    </footer>
+  </div>
+
+  <dialog id="account-dialog" class="dialog" aria-labelledby="account-title">
+    <div class="dialog-head">
+      <div><p class="eyebrow">SUA CONTA</p><h2 id="account-title">Sincronize suas builds</h2></div>
+      <button id="account-close" class="icon-button" type="button" aria-label="Fechar">×</button>
+    </div>
+    <p class="dialog-copy">Sem conta, suas configurações continuam salvas neste dispositivo.</p>
+    <form id="auth-form">
+      <label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="email" required></label>
+      <label class="field"><span>Senha</span><input name="password" type="password" minlength="8" autocomplete="current-password" required></label>
+      <button class="button primary full" type="submit">Entrar</button>
+      <div class="account-actions">
+        <button id="sign-up" class="button ghost" type="button">Criar conta</button>
+        <button id="reset-password" class="button text" type="button">Esqueci a senha</button>
+      </div>
+    </form>
+    <div id="account-profile" hidden>
+      <p>Conectado como <strong id="account-email"></strong></p>
+      <button id="import-local" class="button ghost full" type="button" hidden>Importar builds deste dispositivo</button>
+      <button id="sign-out" class="button ghost full" type="button">Sair da conta</button>
+    </div>
+    <p id="account-message" class="form-message" role="status" aria-live="polite"></p>
+  </dialog>
+
+  <dialog id="name-dialog" class="dialog small-dialog" aria-labelledby="name-title">
+    <div class="dialog-head">
+      <div><p class="eyebrow">SALVAR BUILD</p><h2 id="name-title">Dê um nome à configuração</h2></div>
+      <button id="name-close" class="icon-button" type="button" aria-label="Fechar">×</button>
+    </div>
+    <form id="name-form">
+      <label class="field"><span>Nome</span><input name="name" maxlength="80" placeholder="Ex.: PC 1440p principal" required></label>
+      <button class="button primary full" type="submit">Salvar configuração</button>
+      <p id="name-message" class="form-message" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="ads-config.js"></script>
+  <script src="app.js"></script>
+  <script src="ads.js" defer></script>
+  <script src="live-update.js" defer></script>
+</body>
+</html>
