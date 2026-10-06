@@ -40,7 +40,7 @@
     }
   }
 
-  window.MONTAPC_ANALYTICS = { track };
+  window.MONTAPC_ANALYTICS = { track, getSessionId: sessionId, getViewport: viewport };
 
   window.addEventListener('DOMContentLoaded', () => {
     track('page_view', {
