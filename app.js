@@ -49,6 +49,9 @@ const catalogGrid = document.querySelector('#catalog-grid');
 const catalogResultsCount = document.querySelector('#catalog-results-count');
 const componentDialog = document.querySelector('#component-dialog');
 const componentDialogBody = document.querySelector('#component-dialog-body');
+const feedbackDialog = document.querySelector('#feedback-dialog');
+const feedbackForm = document.querySelector('#feedback-form');
+const feedbackMessage = document.querySelector('#feedback-message');
 
 let catalog = [];
 let byType = {};
@@ -258,9 +261,21 @@ async function openComponentDialog(id) {
     (source.startsWith('https://')
       ? '<a class="component-source" href="' + escapeHtml(source) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t('catalog.source')) + ' ↗</a>'
       : '') +
+    '<button class="button ghost component-share" type="button" data-share-component="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.share')) + '</button>' +
     '<section class="price-history"><h3>' + escapeHtml(t('catalog.history')) + '</h3><div id="price-history-list"></div></section>';
 
   componentDialog.showModal();
+
+  componentDialogBody.querySelector('[data-share-component]')?.addEventListener('click', async () => {
+    const url = new URL(window.location.href.split('#')[0]);
+    url.searchParams.set('component', item.id);
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      showToast(t('catalog.linkCopied'));
+    } catch {
+      showToast(t('toast.shareError'));
+    }
+  });
 
   const historyList = componentDialogBody.querySelector('#price-history-list');
   if (!historyList) return;
@@ -2014,6 +2029,42 @@ componentDialog?.addEventListener('click', event => {
   if (event.target === componentDialog) componentDialog.close();
 });
 
+document.querySelector('#feedback-open')?.addEventListener('click', () => {
+  feedbackMessage.textContent = '';
+  feedbackDialog?.showModal();
+});
+document.querySelector('#feedback-close')?.addEventListener('click', () => feedbackDialog?.close());
+feedbackDialog?.addEventListener('click', event => {
+  if (event.target === feedbackDialog) feedbackDialog.close();
+});
+feedbackForm?.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (!supabaseClient || !feedbackForm.reportValidity()) return;
+  const submit = feedbackForm.querySelector('[type="submit"]');
+  submit.disabled = true;
+  feedbackMessage.textContent = '';
+  try {
+    const analytics = window.MONTAPC_ANALYTICS;
+    const { error } = await supabaseClient.from('montapc_feedback').insert({
+      session_id: analytics?.getSessionId?.() || makeUuid(),
+      user_id: currentUser?.id || null,
+      rating: Number(feedbackForm.elements.rating.value),
+      category: feedbackForm.elements.category.value,
+      comment: feedbackForm.elements.comment.value.trim(),
+      locale: i18n?.locale === 'en' ? 'en' : 'pt-BR',
+      viewport: analytics?.getViewport?.() || (window.innerWidth < 650 ? 'mobile' : window.innerWidth < 1000 ? 'tablet' : 'desktop')
+    });
+    if (error) throw error;
+    feedbackMessage.textContent = t('feedback.sent');
+    feedbackForm.reset();
+  } catch (error) {
+    console.error(error);
+    feedbackMessage.textContent = t('feedback.error');
+  } finally {
+    submit.disabled = false;
+  }
+});
+
 accountOpen.addEventListener('click', () => accountDialog.showModal());
 document.querySelector('#account-close').addEventListener('click', () => accountDialog.close());
 accountDialog.addEventListener('click', event => {
@@ -2140,6 +2191,9 @@ async function init() {
     await loadCatalog();
     await loadLivePrices();
     renderCatalogExplorer();
+    const componentId = new URLSearchParams(window.location.search).get('component');
+    const sharedComponent = componentId ? catalog.find(item => item.id === componentId) : null;
+    if (sharedComponent) window.setTimeout(() => openComponentDialog(sharedComponent.id), 0);
     await migrateLegacyRequests();
     const loadedPublic = await loadPublicBuildFromHash();
     if (!loadedPublic) loadSharedBuildFromHash();
