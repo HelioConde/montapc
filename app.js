@@ -579,7 +579,20 @@ function compatibility(build = currentBuild) {
       ? parts.motherboard.specs.usb_headers.map(String)
       : [];
     if (requiredHeaders.length && availableHeaders.length) {
-      const missing = requiredHeaders.filter(header => !availableHeaders.includes(header));
+      const normalizeHeader = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const headerMatches = (required, available) => {
+        const need = normalizeHeader(required);
+        const have = normalizeHeader(available);
+        if (!need || !have) return false;
+        if (need === have || have.includes(need) || need.includes(have)) return true;
+        if (need.includes('usb c')) return have.includes('usb c') || have.includes('type c');
+        if (need.includes('usb 3')) return have.includes('usb 3');
+        if (need.includes('usb 2')) return have.includes('usb 2');
+        return false;
+      };
+      const missing = requiredHeaders.filter(required =>
+        !availableHeaders.some(available => headerMatches(required, available))
+      );
       push(
         missing.length === 0,
         missing.length === 0
