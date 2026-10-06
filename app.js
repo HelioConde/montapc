@@ -23,6 +23,7 @@ const plannerForm = document.querySelector('#planner-form');
 const resultEmpty = document.querySelector('#result-empty');
 const buildResult = document.querySelector('#build-result');
 const partsList = document.querySelector('#parts-list');
+const partsToggle = document.querySelector('#parts-toggle');
 const compatibilityList = document.querySelector('#compatibility-list');
 const recommendationInsights = document.querySelector('#recommendation-insights');
 const performanceGrid = document.querySelector('#performance-grid');
@@ -61,6 +62,7 @@ let cloudBuilds = [];
 let cloudLoading = false;
 let compareSelection = [];
 let livePrices = new Map();
+let partsCollapsed = false;
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, char => ({
@@ -961,6 +963,16 @@ function componentMeta(item, type) {
   return values.slice(0, 3);
 }
 
+function updatePartsVisibility() {
+  if (!partsToggle || !partsList) return;
+  const mobile = window.matchMedia('(max-width: 650px)').matches;
+  const collapsed = mobile && partsCollapsed;
+  partsList.hidden = collapsed;
+  partsToggle.hidden = !mobile;
+  partsToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  partsToggle.textContent = collapsed ? t('result.showParts') : t('result.hideParts');
+}
+
 function renderParts() {
   const parts = selectedComponents();
   const cpuHasCooler = Boolean(parts.cpu?.specs?.cooler_included);
@@ -991,6 +1003,7 @@ function renderParts() {
           escapeHtml(optionLabel(item)) + '</option>').join('') +
       '</select></article>';
   }).join('');
+  updatePartsVisibility();
 }
 
 function renderBuild() {
@@ -1357,6 +1370,7 @@ function openSavedBuild(id) {
   if (!build) return;
 
   currentBuild = JSON.parse(JSON.stringify(build));
+  partsCollapsed = window.matchMedia('(max-width: 650px)').matches;
   plannerForm.elements.budget.value = Math.round(build.budgetCents / 100);
   plannerForm.elements.usage.value = build.settings.usage;
   plannerForm.elements.resolution.value = build.settings.resolution;
@@ -1623,6 +1637,7 @@ async function loadPublicBuildFromHash() {
       updatedAt: Date.now(),
       visibility: 'private'
     });
+    partsCollapsed = window.matchMedia('(max-width: 650px)').matches;
 
     plannerForm.elements.budget.value = Math.round(currentBuild.budgetCents / 100);
     plannerForm.elements.usage.value = settings.usage;
@@ -1693,6 +1708,7 @@ function loadSharedBuildFromHash() {
 
     currentBuild = buildCandidate(selection, settings, Number(payload.b || settings.budget * 100));
     currentBuild.name = payload.n || t('share.title');
+    partsCollapsed = window.matchMedia('(max-width: 650px)').matches;
     plannerForm.elements.budget.value = Math.round(currentBuild.budgetCents / 100);
     plannerForm.elements.usage.value = settings.usage;
     plannerForm.elements.resolution.value = settings.resolution;
@@ -1824,6 +1840,7 @@ plannerForm.addEventListener('submit', event => {
 
   currentBuild = result.build;
   currentBuild.name = '';
+  partsCollapsed = window.matchMedia('(max-width: 650px)').matches;
   renderBuild();
   trackEvent('build_generated', {
     usage: settings.usage,
@@ -1857,6 +1874,13 @@ document.querySelector('#print-build')?.addEventListener('click', () => {
   window.print();
   window.setTimeout(() => document.body.classList.remove('printing-build'), 300);
 });
+
+partsToggle?.addEventListener('click', () => {
+  partsCollapsed = !partsCollapsed;
+  updatePartsVisibility();
+});
+
+window.addEventListener('resize', updatePartsVisibility);
 
 document.querySelector('#reset-build').addEventListener('click', () => {
   const result = generateBestBuild(settingsFromForm());
