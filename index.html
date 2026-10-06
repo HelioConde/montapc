@@ -83,6 +83,13 @@
               <span data-i18n="planner.budget">Orçamento máximo</span>
               <div class="money-input"><span>R$</span><input name="budget" type="number" min="1500" max="100000" step="100" value="5000" required></div>
             </label>
+            <div class="budget-presets" aria-label="Orçamentos rápidos">
+              <span data-i18n="planner.quickBudget">Orçamentos rápidos</span>
+              <button type="button" data-budget="3000">R$ 3 mil</button>
+              <button type="button" data-budget="5000" class="active">R$ 5 mil</button>
+              <button type="button" data-budget="8000">R$ 8 mil</button>
+              <button type="button" data-budget="12000">R$ 12 mil</button>
+            </div>
 
             <div class="form-grid">
               <label class="field">
@@ -284,7 +291,10 @@
                 <option value="name-asc" data-i18n="catalog.sort.name">Nome A–Z</option>
               </select>
             </label>
-            <span id="catalog-results-count" class="catalog-results-count"></span>
+            <div class="catalog-toolbar-actions">
+              <span id="catalog-results-count" class="catalog-results-count"></span>
+              <button id="catalog-reset" class="button text" type="button" data-i18n="catalog.reset">Limpar filtros</button>
+            </div>
           </div>
           <div id="catalog-grid" class="catalog-grid"></div>
           <div class="catalog-more-row">
