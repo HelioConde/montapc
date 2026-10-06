@@ -266,3 +266,9 @@ a{color:inherit;text-decoration:none}
   .performance-grid{grid-template-columns:1fr 1fr}
   .performance-card{align-items:flex-start;flex-direction:column}
 }
+
+.field textarea{width:100%;min-height:120px;resize:vertical;border:1px solid var(--line);border-radius:9px;background:#fbfcfd;color:var(--ink);padding:11px 12px;outline:none;font:inherit}
+.field textarea:focus{border-color:#86a9ba;box-shadow:0 0 0 3px #315d7215}
+.footer .button{margin-left:auto;font-size:10px}
+.component-share{display:inline-flex;margin-top:10px}
+@media(max-width:650px){.footer .button{margin-left:0;align-self:flex-start}}
