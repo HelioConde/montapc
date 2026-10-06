@@ -226,6 +226,7 @@ async function runSmokeChecks(page, profileName) {
     if (await firstDetails.count()) {
       await firstDetails.click();
       await page.locator('#component-dialog').waitFor({ state: 'visible', timeout: 5000 });
+      await assertUi((await page.locator('#component-dialog [data-use-component]').count()) === 1, 'ação de aplicar componente à build não apareceu');
       await page.locator('#price-history-list').waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
       await page.waitForFunction(() => {
         const node = document.querySelector('#price-history-list');
