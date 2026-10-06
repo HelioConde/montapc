@@ -25,6 +25,8 @@ const buildResult = document.querySelector('#build-result');
 const partsList = document.querySelector('#parts-list');
 const compatibilityList = document.querySelector('#compatibility-list');
 const recommendationInsights = document.querySelector('#recommendation-insights');
+const performanceGrid = document.querySelector('#performance-grid');
+const performanceQuality = document.querySelector('#performance-quality');
 const saveBuildButton = document.querySelector('#save-build');
 const savedBuilds = document.querySelector('#saved-builds');
 const comparePanel = document.querySelector('#compare-panel');
@@ -855,6 +857,36 @@ function optionLabel(item) {
     (live?.in_stock ? ` · ${formatMoney(live.price_cents)} @ ${live.store_name}` : '');
 }
 
+const PERFORMANCE_GAMES = [
+  { name: 'Valorant', base: 340, cpuWeight: .55, gpuWeight: .45 },
+  { name: 'Counter-Strike 2', base: 290, cpuWeight: .55, gpuWeight: .45 },
+  { name: 'Fortnite', base: 190, cpuWeight: .35, gpuWeight: .65 },
+  { name: 'Cyberpunk 2077', base: 105, cpuWeight: .22, gpuWeight: .78 },
+  { name: 'Baldur\'s Gate 3', base: 145, cpuWeight: .35, gpuWeight: .65 },
+  { name: 'Forza Horizon 5', base: 150, cpuWeight: .25, gpuWeight: .75 }
+];
+
+function estimatedGameFps(build, game, quality = 'high') {
+  const parts = selectedComponents(build);
+  const cpu = Math.max(1, performance(parts.cpu));
+  const gpu = Math.max(1, performance(parts.gpu));
+  const combined = (cpu / 100) * game.cpuWeight + (gpu / 100) * game.gpuWeight;
+  const resolutionFactor = { '1080p': 1, '1440p': .74, '4k': .48 }[build.settings?.resolution] || .74;
+  const qualityFactor = { low: 1.35, medium: 1.17, high: 1, ultra: .82 }[quality] || 1;
+  return Math.max(20, Math.round(game.base * combined * resolutionFactor * qualityFactor / 5) * 5);
+}
+
+function renderPerformanceEstimate() {
+  if (!currentBuild || !performanceGrid) return;
+  const quality = performanceQuality?.value || 'high';
+  performanceGrid.innerHTML = PERFORMANCE_GAMES.map(game =>
+    '<article class="performance-card">' +
+      '<strong>' + escapeHtml(game.name) + '</strong>' +
+      '<span>' + escapeHtml(t('performance.fps', { fps: estimatedGameFps(currentBuild, game, quality) })) + '</span>' +
+    '</article>'
+  ).join('');
+}
+
 function componentMeta(item, type) {
   if (!item) return [];
   const specs = item.specs || {};
@@ -950,6 +982,7 @@ function renderBuild() {
 
   renderRecommendationInsights();
   renderCompatibility();
+  renderPerformanceEstimate();
   renderParts();
 }
 
@@ -1781,6 +1814,8 @@ partsList.addEventListener('change', event => {
   renderBuild();
   trackEvent('part_swapped', { type: select.dataset.part });
 });
+
+performanceQuality?.addEventListener('change', renderPerformanceEstimate);
 
 document.querySelector('#print-build')?.addEventListener('click', () => {
   if (!currentBuild) return;
