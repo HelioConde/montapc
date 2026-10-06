@@ -134,3 +134,10 @@ a{color:inherit;text-decoration:none}
   .compatibility-list{margin-bottom:14px}
   .compatibility-details summary{padding:11px 12px}
 }
+
+.part-meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.part-meta em{font-style:normal;padding:3px 6px;border-radius:999px;background:var(--soft);color:var(--accent);font-size:8px;font-weight:800;line-height:1.2}
+.part-label small{margin-top:5px}
+@media(max-width:650px){
+  .part-meta em{font-size:8px}
+}
