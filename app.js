@@ -680,6 +680,9 @@ function renderSavedBuilds() {
           (build.compatibilityStatus === 'compatible' ? t('result.compatible') : t('saved.review')) + '</small></div>' +
         '<div class="saved-actions"><button class="button ghost" type="button" data-compare="' + escapeHtml(build.id) + '">' + escapeHtml(t('compare.select')) + '</button>' +
         '<button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.open')) + '</button>' +
+        '<button class="button ghost" type="button" data-rename="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.rename')) + '</button>' +
+        '<button class="button ghost" type="button" data-duplicate="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.duplicate')) + '</button>' +
+        '<button class="button ghost" type="button" data-share="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.share')) + '</button>' +
         '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.delete')) + '</button></div>' +
       '</article>'
     ).join('')
@@ -938,6 +941,116 @@ function openSavedBuild(id) {
   document.querySelector('.result-panel').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
+function sharedBuildToken(build) {
+  const payload = {
+    v: 1,
+    n: build.name || '',
+    b: build.budgetCents,
+    s: build.settings,
+    p: build.selection
+  };
+  const bytes = new TextEncoder().encode(JSON.stringify(payload));
+  let binary = '';
+  bytes.forEach(byte => { binary += String.fromCharCode(byte); });
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function decodeSharedBuild(token) {
+  const padded = String(token || '').replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(String(token || '').length / 4) * 4, '=');
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+async function shareSavedBuild(id) {
+  const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === id);
+  if (!build) return;
+  const url = new URL(window.location.href.split('#')[0]);
+  url.hash = 'build=' + sharedBuildToken(build);
+
+  try {
+    await navigator.clipboard.writeText(url.toString());
+    showToast(t('toast.shared'));
+  } catch {
+    const input = document.createElement('textarea');
+    input.value = url.toString();
+    document.body.appendChild(input);
+    input.select();
+    const ok = document.execCommand('copy');
+    input.remove();
+    showToast(ok ? t('toast.shared') : t('toast.shareError'));
+  }
+}
+
+async function duplicateSavedBuild(id) {
+  const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === id);
+  if (!build) return;
+
+  const copy = normalizeSavedBuild({
+    ...JSON.parse(JSON.stringify(build)),
+    id: makeUuid(),
+    name: build.name + ' · ' + t('saved.copySuffix'),
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  });
+
+  if (currentUser && supabaseClient) {
+    const saved = await saveCloudBuild(copy);
+    cloudBuilds = [saved, ...cloudBuilds];
+  } else {
+    saveLocalBuild(copy);
+  }
+
+  renderSavedBuilds();
+  showToast(t('toast.duplicated'));
+}
+
+function renameSavedBuild(id) {
+  const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === id);
+  if (!build) return;
+  currentBuild = JSON.parse(JSON.stringify(build));
+  nameForm.elements.name.value = build.name;
+  nameMessage.textContent = currentUser ? t('build.cloudSave') : t('build.localSave');
+  nameDialog.showModal();
+  window.setTimeout(() => nameForm.elements.name.select(), 30);
+}
+
+function loadSharedBuildFromHash() {
+  if (!window.location.hash.startsWith('#build=')) return false;
+  try {
+    const payload = decodeSharedBuild(window.location.hash.slice(7));
+    if (payload?.v !== 1 || !payload?.s || !payload?.p) throw new Error('invalid_share');
+
+    const selection = {};
+    for (const type of TYPE_ORDER) {
+      const id = payload.p[type] || null;
+      if (id && !component(type, id)) throw new Error('missing_component');
+      selection[type] = id;
+    }
+
+    const settings = {
+      budget: Number(payload.s.budget || Number(payload.b || 0) / 100 || 5000),
+      usage: payload.s.usage || 'gaming',
+      resolution: payload.s.resolution || '1440p',
+      strategy: payload.s.strategy || 'balanced'
+    };
+
+    currentBuild = buildCandidate(selection, settings, Number(payload.b || settings.budget * 100));
+    currentBuild.name = payload.n || t('share.title');
+    plannerForm.elements.budget.value = Math.round(currentBuild.budgetCents / 100);
+    plannerForm.elements.usage.value = settings.usage;
+    plannerForm.elements.resolution.value = settings.resolution;
+    plannerForm.elements.strategy.value = settings.strategy;
+    renderBuild();
+    showToast(t('share.loaded'));
+    return true;
+  } catch (error) {
+    console.error(error);
+    showToast(t('share.invalid'));
+    return false;
+  }
+}
+
 async function migrateLegacyRequests() {
   if (readLocal().length || !catalog.length) return;
   try {
@@ -1124,6 +1237,32 @@ savedBuilds.addEventListener('click', async event => {
     return;
   }
 
+  const rename = event.target.closest('[data-rename]');
+  if (rename) {
+    renameSavedBuild(rename.dataset.rename);
+    return;
+  }
+
+  const duplicate = event.target.closest('[data-duplicate]');
+  if (duplicate) {
+    duplicate.disabled = true;
+    try {
+      await duplicateSavedBuild(duplicate.dataset.duplicate);
+    } catch (error) {
+      console.error(error);
+      showToast(t('build.saveError'));
+    } finally {
+      duplicate.disabled = false;
+    }
+    return;
+  }
+
+  const share = event.target.closest('[data-share]');
+  if (share) {
+    await shareSavedBuild(share.dataset.share);
+    return;
+  }
+
   const remove = event.target.closest('[data-delete]');
   if (!remove) return;
   if (!window.confirm(t('confirm.delete'))) return;
@@ -1266,6 +1405,7 @@ async function init() {
   try {
     await loadCatalog();
     await migrateLegacyRequests();
+    loadSharedBuildFromHash();
     renderSavedBuilds();
     updateAccountUi();
   } catch (error) {
