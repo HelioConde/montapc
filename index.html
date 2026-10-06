@@ -42,6 +42,11 @@
   <div class="shell">
     <header class="topbar">
       <a class="brand" href="./">MontaPC<span>.</span></a>
+      <nav class="quick-nav" aria-label="Navegação principal">
+        <a href="#montador" data-i18n="nav.builder">Montador</a>
+        <a href="#builds-salvas" data-i18n="nav.saved">Builds</a>
+        <a href="#catalogo" data-i18n="nav.catalog">Catálogo</a>
+      </nav>
       <div class="top-actions">
         <label class="language-control">
           <span class="sr-only" data-i18n="header.language">Idioma</span>
@@ -73,7 +78,7 @@
         </aside>
       </section>
 
-      <section class="planner-grid">
+      <section id="montador" class="planner-grid">
         <section class="panel planner-panel">
           <div class="panel-head">
             <div><p class="eyebrow" data-i18n="planner.step">1 · PERFIL</p><h2 data-i18n="planner.title">O que você quer montar?</h2></div>
@@ -223,7 +228,7 @@
 
       <aside class="ad-slot" data-ad-slot="afterBuilder" hidden aria-label="Publicidade"></aside>
 
-      <section class="saved-section">
+      <section id="builds-salvas" class="saved-section">
         <div class="section-heading">
           <div><p class="eyebrow" data-i18n="saved.eyebrow">MINHAS CONFIGURAÇÕES</p><h2 data-i18n="saved.title">Builds salvas</h2></div>
           <p data-i18n="saved.copy">Entre na conta para sincronizar em outros dispositivos.</p>
@@ -247,7 +252,7 @@
         <aside class="ad-slot compact" data-ad-slot="beforeSavedBuilds" hidden aria-label="Publicidade"></aside>
       </section>
 
-      <section class="catalog-section">
+      <section id="catalogo" class="catalog-section">
         <details class="catalog-explorer">
           <summary>
             <div>
