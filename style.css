@@ -102,3 +102,10 @@ a{color:inherit;text-decoration:none}
 @media(max-width:650px){
   .language-control{margin-right:auto}
 }
+
+.recommendation-block{margin:0 0 14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fbfcfd}
+.recommendation-block h3{margin:0 0 9px;font:700 12px Manrope,sans-serif}
+.recommendation-insights{display:grid;gap:7px}
+.recommendation-insight{display:grid;grid-template-columns:20px 1fr;gap:7px;align-items:start;color:var(--muted);font-size:10px}
+.recommendation-insight>span{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:800}
+.recommendation-insight p{margin:1px 0 0;line-height:1.5}
