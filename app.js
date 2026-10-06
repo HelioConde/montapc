@@ -819,6 +819,8 @@ function normalizeSavedBuild(build) {
     budgetCents: Number(build.budgetCents || 0),
     totalCents: Number(build.totalCents || buildTotal(build.selection || {})),
     compatibilityStatus: build.compatibilityStatus || 'pending',
+    isFavorite: Boolean(build.isFavorite ?? build.is_favorite),
+    visibility: build.visibility === 'public' ? 'public' : 'private',
     settings: {
       budget: Number(build.settings?.budget || Number(build.budgetCents || 0) / 100 || 5000),
       usage: build.settings?.usage || 'gaming',
@@ -840,8 +842,8 @@ function renderSavedBuilds() {
   savedBuilds.innerHTML = builds.length
     ? builds.map(build =>
       '<article class="saved-card' + (compareSelection.includes(build.id) ? ' selected-for-compare' : '') + '">' +
-        '<div><strong>' + escapeHtml(build.name) + '</strong>' +
-        '<span>' + escapeHtml(settingsLabel(build.settings)) + '</span></div>' +
+        '<div><strong>' + (build.isFavorite ? '★ ' : '') + escapeHtml(build.name) + '</strong>' +
+        '<span>' + escapeHtml(settingsLabel(build.settings)) + ' · ' + escapeHtml(build.visibility === 'public' ? t('saved.public') : t('saved.private')) + '</span></div>' +
         '<div class="saved-values"><span>' + escapeHtml(formatMoney(build.totalCents)) + '</span>' +
         '<small class="' + (build.compatibilityStatus === 'compatible' ? 'status-ok' : 'status-warn') + '">' +
           (build.compatibilityStatus === 'compatible' ? t('result.compatible') : t('saved.review')) + '</small></div>' +
@@ -850,6 +852,8 @@ function renderSavedBuilds() {
         '<button class="button ghost" type="button" data-rename="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.rename')) + '</button>' +
         '<button class="button ghost" type="button" data-duplicate="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.duplicate')) + '</button>' +
         '<button class="button ghost" type="button" data-share="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.share')) + '</button>' +
+        '<button class="button ghost" type="button" data-favorite="' + escapeHtml(build.id) + '">' + escapeHtml(build.isFavorite ? t('saved.unfavorite') : t('saved.favorite')) + '</button>' +
+        (currentUser ? '<button class="button ghost" type="button" data-visibility="' + escapeHtml(build.id) + '">' + escapeHtml(build.visibility === 'public' ? t('saved.makePrivate') : t('saved.makePublic')) + '</button>' : '') +
         '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.delete')) + '</button></div>' +
       '</article>'
     ).join('')
@@ -935,6 +939,8 @@ async function saveCloudBuild(build) {
     purpose: purposeString(build.settings),
     total_cents: build.totalCents,
     compatibility_status: state.ok ? 'compatible' : 'incompatible',
+    is_favorite: Boolean(build.isFavorite),
+    visibility: build.visibility === 'public' ? 'public' : 'private',
     created_at: new Date(build.createdAt || Date.now()).toISOString(),
     updated_at: new Date().toISOString()
   };
@@ -975,6 +981,8 @@ async function saveCloudBuild(build) {
       budgetCents: data.budget_cents,
       totalCents: data.total_cents,
       compatibilityStatus: data.compatibility_status,
+      isFavorite: data.is_favorite,
+      visibility: data.visibility,
       settings: {
         ...parsePurpose(data.purpose),
         budget: Number(data.budget_cents || 0) / 100
@@ -1036,6 +1044,8 @@ async function loadCloudBuilds() {
       budgetCents: row.budget_cents,
       totalCents: row.total_cents,
       compatibilityStatus: row.compatibility_status,
+      isFavorite: row.is_favorite,
+      visibility: row.visibility,
       settings,
       selection,
       createdAt: Date.parse(row.created_at),
@@ -1133,7 +1143,9 @@ async function shareSavedBuild(id) {
   const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === id);
   if (!build) return;
   const url = new URL(window.location.href.split('#')[0]);
-  url.hash = 'build=' + sharedBuildToken(build);
+  url.hash = currentUser && build.visibility === 'public'
+    ? 'public=' + encodeURIComponent(build.id)
+    : 'build=' + sharedBuildToken(build);
 
   try {
     await navigator.clipboard.writeText(url.toString());
@@ -1146,6 +1158,90 @@ async function shareSavedBuild(id) {
     const ok = document.execCommand('copy');
     input.remove();
     showToast(ok ? t('toast.shared') : t('toast.shareError'));
+  }
+}
+
+async function updateSavedBuildMeta(id, patch) {
+  const builds = visibleSavedBuilds().map(normalizeSavedBuild);
+  const build = builds.find(item => item.id === id);
+  if (!build) return;
+
+  const next = { ...build, ...patch, updatedAt: Date.now() };
+
+  if (currentUser && supabaseClient) {
+    const payload = {};
+    if ('isFavorite' in patch) payload.is_favorite = Boolean(patch.isFavorite);
+    if ('visibility' in patch) payload.visibility = patch.visibility === 'public' ? 'public' : 'private';
+    payload.updated_at = new Date().toISOString();
+
+    const { error } = await supabaseClient
+      .from('montapc_builds')
+      .update(payload)
+      .eq('id', id);
+    if (error) throw error;
+
+    cloudBuilds = cloudBuilds.map(item => item.id === id ? normalizeSavedBuild(next) : item);
+  } else {
+    const locals = readLocal().map(normalizeSavedBuild).map(item => item.id === id ? normalizeSavedBuild(next) : item);
+    writeLocal(locals);
+  }
+
+  if (currentBuild?.id === id) currentBuild = normalizeSavedBuild(next);
+  renderSavedBuilds();
+}
+
+async function loadPublicBuildFromHash() {
+  if (!window.location.hash.startsWith('#public=') || !supabaseClient) return false;
+  try {
+    const id = decodeURIComponent(window.location.hash.slice(8));
+    if (!isUuid(id)) throw new Error('invalid_public_id');
+
+    const { data: build, error } = await supabaseClient
+      .from('montapc_builds')
+      .select('*')
+      .eq('id', id)
+      .eq('visibility', 'public')
+      .single();
+    if (error || !build) throw error || new Error('public_not_found');
+
+    const { data: items, error: itemError } = await supabaseClient
+      .from('montapc_build_items')
+      .select('component_id')
+      .eq('build_id', id);
+    if (itemError) throw itemError;
+
+    const selection = {};
+    for (const entry of items || []) {
+      const part = catalog.find(item => item.id === entry.component_id);
+      if (part) selection[part.component_type] = part.id;
+    }
+
+    const settings = parsePurpose(build.purpose);
+    settings.budget = Number(build.budget_cents || 0) / 100;
+    currentBuild = normalizeSavedBuild({
+      id: null,
+      name: build.name || t('share.title'),
+      budgetCents: build.budget_cents,
+      totalCents: build.total_cents,
+      compatibilityStatus: build.compatibility_status,
+      settings,
+      selection,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      visibility: 'private'
+    });
+
+    plannerForm.elements.budget.value = Math.round(currentBuild.budgetCents / 100);
+    plannerForm.elements.usage.value = settings.usage;
+    plannerForm.elements.resolution.value = settings.resolution;
+    plannerForm.elements.strategy.value = settings.strategy;
+    renderBuild();
+    showToast(t('share.publicLoaded'));
+    return true;
+  } catch (error) {
+    console.error(error);
+    showToast(t('share.invalid'));
+    return false;
   }
 }
 
@@ -1461,6 +1557,36 @@ savedBuilds.addEventListener('click', async event => {
     return;
   }
 
+  const favorite = event.target.closest('[data-favorite]');
+  if (favorite) {
+    const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === favorite.dataset.favorite);
+    if (build) {
+      try {
+        await updateSavedBuildMeta(build.id, { isFavorite: !build.isFavorite });
+        showToast(t('toast.favoriteUpdated'));
+      } catch (error) {
+        console.error(error);
+        showToast(t('build.saveError'));
+      }
+    }
+    return;
+  }
+
+  const visibility = event.target.closest('[data-visibility]');
+  if (visibility) {
+    const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === visibility.dataset.visibility);
+    if (build) {
+      try {
+        await updateSavedBuildMeta(build.id, { visibility: build.visibility === 'public' ? 'private' : 'public' });
+        showToast(t('toast.visibilityUpdated'));
+      } catch (error) {
+        console.error(error);
+        showToast(t('build.saveError'));
+      }
+    }
+    return;
+  }
+
   const remove = event.target.closest('[data-delete]');
   if (!remove) return;
   if (!window.confirm(t('confirm.delete'))) return;
@@ -1617,7 +1743,8 @@ async function init() {
     await loadLivePrices();
     renderCatalogExplorer();
     await migrateLegacyRequests();
-    loadSharedBuildFromHash();
+    const loadedPublic = await loadPublicBuildFromHash();
+    if (!loadedPublic) loadSharedBuildFromHash();
     renderSavedBuilds();
     updateAccountUi();
   } catch (error) {
