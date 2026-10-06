@@ -23,6 +23,7 @@ jobs:
           test -f manifest.webmanifest
           test -f sw.js
           test -f pwa.js
+          test -f analytics.js
           test -f robots.txt
           test -f sitemap.xml
           test -f icon.svg
@@ -34,6 +35,7 @@ jobs:
           node --check scripts/capture-site.mjs
           node --check sw.js
           node --check pwa.js
+          node --check analytics.js
           grep -qi '<title' index.html
           grep -qi 'name="description"' index.html
           grep -qi 'rel="canonical"' index.html
@@ -48,6 +50,8 @@ jobs:
           grep -q 'application/ld+json' index.html
           grep -q 'pwa.js' index.html
           grep -q 'sitemap.xml' robots.txt
+          grep -q 'hreflang="en"' index.html
+          grep -q 'analytics.js' index.html
           grep -q "'pt-BR'" i18n.js
           grep -q "'en'" i18n.js
           grep -q 'enabled: false' ads-config.js
