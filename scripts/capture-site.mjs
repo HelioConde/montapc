@@ -189,6 +189,7 @@ async function runSmokeChecks(page, profileName) {
       await assertUi((await page.locator('#catalog-type-filter').inputValue()) === 'gpu', 'atalho visual de categoria não aplicou o filtro');
       await assertUi((await gpuShortcut.getAttribute('aria-pressed')) === 'true', 'atalho visual ativo não foi marcado');
       await assertUi((await page.locator('#catalog-grid .catalog-card').count()) > 0, 'atalho visual de categoria não retornou componentes');
+      await assertUi((await page.locator('#catalog-grid .catalog-card.is-selected').count()) === 1, 'GPU atual da build não foi destacada no catálogo');
 
       await gpuShortcut.click();
       await page.waitForTimeout(100);
