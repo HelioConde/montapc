@@ -117,3 +117,12 @@ Arquitetura:
 - ausência de layout quebrado com anúncios desligados;
 - anúncios nunca bloquearem ações principais;
 - transparência de preço estimado e conteúdo patrocinado.
+
+
+## Gestão do backlog
+
+- Fonte de verdade: `ROADMAP.md`.
+- Execução rastreável: GitHub Issues #1–#12.
+- Ordem: P0 → P1 → P2 → P3 → P4.
+- Novas funcionalidades devem entrar em uma issue existente ou receber issue própria antes de ampliar o escopo.
+- Monetização permanece posterior à estabilidade, QA e validação real.
