@@ -749,21 +749,6 @@ input,select,button{max-width:100%;min-width:0}
   .compare-summary span{font-size:7px}
   .compare-summary strong{font-size:10px}
 
-  .catalog-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:8px;
-    padding:0 12px 14px;
-  }
-  .catalog-card{padding:10px;gap:5px}
-  .catalog-card-image{height:82px;padding:6px}
-  .catalog-card>strong{font-size:11px;line-height:1.28}
-  .catalog-card>small{font-size:8px}
-  .catalog-card>.button{width:100%;justify-content:center;padding:8px 7px}
-}
-
-@media(max-width:360px){
-  .catalog-grid{grid-template-columns:1fr}
-  .catalog-card-image{height:96px}
 }
 
 .price-history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:9px}
