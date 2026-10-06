@@ -584,13 +584,24 @@ function renderRecommendationInsights() {
   const margin = budget - total;
   const insights = [];
 
-  if (settings.usage === 'work') {
-    insights.push(t('insights.work'));
-  } else if (settings.usage === 'mixed') {
-    insights.push(t('insights.mixed'));
-  } else {
-    insights.push(t('insights.gaming', { resolution: settings.resolution || '—' }));
-  }
+  const usageInsightKey = {
+    work: 'insights.work',
+    mixed: 'insights.mixed',
+    competitive: 'insights.competitive',
+    aaa: 'insights.aaa',
+    streaming: 'insights.streaming',
+    editing: 'insights.editing',
+    programming: 'insights.programming',
+    '3d': 'insights.3d',
+    ai: 'insights.ai',
+    office: 'insights.office'
+  }[settings.usage];
+
+  insights.push(
+    usageInsightKey
+      ? t(usageInsightKey)
+      : t('insights.gaming', { resolution: settings.resolution || '—' })
+  );
 
   insights.push(t('insights.platform', { socket, memory: memoryType }));
 
@@ -1300,6 +1311,36 @@ document.querySelector('#reset-build').addEventListener('click', () => {
   currentBuild = result.build;
   if (currentBuild) currentBuild.name = '';
   renderBuild();
+});
+
+document.querySelector('.alternative-actions')?.addEventListener('click', event => {
+  const button = event.target.closest('[data-alternative]');
+  if (!button || !currentBuild) return;
+
+  const settings = { ...currentBuild.settings };
+  if (button.dataset.alternative === 'save500') {
+    settings.budget = Math.max(1500, Math.floor(Number(settings.budget || 0) - 500));
+    settings.strategy = 'economy';
+  } else if (button.dataset.alternative === 'gpu') {
+    settings.strategy = 'fps';
+  } else if (button.dataset.alternative === 'cpu') {
+    settings.strategy = 'cpu';
+  } else if (button.dataset.alternative === 'upgrade') {
+    settings.strategy = 'upgrade';
+  }
+
+  plannerForm.elements.budget.value = settings.budget;
+  plannerForm.elements.strategy.value = settings.strategy;
+  const result = generateBestBuild(settings);
+  if (!result.build) {
+    showToast(t('toast.noCompatible'));
+    return;
+  }
+
+  currentBuild = result.build;
+  currentBuild.name = '';
+  renderBuild();
+  showToast(t('alternatives.applied'));
 });
 
 saveBuildButton.addEventListener('click', () => {
