@@ -30,11 +30,31 @@ async function assertUi(condition, message) {
 }
 
 async function prepareFullPageCapture(page) {
-  await page.evaluate(() => {
+  await page.evaluate(async () => {
     const active = document.activeElement;
     if (active && typeof active.blur === 'function') active.blur();
+
+    // Warm lazy-loaded artwork before a full-page screenshot so rows below the fold
+    // are captured with their component images instead of empty placeholders.
+    const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const step = Math.max(420, Math.floor(window.innerHeight * 0.8));
+    for (let y = 0; y <= max; y += step) {
+      window.scrollTo(0, y);
+      await new Promise(resolve => setTimeout(resolve, 35));
+    }
+
     window.scrollTo(0, 0);
   });
+
+  await page.waitForFunction(() => {
+    const visibleImages = Array.from(document.images).filter(img => {
+      const style = getComputedStyle(img);
+      const rect = img.getBoundingClientRect();
+      return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+    });
+    return visibleImages.every(img => img.complete && img.naturalWidth > 0);
+  }, null, { timeout: 5000 }).catch(() => {});
+
   await page.waitForTimeout(120);
 }
 
