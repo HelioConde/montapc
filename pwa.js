@@ -15,6 +15,7 @@
   });
 
   button?.addEventListener('click', async () => {
+    window.MONTAPC_ANALYTICS?.track('pwa_install_clicked');
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     await deferredPrompt.userChoice.catch(() => null);
