@@ -545,7 +545,8 @@
   function normalizeLocale(value) {
     return String(value || '').toLowerCase().startsWith('en') ? 'en' : DEFAULT_LOCALE;
   }
-  let locale = normalizeLocale(localStorage.getItem(STORAGE_KEY) || DEFAULT_LOCALE);
+  const urlLocale = new URLSearchParams(window.location.search).get('lang');
+  let locale = normalizeLocale(urlLocale || localStorage.getItem(STORAGE_KEY) || DEFAULT_LOCALE);
 
   function t(key, vars = {}) {
     const table = translations[locale] || translations[DEFAULT_LOCALE];
@@ -576,6 +577,12 @@
   function setLocale(next) {
     locale = normalizeLocale(next);
     localStorage.setItem(STORAGE_KEY, locale);
+
+    const url = new URL(window.location.href);
+    if (locale === 'en') url.searchParams.set('lang', 'en');
+    else url.searchParams.delete('lang');
+    history.replaceState(null, '', url);
+
     applyStatic();
   }
 
