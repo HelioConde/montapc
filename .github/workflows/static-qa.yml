@@ -19,11 +19,13 @@ jobs:
           test -f ads-config.js
           test -f ads.js
           test -f i18n.js
+          test -f scripts/capture-site.mjs
           node --check app.js
           node --check supabase-config.js
           node --check ads-config.js
           node --check ads.js
           node --check i18n.js
+          node --check scripts/capture-site.mjs
           grep -qi '<title' index.html
           grep -qi 'name="description"' index.html
           grep -qi 'rel="canonical"' index.html
