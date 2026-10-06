@@ -18,47 +18,54 @@
     <header class="topbar">
       <a class="brand" href="./">MontaPC<span>.</span></a>
       <div class="top-actions">
-        <span id="sync-status" class="sync-status" role="status">Carregando catálogo…</span>
-        <button id="account-open" class="button ghost" type="button">Entrar / sincronizar</button>
+        <label class="language-control">
+          <span class="sr-only" data-i18n="header.language">Idioma</span>
+          <select id="language-select" aria-label="Idioma">
+            <option value="pt-BR">PT-BR</option>
+            <option value="en">EN</option>
+          </select>
+        </label>
+        <span id="sync-status" class="sync-status" role="status" data-i18n="header.loading">Carregando catálogo…</span>
+        <button id="account-open" class="button ghost" type="button" data-i18n="header.account">Entrar / sincronizar</button>
       </div>
     </header>
 
     <main>
       <section class="hero">
         <div>
-          <p class="eyebrow">MONTADOR E VERIFICADOR DE COMPATIBILIDADE</p>
-          <h1>Monte pelo orçamento.<br><span>Entenda por que combina.</span></h1>
-          <p class="hero-copy">O MontaPC cruza socket, tipo de memória, potência da fonte e espaço do gabinete para explicar os conflitos antes de você comprar.</p>
+          <p class="eyebrow" data-i18n="hero.eyebrow">MONTADOR E VERIFICADOR DE COMPATIBILIDADE</p>
+          <h1><span data-i18n="hero.title">Monte pelo orçamento.</span><br><span data-i18n="hero.titleAccent">Entenda por que combina.</span></h1>
+          <p class="hero-copy" data-i18n="hero.copy">O MontaPC cruza socket, tipo de memória, potência da fonte e espaço do gabinete para explicar os conflitos antes de você comprar.</p>
         </div>
         <aside class="hero-card">
-          <span>Catálogo inicial</span>
+          <span data-i18n="hero.catalog">Catálogo inicial</span>
           <strong id="catalog-count">—</strong>
-          <small>peças de referência</small>
+          <small data-i18n="hero.parts">peças de referência</small>
         </aside>
       </section>
 
       <section class="planner-grid">
         <section class="panel planner-panel">
           <div class="panel-head">
-            <div><p class="eyebrow">1 · PERFIL</p><h2>O que você quer montar?</h2></div>
+            <div><p class="eyebrow" data-i18n="planner.step">1 · PERFIL</p><h2 data-i18n="planner.title">O que você quer montar?</h2></div>
           </div>
           <form id="planner-form">
             <label class="field">
-              <span>Orçamento máximo</span>
+              <span data-i18n="planner.budget">Orçamento máximo</span>
               <div class="money-input"><span>R$</span><input name="budget" type="number" min="1500" max="100000" step="100" value="5000" required></div>
             </label>
 
             <div class="form-grid">
               <label class="field">
-                <span>Uso principal</span>
+                <span data-i18n="planner.usage">Uso principal</span>
                 <select name="usage">
-                  <option value="gaming" selected>Jogos</option>
-                  <option value="work">Trabalho / produtividade</option>
-                  <option value="mixed">Uso misto</option>
+                  <option value="gaming" selected data-i18n="planner.usage.gaming">Jogos</option>
+                  <option value="work" data-i18n="planner.usage.work">Trabalho / produtividade</option>
+                  <option value="mixed" data-i18n="planner.usage.mixed">Uso misto</option>
                 </select>
               </label>
               <label class="field">
-                <span>Resolução alvo</span>
+                <span data-i18n="planner.resolution">Resolução alvo</span>
                 <select name="resolution">
                   <option value="1080p">1080p</option>
                   <option value="1440p" selected>1440p</option>
@@ -68,57 +75,57 @@
             </div>
 
             <label class="field">
-              <span>Prioridade</span>
+              <span data-i18n="planner.strategy">Prioridade</span>
               <select name="strategy">
-                <option value="balanced" selected>Equilíbrio geral</option>
-                <option value="fps">Mais desempenho em jogos</option>
-                <option value="upgrade">Mais espaço para upgrades</option>
-                <option value="economy">Economizar o máximo possível</option>
+                <option value="balanced" selected data-i18n="planner.strategy.balanced">Equilíbrio geral</option>
+                <option value="fps" data-i18n="planner.strategy.fps">Mais desempenho em jogos</option>
+                <option value="upgrade" data-i18n="planner.strategy.upgrade">Mais espaço para upgrades</option>
+                <option value="economy" data-i18n="planner.strategy.economy">Economizar o máximo possível</option>
               </select>
             </label>
 
-            <button id="generate-build" class="button primary full" type="submit">Montar melhor configuração</button>
-            <p class="fine-print">Os valores do catálogo são <strong>estimativas internas de referência</strong>, não preços ao vivo de lojas.</p>
+            <button id="generate-build" class="button primary full" type="submit" data-i18n="planner.generate">Montar melhor configuração</button>
+            <p class="fine-print" data-i18n="planner.priceNote">Os valores do catálogo são estimativas internas de referência, não preços ao vivo de lojas.</p>
           </form>
         </section>
 
         <section class="panel result-panel">
           <div id="result-empty" class="result-empty">
             <span class="empty-icon">▦</span>
-            <h2>Sua configuração aparece aqui</h2>
-            <p>Defina orçamento e objetivo. O MontaPC procura a combinação compatível com melhor equilíbrio dentro do catálogo atual.</p>
+            <h2 data-i18n="result.emptyTitle">Sua configuração aparece aqui</h2>
+            <p data-i18n="result.emptyCopy">Defina orçamento e objetivo. O MontaPC procura a combinação compatível com melhor equilíbrio dentro do catálogo atual.</p>
           </div>
 
           <div id="build-result" hidden>
             <div class="result-top">
               <div>
-                <p class="eyebrow">2 · CONFIGURAÇÃO</p>
-                <h2 id="build-title">PC recomendado</h2>
+                <p class="eyebrow" data-i18n="result.step">2 · CONFIGURAÇÃO</p>
+                <h2 id="build-title" data-i18n="result.recommended">PC recomendado</h2>
                 <p id="build-subtitle" class="result-subtitle"></p>
               </div>
-              <span id="compatibility-badge" class="compatibility-badge">Compatível</span>
+              <span id="compatibility-badge" class="compatibility-badge" data-i18n="result.compatible">Compatível</span>
             </div>
 
             <div class="budget-summary">
-              <article><span>Total estimado</span><strong id="build-total">R$ 0</strong></article>
-              <article><span>Orçamento</span><strong id="build-budget">R$ 0</strong></article>
-              <article><span>Margem</span><strong id="build-margin">R$ 0</strong></article>
-              <article><span>Fonte recomendada</span><strong id="build-psu">—</strong></article>
+              <article><span data-i18n="result.total">Total estimado</span><strong id="build-total">R$ 0</strong></article>
+              <article><span data-i18n="result.budget">Orçamento</span><strong id="build-budget">R$ 0</strong></article>
+              <article><span data-i18n="result.margin">Margem</span><strong id="build-margin">R$ 0</strong></article>
+              <article><span data-i18n="result.psu">Fonte recomendada</span><strong id="build-psu">—</strong></article>
             </div>
 
             <div id="compatibility-list" class="compatibility-list"></div>
 
             <div class="parts-heading">
-              <div><h3>Peças selecionadas</h3><p>Troque qualquer item para testar outra combinação.</p></div>
+              <div><h3 data-i18n="result.parts">Peças selecionadas</h3><p data-i18n="result.partsCopy">Troque qualquer item para testar outra combinação.</p></div>
             </div>
             <div id="parts-list" class="parts-list"></div>
 
             <div class="result-actions">
-              <button id="reset-build" class="button ghost" type="button">Gerar outra</button>
-              <button id="save-build" class="button primary" type="button">Salvar build</button>
+              <button id="reset-build" class="button ghost" type="button" data-i18n="result.regenerate">Gerar outra</button>
+              <button id="save-build" class="button primary" type="button" data-i18n="result.save">Salvar build</button>
             </div>
 
-            <p class="price-warning">Preços e dimensões são referências do catálogo para validar o fluxo. Confirme o SKU, medidas e preço da loja antes da compra.</p>
+            <p class="price-warning" data-i18n="result.priceWarning">Preços e dimensões são referências do catálogo para validar o fluxo. Confirme o SKU, medidas e preço da loja antes da compra.</p>
           </div>
         </section>
       </section>
@@ -127,8 +134,8 @@
 
       <section class="saved-section">
         <div class="section-heading">
-          <div><p class="eyebrow">MINHAS CONFIGURAÇÕES</p><h2>Builds salvas</h2></div>
-          <p>Entre na conta para sincronizar em outros dispositivos.</p>
+          <div><p class="eyebrow" data-i18n="saved.eyebrow">MINHAS CONFIGURAÇÕES</p><h2 data-i18n="saved.title">Builds salvas</h2></div>
+          <p data-i18n="saved.copy">Entre na conta para sincronizar em outros dispositivos.</p>
         </div>
         <div id="saved-builds" class="saved-builds"></div>
         <aside class="ad-slot compact" data-ad-slot="beforeSavedBuilds" hidden aria-label="Publicidade"></aside>
@@ -137,41 +144,41 @@
 
     <footer class="footer">
       <strong>MontaPC</strong>
-      <span>Compatibilidade explicável primeiro; links afiliados só serão exibidos quando houver integração e sempre serão identificados.</span>
+      <span data-i18n="footer.copy">Compatibilidade explicável primeiro; conteúdo comercial futuro será sempre identificado.</span>
     </footer>
   </div>
 
   <dialog id="account-dialog" class="dialog" aria-labelledby="account-title">
     <div class="dialog-head">
-      <div><p class="eyebrow">SUA CONTA</p><h2 id="account-title">Sincronize suas builds</h2></div>
-      <button id="account-close" class="icon-button" type="button" aria-label="Fechar">×</button>
+      <div><p class="eyebrow" data-i18n="account.eyebrow">SUA CONTA</p><h2 id="account-title" data-i18n="account.title">Sincronize suas builds</h2></div>
+      <button id="account-close" class="icon-button" type="button" data-i18n-aria="account.close" aria-label="Fechar">×</button>
     </div>
-    <p class="dialog-copy">Sem conta, suas configurações continuam salvas neste dispositivo.</p>
+    <p class="dialog-copy" data-i18n="account.copy">Sem conta, suas configurações continuam salvas neste dispositivo.</p>
     <form id="auth-form">
-      <label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="email" required></label>
-      <label class="field"><span>Senha</span><input name="password" type="password" minlength="8" autocomplete="current-password" required></label>
-      <button class="button primary full" type="submit">Entrar</button>
+      <label class="field"><span data-i18n="account.email">E-mail</span><input name="email" type="email" autocomplete="email" required></label>
+      <label class="field"><span data-i18n="account.password">Senha</span><input name="password" type="password" minlength="8" autocomplete="current-password" required></label>
+      <button class="button primary full" type="submit" data-i18n="account.signIn">Entrar</button>
       <div class="account-actions">
-        <button id="sign-up" class="button ghost" type="button">Criar conta</button>
-        <button id="reset-password" class="button text" type="button">Esqueci a senha</button>
+        <button id="sign-up" class="button ghost" type="button" data-i18n="account.signUp">Criar conta</button>
+        <button id="reset-password" class="button text" type="button" data-i18n="account.reset">Esqueci a senha</button>
       </div>
     </form>
     <div id="account-profile" hidden>
-      <p>Conectado como <strong id="account-email"></strong></p>
-      <button id="import-local" class="button ghost full" type="button" hidden>Importar builds deste dispositivo</button>
-      <button id="sign-out" class="button ghost full" type="button">Sair da conta</button>
+      <p><span data-i18n="account.connectedAs">Conectado como</span> <strong id="account-email"></strong></p>
+      <button id="import-local" class="button ghost full" type="button" hidden data-i18n="account.import">Importar builds deste dispositivo</button>
+      <button id="sign-out" class="button ghost full" type="button" data-i18n="account.signOut">Sair da conta</button>
     </div>
     <p id="account-message" class="form-message" role="status" aria-live="polite"></p>
   </dialog>
 
   <dialog id="name-dialog" class="dialog small-dialog" aria-labelledby="name-title">
     <div class="dialog-head">
-      <div><p class="eyebrow">SALVAR BUILD</p><h2 id="name-title">Dê um nome à configuração</h2></div>
+      <div><p class="eyebrow" data-i18n="save.eyebrow">SALVAR BUILD</p><h2 id="name-title" data-i18n="save.title">Dê um nome à configuração</h2></div>
       <button id="name-close" class="icon-button" type="button" aria-label="Fechar">×</button>
     </div>
     <form id="name-form">
-      <label class="field"><span>Nome</span><input name="name" maxlength="80" placeholder="Ex.: PC 1440p principal" required></label>
-      <button class="button primary full" type="submit">Salvar configuração</button>
+      <label class="field"><span data-i18n="save.name">Nome</span><input name="name" maxlength="80" placeholder="Ex.: PC 1440p principal" data-i18n-placeholder="save.placeholder" required></label>
+      <button class="button primary full" type="submit" data-i18n="save.submit">Salvar configuração</button>
       <p id="name-message" class="form-message" role="status" aria-live="polite"></p>
     </form>
   </dialog>
@@ -180,6 +187,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
   <script src="supabase-config.js"></script>
   <script src="ads-config.js"></script>
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
   <script src="ads.js" defer></script>
   <script src="live-update.js" defer></script>
