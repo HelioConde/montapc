@@ -72,10 +72,24 @@ try {
       animations: 'disabled'
     });
 
+    const languageSelect = page.locator('#language-select');
+    let englishBuildFile = null;
+    if (await languageSelect.count()) {
+      await languageSelect.selectOption('en');
+      await page.waitForTimeout(400);
+      englishBuildFile = `latest-${profile.name}-build-en.png`;
+      await page.screenshot({
+        path: path.join(outputDir, englishBuildFile),
+        fullPage: true,
+        animations: 'disabled'
+      });
+    }
+
     results.push({
       profile: profile.name,
       emptyFile: emptyFilename,
       buildFile: buildFilename,
+      englishBuildFile,
       viewport: profile.viewport,
       title: await page.title()
     });
