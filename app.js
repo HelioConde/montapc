@@ -236,6 +236,92 @@ function compatibility(build = currentBuild) {
     );
   }
 
+  if (parts.motherboard && parts.storage && String(parts.storage.specs?.interface || '').toUpperCase().includes('NVME')) {
+    const slots = Number(parts.motherboard.specs?.m2_slots || 0);
+    push(
+      slots > 0,
+      slots > 0 ? t('compat.m2Ok', { slots }) : t('compat.m2Error')
+    );
+  }
+
+  if (parts.motherboard && parts.memory) {
+    const capacity = Number(parts.memory.specs?.capacity_gb || 0);
+    const maxMemory = Number(parts.motherboard.specs?.max_memory_gb || 0);
+    if (capacity && maxMemory) {
+      push(
+        capacity <= maxMemory,
+        capacity <= maxMemory
+          ? t('compat.ramCapacityOk', { capacity, max: maxMemory })
+          : t('compat.ramCapacityError', { capacity, max: maxMemory })
+      );
+    }
+
+    const modules = Number(parts.memory.specs?.modules || 0);
+    const memorySlots = Number(parts.motherboard.specs?.memory_slots || 0);
+    if (modules && memorySlots) {
+      push(
+        modules <= memorySlots,
+        modules <= memorySlots
+          ? t('compat.ramModulesOk', { modules, slots: memorySlots })
+          : t('compat.ramModulesError', { modules, slots: memorySlots })
+      );
+    }
+  }
+
+  if (parts.gpu && parts.psu) {
+    const connector = String(parts.gpu.specs?.power_connector || '');
+    const connectors = Array.isArray(parts.psu.specs?.connectors) ? parts.psu.specs.connectors.map(String) : [];
+    if (connector && connectors.length) {
+      push(
+        connectors.includes(connector),
+        connectors.includes(connector)
+          ? t('compat.gpuPowerOk', { connector })
+          : t('compat.gpuPowerError', { connector })
+      );
+    }
+  }
+
+  if (parts.gpu && parts.case) {
+    const gpuSlots = Number(parts.gpu.specs?.slot_width || 0);
+    const maxSlots = Number(parts.case.specs?.max_gpu_slots || 0);
+    if (gpuSlots && maxSlots) {
+      push(
+        gpuSlots <= maxSlots,
+        gpuSlots <= maxSlots
+          ? t('compat.gpuSlotsOk', { slots: gpuSlots, max: maxSlots })
+          : t('compat.gpuSlotsError', { slots: gpuSlots, max: maxSlots })
+      );
+    }
+  }
+
+  if (parts.cooler && parts.case && parts.cooler.specs?.cooler_type === 'aio') {
+    const radiator = Number(parts.cooler.specs?.radiator_mm || 0);
+    const supported = Array.isArray(parts.case.specs?.radiator_support_mm) ? parts.case.specs.radiator_support_mm.map(Number) : [];
+    if (radiator && supported.length) {
+      push(
+        supported.includes(radiator),
+        supported.includes(radiator)
+          ? t('compat.radiatorOk', { size: radiator })
+          : t('compat.radiatorError', { size: radiator })
+      );
+    }
+  }
+
+  if (parts.cpu && parts.motherboard) {
+    const family = String(parts.cpu.specs?.family || '');
+    const supportedFamilies = Array.isArray(parts.motherboard.specs?.supported_cpu_families)
+      ? parts.motherboard.specs.supported_cpu_families.map(String)
+      : [];
+    if (family && supportedFamilies.length) {
+      push(
+        supportedFamilies.includes(family),
+        supportedFamilies.includes(family)
+          ? t('compat.cpuFamilyOk', { family })
+          : t('compat.cpuFamilyError', { family })
+      );
+    }
+  }
+
   const hardErrors = checks.filter(check => check.level === 'error' && !check.ok);
   return { ok: hardErrors.length === 0, checks, requiredPsu: requiredPsuWatts(build.selection) };
 }
