@@ -47,18 +47,35 @@ try {
     await page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
     await page.waitForTimeout(1500);
 
-    const filename = `latest-${profile.name}.png`;
-    const outputPath = path.join(outputDir, filename);
+    const emptyFilename = `latest-${profile.name}.png`;
+    const emptyOutputPath = path.join(outputDir, emptyFilename);
 
     await page.screenshot({
-      path: outputPath,
+      path: emptyOutputPath,
+      fullPage: true,
+      animations: 'disabled'
+    });
+
+    const generateButton = page.locator('#generate-build');
+    if (await generateButton.isEnabled().catch(() => false)) {
+      await generateButton.click();
+      await page.locator('#build-result').waitFor({ state: 'visible', timeout: 15_000 }).catch(() => {});
+      await page.waitForTimeout(800);
+    }
+
+    const buildFilename = `latest-${profile.name}-build.png`;
+    const buildOutputPath = path.join(outputDir, buildFilename);
+
+    await page.screenshot({
+      path: buildOutputPath,
       fullPage: true,
       animations: 'disabled'
     });
 
     results.push({
       profile: profile.name,
-      file: filename,
+      emptyFile: emptyFilename,
+      buildFile: buildFilename,
       viewport: profile.viewport,
       title: await page.title()
     });
