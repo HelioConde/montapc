@@ -421,6 +421,22 @@ function candidateScore(selection, settings, total, budget) {
   let score;
   if (settings.usage === 'work') {
     score = cpu * .46 + gpu * .13 + memory * .20 + storage * .13 + psu * .04 + pcCase * .04;
+  } else if (settings.usage === 'competitive') {
+    score = cpu * .34 + gpu * .48 + memory * .10 + storage * .03 + psu * .03 + pcCase * .02;
+  } else if (settings.usage === 'aaa') {
+    score = cpu * .17 + gpu * .65 + memory * .10 + storage * .03 + psu * .03 + pcCase * .02;
+  } else if (settings.usage === 'streaming') {
+    score = cpu * .35 + gpu * .45 + memory * .11 + storage * .04 + psu * .03 + pcCase * .02;
+  } else if (settings.usage === 'editing') {
+    score = cpu * .42 + gpu * .28 + memory * .16 + storage * .10 + psu * .02 + pcCase * .02;
+  } else if (settings.usage === 'programming') {
+    score = cpu * .50 + gpu * .05 + memory * .25 + storage * .15 + psu * .03 + pcCase * .02;
+  } else if (settings.usage === '3d') {
+    score = cpu * .24 + gpu * .56 + memory * .12 + storage * .04 + psu * .02 + pcCase * .02;
+  } else if (settings.usage === 'ai') {
+    score = cpu * .14 + gpu * .70 + memory * .11 + storage * .02 + psu * .02 + pcCase * .01;
+  } else if (settings.usage === 'office') {
+    score = cpu * .45 + gpu * .03 + memory * .25 + storage * .17 + psu * .05 + pcCase * .05;
   } else if (settings.usage === 'mixed') {
     score = cpu * .32 + gpu * .38 + memory * .14 + storage * .09 + psu * .04 + pcCase * .03;
   } else if (settings.resolution === '4k') {
@@ -433,10 +449,17 @@ function candidateScore(selection, settings, total, budget) {
 
   const utilization = budget > 0 ? total / budget : 1;
   if (settings.strategy === 'fps') score += gpu * .16;
+  if (settings.strategy === 'cpu') score += cpu * .18;
   if (settings.strategy === 'upgrade') {
     if (p.cpu?.socket === 'AM5') score += 10;
     if (p.memory?.specs?.memory_type === 'DDR5') score += 5;
     if (Number(p.psu?.specs?.wattage || 0) >= requiredPsuWatts(selection) + 100) score += 3;
+  }
+  if (settings.strategy === 'silent') {
+    const draw = wattageOf(p.cpu) + wattageOf(p.gpu) + wattageOf(p.motherboard) +
+      wattageOf(p.memory) + wattageOf(p.storage) + wattageOf(p.cooler);
+    score -= draw / 24;
+    if (/Gold|Platinum|Titanium/i.test(String(p.psu?.specs?.efficiency || ''))) score += 4;
   }
   if (settings.strategy === 'economy') {
     score += (1 - Math.min(utilization, 1)) * 30;
@@ -579,6 +602,17 @@ function renderRecommendationInsights() {
 
   if (settings.strategy === 'upgrade') insights.push(t('insights.upgrade'));
   if (settings.strategy === 'economy') insights.push(t('insights.economy'));
+  if (settings.strategy === 'cpu') insights.push(t('insights.cpuPriority'));
+  if (settings.strategy === 'silent') insights.push(t('insights.silent'));
+
+  const cpuScore = performance(parts.cpu);
+  const gpuScore = performance(parts.gpu);
+  const gamingLike = ['gaming','competitive','aaa','streaming','mixed'].includes(settings.usage);
+  if (gamingLike && cpuScore && gpuScore) {
+    if (gpuScore - cpuScore >= 22) insights.push(t('insights.bottleneckCpu'));
+    else if (cpuScore - gpuScore >= 22) insights.push(t('insights.bottleneckGpu'));
+    else insights.push(t('insights.balanceOk'));
+  }
 
   recommendationInsights.innerHTML = insights.map(text =>
     '<div class="recommendation-insight"><span>✓</span><p>' + escapeHtml(text) + '</p></div>'
