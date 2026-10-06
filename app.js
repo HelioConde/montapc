@@ -23,6 +23,7 @@ const resultEmpty = document.querySelector('#result-empty');
 const buildResult = document.querySelector('#build-result');
 const partsList = document.querySelector('#parts-list');
 const compatibilityList = document.querySelector('#compatibility-list');
+const recommendationInsights = document.querySelector('#recommendation-insights');
 const saveBuildButton = document.querySelector('#save-build');
 const savedBuilds = document.querySelector('#saved-builds');
 const syncStatus = document.querySelector('#sync-status');
@@ -382,6 +383,43 @@ function settingsLabel(settings) {
   return `${usage} · ${settings.resolution} · ${strategy}`;
 }
 
+
+function renderRecommendationInsights() {
+  if (!currentBuild || !recommendationInsights) return;
+  const parts = selectedComponents();
+  const settings = currentBuild.settings || {};
+  const memoryType = parts.memory?.specs?.memory_type || parts.motherboard?.specs?.memory_type || '—';
+  const socket = parts.cpu?.socket || parts.motherboard?.socket || '—';
+  const total = Number(currentBuild.totalCents || 0);
+  const budget = Number(currentBuild.budgetCents || 0);
+  const percent = budget > 0 ? Math.round((total / budget) * 100) : 0;
+  const margin = budget - total;
+  const insights = [];
+
+  if (settings.usage === 'work') {
+    insights.push(t('insights.work'));
+  } else if (settings.usage === 'mixed') {
+    insights.push(t('insights.mixed'));
+  } else {
+    insights.push(t('insights.gaming', { resolution: settings.resolution || '—' }));
+  }
+
+  insights.push(t('insights.platform', { socket, memory: memoryType }));
+
+  if (margin >= 0) {
+    insights.push(t('insights.budget', { percent, margin: formatMoney(margin) }));
+  } else {
+    insights.push(t('insights.overBudget', { amount: formatMoney(Math.abs(margin)) }));
+  }
+
+  if (settings.strategy === 'upgrade') insights.push(t('insights.upgrade'));
+  if (settings.strategy === 'economy') insights.push(t('insights.economy'));
+
+  recommendationInsights.innerHTML = insights.map(text =>
+    '<div class="recommendation-insight"><span>✓</span><p>' + escapeHtml(text) + '</p></div>'
+  ).join('');
+}
+
 function renderCompatibility() {
   const state = compatibility(currentBuild);
   const badge = document.querySelector('#compatibility-badge');
@@ -453,6 +491,7 @@ function renderBuild() {
   document.querySelector('#build-margin').textContent = (margin >= 0 ? '' : '−') + formatMoney(Math.abs(margin));
   document.querySelector('#build-margin').className = margin >= 0 ? 'positive' : 'negative';
 
+  renderRecommendationInsights();
   renderCompatibility();
   renderParts();
 }
