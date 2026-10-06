@@ -10,8 +10,29 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://helioconde.github.io/montapc/">
   <link rel="canonical" href="https://helioconde.github.io/montapc/">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta property="og:image" content="https://helioconde.github.io/montapc/icon.svg">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary">
   <title>MontaPC — Monte um PC compatível por orçamento</title>
   <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MontaPC",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Web",
+    "url": "https://helioconde.github.io/montapc/",
+    "description": "Monte um PC por orçamento e valide a compatibilidade das peças.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "BRL"
+    }
+  }
+  </script>
 </head>
 <body>
   <div class="shell">
@@ -26,6 +47,7 @@
           </select>
         </label>
         <span id="sync-status" class="sync-status" role="status" data-i18n="header.loading">Carregando catálogo…</span>
+        <button id="install-app" class="button ghost install-button" type="button" data-i18n="header.install" hidden>Instalar app</button>
         <button id="account-open" class="button ghost" type="button" data-i18n="header.account">Entrar / sincronizar</button>
       </div>
     </header>
@@ -208,5 +230,6 @@
   <script src="app.js"></script>
   <script src="ads.js" defer></script>
   <script src="live-update.js" defer></script>
+  <script src="pwa.js" defer></script>
 </body>
 </html>
