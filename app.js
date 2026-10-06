@@ -1233,9 +1233,14 @@ function renderComparison() {
 
   compareContent.innerHTML =
     '<div class="compare-grid compare-grid-head"><span></span><strong>' + escapeHtml(a.name) + '</strong><strong>' + escapeHtml(b.name) + '</strong></div>' +
-    rows.map(row =>
-      '<div class="compare-grid"><span>' + escapeHtml(row[0]) + '</span><div>' + escapeHtml(row[1]) + '</div><div>' + escapeHtml(row[2]) + '</div></div>'
-    ).join('') +
+    rows.map(row => {
+      const differs = String(row[1]) !== String(row[2]);
+      return '<div class="compare-grid' + (differs ? ' has-difference' : '') + '">' +
+        '<span>' + escapeHtml(row[0]) + '</span>' +
+        '<div>' + escapeHtml(row[1]) + '</div>' +
+        '<div>' + escapeHtml(row[2]) + '</div>' +
+      '</div>';
+    }).join('') +
     '<div class="compare-verdict">' +
       escapeHtml(a.totalCents === b.totalCents
         ? t('compare.noDifference')
