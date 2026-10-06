@@ -275,6 +275,15 @@
               <span data-i18n="catalog.maxPrice">Preço máximo</span>
               <input id="catalog-max-price" type="number" min="0" step="100" placeholder="5000">
             </label>
+            <label class="catalog-sort-filter">
+              <span data-i18n="catalog.sort">Ordenar</span>
+              <select id="catalog-sort">
+                <option value="price-asc" data-i18n="catalog.sort.priceAsc">Menor preço</option>
+                <option value="price-desc" data-i18n="catalog.sort.priceDesc">Maior preço</option>
+                <option value="performance-desc" data-i18n="catalog.sort.performance">Mais desempenho</option>
+                <option value="name-asc" data-i18n="catalog.sort.name">Nome A–Z</option>
+              </select>
+            </label>
             <span id="catalog-results-count" class="catalog-results-count"></span>
           </div>
           <div id="catalog-grid" class="catalog-grid"></div>
