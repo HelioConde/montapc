@@ -196,6 +196,18 @@ async function runSmokeChecks(page, profileName) {
       await assertUi((await gpuShortcut.getAttribute('aria-pressed')) === 'false', 'atalho visual continuou ativo após limpar o filtro');
     }
 
+    const resetButton = page.locator('#catalog-reset');
+    if (await resetButton.count()) {
+      await page.locator('#catalog-search').fill('Ryzen');
+      await page.locator('#catalog-max-price').fill('2000');
+      await page.locator('#catalog-sort').selectOption('price-desc');
+      await resetButton.click();
+      await page.waitForTimeout(100);
+      await assertUi((await page.locator('#catalog-search').inputValue()) === '', 'reset não limpou a busca');
+      await assertUi((await page.locator('#catalog-max-price').inputValue()) === '', 'reset não limpou o preço máximo');
+      await assertUi((await page.locator('#catalog-sort').inputValue()) === 'price-asc', 'reset não restaurou a ordenação');
+    }
+
     if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
       const catalogWidth = await catalogDetails.evaluate(element => element.getBoundingClientRect().width);
       const viewportWidth = page.viewportSize().width;
@@ -307,6 +319,15 @@ try {
     });
 
     const generateButton = page.locator('#generate-build');
+    const quickBudget8k = page.locator('.budget-presets [data-budget="8000"]');
+    const quickBudget5k = page.locator('.budget-presets [data-budget="5000"]');
+    if (await quickBudget8k.count() && await quickBudget5k.count()) {
+      await quickBudget8k.click();
+      await assertUi((await page.locator('#planner-form input[name="budget"]').inputValue()) === '8000', 'preset de orçamento não atualizou o campo');
+      await quickBudget5k.click();
+      await assertUi((await page.locator('#planner-form input[name="budget"]').inputValue()) === '5000', 'preset padrão não foi restaurado');
+    }
+
     if (await generateButton.isEnabled().catch(() => false)) {
       await generateButton.click();
       await page.locator('#build-result').waitFor({ state: 'visible', timeout: 15_000 }).catch(() => {});
