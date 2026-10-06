@@ -134,6 +134,7 @@ async function runSmokeChecks(page, profileName) {
   await page.waitForTimeout(150);
   await assertUi(await page.locator('#compare-panel').isVisible(), 'painel de comparação não abriu');
   await assertUi((await page.locator('#compare-content .compare-grid').count()) >= 2, 'comparação não foi renderizada');
+  await assertUi((await page.locator('#compare-content .compare-summary article').count()) === 3, 'resumo rápido da comparação não foi renderizado');
 
   if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
     const comparePartsToggle = page.locator('#parts-toggle');
@@ -161,6 +162,12 @@ async function runSmokeChecks(page, profileName) {
     const initialCatalogCards = await page.locator('#catalog-grid .catalog-card').count();
     const expectedMax = page.viewportSize()?.width && page.viewportSize().width <= 650 ? 6 : 12;
     await assertUi(initialCatalogCards > 0 && initialCatalogCards <= expectedMax, 'catálogo inicial não está paginado');
+
+    if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
+      const catalogWidth = await catalogDetails.evaluate(element => element.getBoundingClientRect().width);
+      const viewportWidth = page.viewportSize().width;
+      await assertUi(catalogWidth >= viewportWidth * 0.82, 'catálogo mobile está estreito demais');
+    }
 
     const moreButton = page.locator('#catalog-load-more');
     if (await moreButton.isVisible().catch(() => false)) {
@@ -192,6 +199,12 @@ async function runSmokeChecks(page, profileName) {
 
     await catalogDetails.evaluate(element => { element.open = false; });
   }
+
+  const pageWidths = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    scroll: document.documentElement.scrollWidth
+  }));
+  await assertUi(pageWidths.scroll <= pageWidths.viewport + 2, 'há overflow horizontal no documento');
 
   while (await page.locator('#saved-builds .saved-card').count()) {
     const moreActions = page.locator('#saved-builds .saved-more').first();
