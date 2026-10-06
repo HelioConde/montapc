@@ -468,3 +468,11 @@ input,select,button{max-width:100%;min-width:0}
   .component-actions{display:grid;grid-template-columns:1fr}
   .component-actions .button{width:100%}
 }
+
+.catalog-card{position:relative}
+.catalog-card.is-selected{border-color:#89ad9b;background:#f6fbf8;box-shadow:0 0 0 2px #4d866313}
+.catalog-selected-badge{position:absolute;z-index:2;top:9px;right:9px;padding:4px 7px;border-radius:999px;background:var(--ok-soft);color:var(--ok)!important;font-size:8px!important;font-weight:800;line-height:1}
+.component-actions .button[disabled]{opacity:.62;cursor:default}
+@media(max-width:650px){
+  .catalog-selected-badge{top:8px;right:8px}
+}
