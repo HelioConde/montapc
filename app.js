@@ -302,7 +302,7 @@ function renderCatalogExplorer() {
   catalogGrid.innerHTML = items.length
     ? visibleItems.map(item =>
         '<article class="catalog-card">' +
-          '<img class="catalog-card-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">' +
+          '<img class="catalog-card-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" decoding="async" fetchpriority="low">' +
           '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
           '<strong>' + escapeHtml(item.brand + ' ' + item.model) + '</strong>' +
           '<div class="part-meta">' + componentMeta(item, item.component_type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>' +
@@ -331,7 +331,7 @@ async function openComponentDialog(id) {
   const highlights = componentHighlights(item);
 
   componentDialogBody.innerHTML =
-    '<img class="component-hero-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">' +
+    '<img class="component-hero-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" decoding="async">' +
     '<div class="component-detail-summary">' +
       '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
       '<strong>' + escapeHtml(formatMoney(item.price_cents)) + '</strong>' +
@@ -1085,7 +1085,7 @@ function renderParts() {
     const selected = parts[type];
     return '<article class="part-row">' +
       '<div class="part-label">' +
-        (selected ? '<img class="part-type-image" src="' + escapeHtml(componentImage(selected)) + '" alt="" aria-hidden="true" loading="lazy">' : '') +
+        (selected ? '<img class="part-type-image" src="' + escapeHtml(componentImage(selected)) + '" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low">' : '') +
         '<div class="part-label-copy"><span>' + escapeHtml(typeLabel(type)) + '</span>' +
         '<strong>' + (selected ? escapeHtml(selected.brand + ' ' + selected.model) : t('part.notSelected', { type: typeLabel(type) })) + '</strong>' +
         (selected && componentMeta(selected, type).length
