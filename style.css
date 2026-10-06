@@ -191,3 +191,10 @@ a{color:inherit;text-decoration:none}
   .catalog-grid{grid-template-columns:1fr;padding:0 14px 14px}
   .component-spec-grid{grid-template-columns:1fr}
 }
+
+.alternative-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.alternative-actions>span{width:100%;color:var(--muted);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.alternative-actions .button{padding:7px 9px;font-size:9px}
+@media(max-width:650px){
+  .alternative-actions .button{flex:1 1 calc(50% - 6px)}
+}
