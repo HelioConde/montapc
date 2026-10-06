@@ -319,7 +319,12 @@ try {
     const catalogDetails = page.locator('.catalog-explorer');
     if (await catalogDetails.count()) {
       await catalogDetails.evaluate(element => { element.open = true; });
+      await catalogDetails.scrollIntoViewIfNeeded();
       await page.waitForTimeout(250);
+      await page.waitForFunction(() => {
+        const images = Array.from(document.querySelectorAll('#catalog-grid img'));
+        return images.length === 0 || images.every(img => img.complete && img.naturalWidth > 0);
+      }, null, { timeout: 5000 }).catch(() => {});
       catalogFile = `latest-${profile.name}-catalog.png`;
       await page.screenshot({
         path: path.join(outputDir, catalogFile),
