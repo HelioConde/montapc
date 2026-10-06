@@ -1,0 +1,19 @@
+{
+  "name": "MontaPC",
+  "short_name": "MontaPC",
+  "description": "Monte um PC por orçamento e valide a compatibilidade das peças.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f8",
+  "theme_color": "#315d72",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
