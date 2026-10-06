@@ -1,6 +1,7 @@
 const supabaseClient = window.IDEIAS_SUPABASE?.client || null;
 const i18n = window.MONTAPC_I18N;
 const t = (key, vars) => i18n?.t(key, vars) ?? key;
+const trackEvent = (name, context = {}) => window.MONTAPC_ANALYTICS?.track(name, context);
 const LOCAL_KEY = 'montapc-builds-v2';
 
 const TYPE_ORDER = ['cpu','motherboard','gpu','memory','storage','psu','case','cooler'];
@@ -1179,6 +1180,7 @@ async function shareSavedBuild(id) {
   try {
     await navigator.clipboard.writeText(url.toString());
     showToast(t('toast.shared'));
+    trackEvent('build_shared', { mode: currentUser && build.visibility === 'public' ? 'public' : 'encoded' });
   } catch {
     const input = document.createElement('textarea');
     input.value = url.toString();
@@ -1187,6 +1189,7 @@ async function shareSavedBuild(id) {
     const ok = document.execCommand('copy');
     input.remove();
     showToast(ok ? t('toast.shared') : t('toast.shareError'));
+    if (ok) trackEvent('build_shared', { mode: currentUser && build.visibility === 'public' ? 'public' : 'encoded' });
   }
 }
 
@@ -1460,6 +1463,12 @@ plannerForm.addEventListener('submit', event => {
   currentBuild = result.build;
   currentBuild.name = '';
   renderBuild();
+  trackEvent('build_generated', {
+    usage: settings.usage,
+    resolution: settings.resolution,
+    strategy: settings.strategy,
+    budget: Math.round(settings.budget)
+  });
 
   if (!result.withinBudget) {
     showToast(t('toast.belowBudget'));
@@ -1475,6 +1484,7 @@ partsList.addEventListener('change', event => {
   currentBuild.id = currentBuild.id || null;
   currentBuild.updatedAt = Date.now();
   renderBuild();
+  trackEvent('part_swapped', { type: select.dataset.part });
 });
 
 document.querySelector('#reset-build').addEventListener('click', () => {
@@ -1537,6 +1547,10 @@ nameForm.addEventListener('submit', async event => {
     await persistCurrentBuild(nameForm.elements.name.value);
     nameDialog.close();
     showToast(t('toast.saved'));
+    trackEvent('build_saved', {
+      storage: currentUser ? 'cloud' : 'local',
+      resolution: currentBuild?.settings?.resolution || ''
+    });
   } catch (error) {
     console.error(error);
     nameMessage.textContent = error.message === 'incompatible'
@@ -1755,11 +1769,12 @@ async function initAuth() {
   setSession(data.session);
 }
 
-document.addEventListener('montapc:languagechange', () => {
+document.addEventListener('montapc:languagechange', event => {
   updateAccountUi();
   renderBuild();
   renderSavedBuilds();
   renderCatalogExplorer();
+  trackEvent('language_changed', { locale: event.detail?.locale || i18n?.locale || 'pt-BR' });
 });
 
 async function init() {
