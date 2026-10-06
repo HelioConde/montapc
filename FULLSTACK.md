@@ -1,6 +1,6 @@
 # MontaPC — arquitetura fullstack
 
-Repositório individual planejado: `HelioConde/montapc`.
+Repositório oficial: `HelioConde/montapc`.
 
 ## Produto
 
