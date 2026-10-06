@@ -4,11 +4,11 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 
 ## P0 — Estabilizar produção
 
-- [ ] Confirmar GitHub Pages funcionando em `https://helioconde.github.io/montapc/`
-- [ ] Testar caminhos relativos, cache e carregamento do Supabase
+- [x] Confirmar GitHub Pages funcionando em `https://helioconde.github.io/montapc/`
+- [x] Testar caminhos relativos, cache e carregamento do Supabase
 - [ ] Executar QA completo de geração, troca de peças, incompatibilidades, salvamento local/nuvem, autenticação, importação e i18n
-- [ ] Validar desktop e mobile
-- [ ] Garantir que PT-BR continue sendo padrão/fallback e EN secundário
+- [x] Validar desktop e mobile
+- [x] Garantir que PT-BR continue sendo padrão/fallback e EN secundário
 
 ## P1 — Catálogo e compatibilidade
 
@@ -18,8 +18,8 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 - [ ] ATX, mATX e Mini-ITX
 - [ ] AM4, AM5, LGA1700 e novas plataformas conforme catálogo
 - [ ] PCIe, 12VHPWR/12V-2x6 e conectores da fonte
-- [ ] Slots M.2/SATA
-- [ ] RAM máxima, quantidade de módulos e geração DDR
+- [x] Slots M.2/SATA (motor + metadados iniciais)
+- [x] RAM máxima, quantidade de módulos e geração DDR
 - [ ] Altura de RAM × cooler
 - [ ] Radiador × gabinete
 - [ ] Water cooler × socket
@@ -42,8 +42,8 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 - [ ] 1080p / 1440p / 4K
 - [ ] Qualidade baixa/média/alta/ultra
 - [ ] Metodologia explícita
-- [ ] Comparar duas builds lado a lado
-- [ ] Diferença de preço, CPU, GPU, RAM, armazenamento, consumo, upgrade e desempenho
+- [x] Comparar duas builds lado a lado
+- [ ] Diferença de preço, CPU, GPU, RAM, armazenamento, consumo, upgrade e desempenho (comparador base pronto; consumo/desempenho pendentes)
 - [ ] Ações: economizar, melhorar GPU, melhorar CPU, preparar upgrade e manter desempenho gastando menos
 
 ## P2 — Preço e comércio
@@ -61,7 +61,7 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 
 - [ ] Cards de peças mais visuais
 - [ ] Imagens dos componentes
-- [ ] Chips técnicos: socket, DDR, potência, VRAM etc.
+- [x] Chips técnicos: socket, DDR, potência, VRAM etc.
 - [ ] Pontos fortes/fracos
 - [ ] Filtros por marca e preço
 - [ ] Página própria de componente
@@ -76,14 +76,14 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 - [ ] Validar isolamento entre usuários
 - [ ] Nunca expor `service_role`
 - [ ] Rate limiting em APIs próprias
-- [ ] sitemap.xml
-- [ ] robots.txt
-- [ ] Open Graph completo
-- [ ] JSON-LD
+- [x] sitemap.xml
+- [x] robots.txt
+- [x] Open Graph base
+- [x] JSON-LD
 - [ ] URLs amigáveis e indexação PT-BR/EN
-- [ ] PWA: manifest, ícones, instalação, cache e offline
+- [x] PWA: manifest, ícone, instalação, cache e offline base
 - [ ] Analytics de geração, orçamento, peças, troca manual, idioma e funil
-- [ ] Testes automatizados para compatibilidade, auth, persistência e i18n
+- [ ] Testes automatizados para compatibilidade, auth, persistência e i18n (smoke de compatibilidade/persistência/i18n pronto; auth pendente)
 
 ## P4 — Monetização e validação
 
