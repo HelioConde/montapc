@@ -61,8 +61,8 @@ async function runSmokeChecks(page, profileName) {
     await generateButton.click();
     await page.locator('#build-result').waitFor({ state: 'visible', timeout: 15_000 });
     await assertUi((await page.locator('#parts-list .part-row').count()) >= 7, 'cenário de geração retornou peças incompletas');
-    await assertUi(
-      (await page.locator('#build-total').textContent())?.includes('R
+    await assertUi((await page.locator('#build-total').textContent())?.includes('R' + '$'), 'total da build não foi calculado');
+  }
 
   const partsToggle = page.locator('#parts-toggle');
   if (await partsToggle.count()) {
