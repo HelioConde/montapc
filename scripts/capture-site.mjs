@@ -54,6 +54,18 @@ async function runSmokeChecks(page, profileName) {
 
   await assertUi((await page.locator('#parts-list .part-row').count()) >= 7, 'lista de peças incompleta');
 
+  const swipeHint = page.locator('.performance-swipe-hint');
+  if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
+    await assertUi(await swipeHint.isVisible(), 'dica de deslize do desempenho não apareceu no mobile');
+    const perfOverflow = await page.locator('#performance-grid').evaluate(element => ({
+      scrollWidth: element.scrollWidth,
+      clientWidth: element.clientWidth
+    }));
+    await assertUi(perfOverflow.scrollWidth > perfOverflow.clientWidth, 'faixa de desempenho não possui rolagem horizontal no mobile');
+  } else if (await swipeHint.count()) {
+    await assertUi(!(await swipeHint.isVisible()), 'dica de deslize apareceu no desktop');
+  }
+
   const languageSelect = page.locator('#language-select');
   await languageSelect.selectOption('en');
   await page.waitForTimeout(150);
