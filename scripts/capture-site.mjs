@@ -29,7 +29,9 @@ async function assertUi(condition, message) {
   if (!condition) throw new Error('Smoke test: ' + message);
 }
 
-async function runSmokeChecks(page) {
+async function runSmokeChecks(page, profileName) {
+  let compareFile = null;
+  let componentFile = null;
   const catalogCount = Number((await page.locator('#catalog-count').textContent())?.trim() || 0);
   await assertUi(catalogCount > 0, 'catálogo não carregou');
 
@@ -97,6 +99,13 @@ async function runSmokeChecks(page) {
   await assertUi(await page.locator('#compare-panel').isVisible(), 'painel de comparação não abriu');
   await assertUi((await page.locator('#compare-content .compare-grid').count()) >= 2, 'comparação não foi renderizada');
 
+  compareFile = `latest-${profileName}-compare.png`;
+  await page.screenshot({
+    path: path.join(outputDir, compareFile),
+    fullPage: true,
+    animations: 'disabled'
+  });
+
   const catalogDetails = page.locator('.catalog-explorer');
   if (await catalogDetails.count()) {
     await catalogDetails.evaluate(element => { element.open = true; });
@@ -114,6 +123,21 @@ async function runSmokeChecks(page) {
       await assertUi(expandedCatalogCards > initialCatalogCards, 'carregamento progressivo do catálogo falhou');
     }
 
+    const firstDetails = page.locator('#catalog-grid [data-component-details]').first();
+    if (await firstDetails.count()) {
+      await firstDetails.click();
+      await page.locator('#component-dialog').waitFor({ state: 'visible', timeout: 5000 });
+      await page.waitForTimeout(150);
+      componentFile = `latest-${profileName}-component.png`;
+      await page.screenshot({
+        path: path.join(outputDir, componentFile),
+        fullPage: false,
+        animations: 'disabled'
+      });
+      await page.locator('#component-dialog-close').click();
+      await page.waitForTimeout(80);
+    }
+
     await catalogDetails.evaluate(element => { element.open = false; });
   }
 
@@ -123,6 +147,8 @@ async function runSmokeChecks(page) {
     await savedDelete.click();
     await page.waitForTimeout(100);
   }
+
+  return { compareFile, componentFile };
 }
 
 try {
@@ -201,7 +227,7 @@ try {
       await catalogDetails.evaluate(element => { element.open = false; });
     }
 
-    await runSmokeChecks(page);
+    const smokeFiles = await runSmokeChecks(page, profile.name);
 
     results.push({
       profile: profile.name,
@@ -209,6 +235,8 @@ try {
       buildFile: buildFilename,
       englishBuildFile,
       catalogFile,
+      compareFile: smokeFiles.compareFile,
+      componentFile: smokeFiles.componentFile,
       viewport: profile.viewport,
       title: await page.title(),
       smokeTest: 'passed'
