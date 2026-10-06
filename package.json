@@ -1,0 +1,11 @@
+{
+  "name": "montapc-visual-snapshots",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture:site": "node scripts/capture-site.mjs"
+  },
+  "devDependencies": {
+    "playwright": "latest"
+  }
+}
