@@ -29,6 +29,15 @@ async function assertUi(condition, message) {
   if (!condition) throw new Error('Smoke test: ' + message);
 }
 
+async function prepareFullPageCapture(page) {
+  await page.evaluate(() => {
+    const active = document.activeElement;
+    if (active && typeof active.blur === 'function') active.blur();
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(120);
+}
+
 async function runSmokeChecks(page, profileName) {
   let compareFile = null;
   let componentFile = null;
@@ -168,6 +177,7 @@ async function runSmokeChecks(page, profileName) {
   }
 
   compareFile = `latest-${profileName}-compare.png`;
+  await prepareFullPageCapture(page);
   await page.screenshot({
     path: path.join(outputDir, compareFile),
     fullPage: true,
@@ -247,7 +257,8 @@ async function runSmokeChecks(page, profileName) {
       }, null, { timeout: 2500 }).catch(() => {});
       await page.waitForTimeout(100);
       componentFile = `latest-${profileName}-component.png`;
-      await page.screenshot({
+      await prepareFullPageCapture(page);
+  await page.screenshot({
         path: path.join(outputDir, componentFile),
         fullPage: false,
         animations: 'disabled'
@@ -326,7 +337,8 @@ try {
     const emptyFilename = `latest-${profile.name}.png`;
     const emptyOutputPath = path.join(outputDir, emptyFilename);
 
-    await page.screenshot({
+    await prepareFullPageCapture(page);
+  await page.screenshot({
       path: emptyOutputPath,
       fullPage: true,
       animations: 'disabled'
@@ -356,7 +368,8 @@ try {
     const buildFilename = `latest-${profile.name}-build.png`;
     const buildOutputPath = path.join(outputDir, buildFilename);
 
-    await page.screenshot({
+    await prepareFullPageCapture(page);
+  await page.screenshot({
       path: buildOutputPath,
       fullPage: true,
       animations: 'disabled'
@@ -368,7 +381,8 @@ try {
       await languageSelect.selectOption('en');
       await page.waitForTimeout(400);
       englishBuildFile = `latest-${profile.name}-build-en.png`;
-      await page.screenshot({
+      await prepareFullPageCapture(page);
+  await page.screenshot({
         path: path.join(outputDir, englishBuildFile),
         fullPage: true,
         animations: 'disabled'
@@ -388,7 +402,8 @@ try {
         return images.length === 0 || images.every(img => img.complete && img.naturalWidth > 0);
       }, null, { timeout: 5000 }).catch(() => {});
       catalogFile = `latest-${profile.name}-catalog.png`;
-      await page.screenshot({
+      await prepareFullPageCapture(page);
+  await page.screenshot({
         path: path.join(outputDir, catalogFile),
         fullPage: true,
         animations: 'disabled'
