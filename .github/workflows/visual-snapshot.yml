@@ -48,26 +48,35 @@ jobs:
         run: npm run capture:site
 
       - name: Commit snapshots
+        shell: bash
         run: |
-          if [ -z "$(git status --porcelain -- screenshots/)" ]; then
-            echo "No visual changes to commit."
-            exit 0
-          fi
+          set -euo pipefail
+
+          # PNGs are binary, so rebasing a snapshot commit can conflict whenever
+          # another capture lands first. Keep the generated files aside and
+          # reapply them on top of the newest main on every push attempt.
+          SNAPSHOT_TMP="$(mktemp -d)"
+          cp -a screenshots/. "$SNAPSHOT_TMP"/
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add screenshots/
-          git commit -m "chore: refresh visual snapshots [skip ci]"
 
           for attempt in 1 2 3; do
             echo "Snapshot push attempt $attempt"
             git fetch origin main
+            git reset --hard origin/main
 
-            if ! git rebase origin/main; then
-              git rebase --abort || true
-              echo "Could not rebase snapshot commit."
-              exit 1
+            rm -rf screenshots
+            mkdir -p screenshots
+            cp -a "$SNAPSHOT_TMP"/. screenshots/
+
+            if [ -z "$(git status --porcelain -- screenshots/)" ]; then
+              echo "No visual changes to commit."
+              exit 0
             fi
+
+            git add screenshots/
+            git commit -m "chore: refresh visual snapshots [skip ci]"
 
             if git push origin HEAD:main; then
               exit 0
