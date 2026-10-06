@@ -135,6 +135,17 @@ async function runSmokeChecks(page, profileName) {
   await assertUi(await page.locator('#compare-panel').isVisible(), 'painel de comparação não abriu');
   await assertUi((await page.locator('#compare-content .compare-grid').count()) >= 2, 'comparação não foi renderizada');
 
+  if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
+    const comparePartsToggle = page.locator('#parts-toggle');
+    if (await comparePartsToggle.count()) {
+      const partsVisible = !(await page.locator('#parts-list').evaluate(element => element.hidden));
+      if (partsVisible) {
+        await comparePartsToggle.click();
+        await page.waitForTimeout(80);
+      }
+    }
+  }
+
   compareFile = `latest-${profileName}-compare.png`;
   await page.screenshot({
     path: path.join(outputDir, compareFile),
@@ -163,7 +174,12 @@ async function runSmokeChecks(page, profileName) {
     if (await firstDetails.count()) {
       await firstDetails.click();
       await page.locator('#component-dialog').waitFor({ state: 'visible', timeout: 5000 });
-      await page.waitForTimeout(150);
+      await page.locator('#price-history-list').waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
+      await page.waitForFunction(() => {
+        const node = document.querySelector('#price-history-list');
+        return !node || node.textContent.trim().length > 0;
+      }, null, { timeout: 2500 }).catch(() => {});
+      await page.waitForTimeout(100);
       componentFile = `latest-${profileName}-component.png`;
       await page.screenshot({
         path: path.join(outputDir, componentFile),
