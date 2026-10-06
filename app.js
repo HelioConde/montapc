@@ -1977,6 +1977,11 @@ plannerForm.addEventListener('submit', event => {
   currentBuild.name = '';
   partsCollapsed = window.matchMedia('(max-width: 650px)').matches;
   renderBuild();
+  if (window.matchMedia('(max-width: 650px)').matches) {
+    window.setTimeout(() => {
+      document.querySelector('.result-panel')?.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 60);
+  }
   trackEvent('build_generated', {
     usage: settings.usage,
     resolution: settings.resolution,
@@ -2212,15 +2217,24 @@ catalogLoadMore?.addEventListener('click', () => {
   renderCatalogExplorer();
 });
 
+function syncCatalogShortcutState() {
+  const selectedType = catalogTypeFilter?.value || '';
+  document.querySelectorAll('.catalog-category-shortcuts [data-catalog-type]').forEach(item => {
+    item.classList.toggle('active', item.dataset.catalogType === selectedType);
+    item.setAttribute('aria-pressed', item.dataset.catalogType === selectedType ? 'true' : 'false');
+  });
+}
+
 document.querySelector('.catalog-category-shortcuts')?.addEventListener('click', event => {
   const button = event.target.closest('[data-catalog-type]');
   if (!button || !catalogTypeFilter) return;
-  catalogTypeFilter.value = button.dataset.catalogType || '';
+  const requestedType = button.dataset.catalogType || '';
+  catalogTypeFilter.value = catalogTypeFilter.value === requestedType ? '' : requestedType;
   resetCatalogFilters();
-  document.querySelectorAll('.catalog-category-shortcuts [data-catalog-type]').forEach(item => {
-    item.classList.toggle('active', item === button);
-  });
+  syncCatalogShortcutState();
 });
+
+catalogTypeFilter?.addEventListener('change', syncCatalogShortcutState);
 catalogGrid?.addEventListener('click', event => {
   const button = event.target.closest('[data-component-details]');
   if (button) openComponentDialog(button.dataset.componentDetails);
