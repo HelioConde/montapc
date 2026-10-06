@@ -25,6 +25,63 @@ await fs.mkdir(outputDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const results = [];
 
+async function assertUi(condition, message) {
+  if (!condition) throw new Error('Smoke test: ' + message);
+}
+
+async function runSmokeChecks(page) {
+  const catalogCount = Number((await page.locator('#catalog-count').textContent())?.trim() || 0);
+  await assertUi(catalogCount > 0, 'catálogo não carregou');
+
+  const generateButton = page.locator('#generate-build');
+  await assertUi(await generateButton.isEnabled(), 'botão de geração está desabilitado');
+
+  if (!(await page.locator('#build-result').isVisible())) {
+    await generateButton.click();
+    await page.locator('#build-result').waitFor({ state: 'visible', timeout: 15_000 });
+  }
+
+  await assertUi((await page.locator('#parts-list .part-row').count()) >= 7, 'lista de peças incompleta');
+
+  const languageSelect = page.locator('#language-select');
+  await languageSelect.selectOption('en');
+  await page.waitForTimeout(150);
+  await assertUi((await page.locator('#result-empty').isHidden()), 'build sumiu ao trocar idioma');
+  await assertUi((await page.locator('#build-title').textContent())?.includes('Recommended'), 'tradução EN dinâmica não aplicada');
+
+  await languageSelect.selectOption('pt-BR');
+  await page.waitForTimeout(150);
+
+  const motherboard = page.locator('select[data-part="motherboard"]');
+  const originalBoard = await motherboard.inputValue();
+  const boardOptions = await motherboard.locator('option').evaluateAll(options =>
+    options.map(option => ({ value: option.value, text: option.textContent || '' }))
+  );
+  const incompatible = boardOptions.find(option => /B650M|AM5/i.test(option.text) && option.value !== originalBoard);
+
+  if (incompatible) {
+    await motherboard.selectOption(incompatible.value);
+    await page.waitForTimeout(150);
+    await assertUi(await page.locator('#save-build').isDisabled(), 'build incompatível ainda pode ser salva');
+    await motherboard.selectOption(originalBoard);
+    await page.waitForTimeout(150);
+    await assertUi(await page.locator('#save-build').isEnabled(), 'build compatível não voltou ao estado salvável');
+  }
+
+  await page.locator('#save-build').click();
+  await page.locator('#name-dialog').waitFor({ state: 'visible', timeout: 5000 });
+  const smokeName = 'QA Snapshot ' + Date.now();
+  await page.locator('#name-form input[name="name"]').fill(smokeName);
+  await page.locator('#name-form').evaluate(form => form.requestSubmit());
+  await page.locator('#name-dialog').waitFor({ state: 'hidden', timeout: 5000 });
+  await assertUi((await page.locator('#saved-builds').textContent())?.includes(smokeName), 'salvamento local falhou');
+
+  const savedDelete = page.locator('#saved-builds [data-delete]').first();
+  page.once('dialog', dialog => dialog.accept());
+  await savedDelete.click();
+  await page.waitForTimeout(150);
+}
+
 try {
   for (const profile of profiles) {
     const context = await browser.newContext({
@@ -85,13 +142,16 @@ try {
       });
     }
 
+    await runSmokeChecks(page);
+
     results.push({
       profile: profile.name,
       emptyFile: emptyFilename,
       buildFile: buildFilename,
       englishBuildFile,
       viewport: profile.viewport,
-      title: await page.title()
+      title: await page.title(),
+      smokeTest: 'passed'
     });
 
     await context.close();
