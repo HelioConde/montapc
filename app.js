@@ -145,14 +145,52 @@ function catalogSpecEntries(item) {
 }
 
 function humanSpecKey(key) {
-  return String(key || '')
+  const labels = {
+    max_gpu_mm: 'spec.maxGpu',
+    form_factors: 'spec.formFactors',
+    max_cooler_mm: 'spec.maxCooler',
+    cores: 'spec.cores',
+    threads: 'spec.threads',
+    memory_type: 'spec.memoryType',
+    memory_slots: 'spec.memorySlots',
+    max_memory_gb: 'spec.maxMemory',
+    m2_slots: 'spec.m2Slots',
+    sata_ports: 'spec.sataPorts',
+    vram_gb: 'spec.vram',
+    length_mm: 'spec.gpuLength',
+    recommended_psu_watts: 'spec.psuRecommended',
+    capacity_gb: 'spec.capacity',
+    modules: 'spec.modules',
+    speed_mt: 'spec.speed',
+    interface: 'spec.interface',
+    wattage: 'spec.wattage',
+    efficiency: 'spec.efficiency',
+    modular: 'spec.modular',
+    supported_sockets: 'spec.supportedSockets',
+    height_mm: 'spec.height',
+    radiator_mm: 'spec.radiator',
+    atx_version: 'spec.atxVersion',
+    pcie_connector_count: 'spec.pcieConnectors',
+    sata_connector_count: 'spec.sataConnectors'
+  };
+  return labels[key] ? t(labels[key]) : String(key || '')
     .replace(/_/g, ' ')
     .replace(/\b\w/g, char => char.toUpperCase());
 }
 
-function humanSpecValue(value) {
+function humanSpecValue(key, value) {
   if (Array.isArray(value)) return value.join(' · ');
   if (typeof value === 'boolean') return value ? '✓' : '—';
+
+  const number = Number(value);
+  if (Number.isFinite(number)) {
+    if (['max_gpu_mm','max_cooler_mm','length_mm','height_mm','ram_clearance_mm'].includes(key)) return number + ' mm';
+    if (['vram_gb','capacity_gb','max_memory_gb'].includes(key)) return number + ' GB';
+    if (['recommended_psu_watts','wattage'].includes(key)) return number + ' W';
+    if (key === 'speed_mt') return number + ' MT/s';
+    if (key === 'radiator_mm') return number + ' mm';
+  }
+
   return String(value);
 }
 
@@ -284,7 +322,7 @@ async function openComponentDialog(id) {
       : '') +
     '<div class="component-spec-grid">' +
       specs.map(([key, value]) =>
-        '<div><span>' + escapeHtml(humanSpecKey(key)) + '</span><strong>' + escapeHtml(humanSpecValue(value)) + '</strong></div>'
+        '<div><span>' + escapeHtml(humanSpecKey(key)) + '</span><strong>' + escapeHtml(humanSpecValue(key, value)) + '</strong></div>'
       ).join('') +
     '</div>' +
     ((highlights.strengths.length || highlights.attention.length)
@@ -1101,16 +1139,20 @@ function renderSavedBuilds() {
         '<div class="saved-values"><span>' + escapeHtml(formatMoney(build.totalCents)) + '</span>' +
         '<small class="' + (build.compatibilityStatus === 'compatible' ? 'status-ok' : 'status-warn') + '">' +
           (build.compatibilityStatus === 'compatible' ? t('result.compatible') : t('saved.review')) + '</small></div>' +
-        '<div class="saved-actions"><button class="button ghost" type="button" data-compare="' + escapeHtml(build.id) + '">' + escapeHtml(t('compare.select')) + '</button>' +
-        '<button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.open')) + '</button>' +
-        '<button class="button ghost" type="button" data-rename="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.rename')) + '</button>' +
-        '<button class="button ghost" type="button" data-duplicate="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.duplicate')) + '</button>' +
-        '<button class="button ghost" type="button" data-share="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.share')) + '</button>' +
-        '<button class="button ghost" type="button" data-export-text="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.exportText')) + '</button>' +
-        '<button class="button ghost" type="button" data-export-image="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.exportImage')) + '</button>' +
-        '<button class="button ghost" type="button" data-favorite="' + escapeHtml(build.id) + '">' + escapeHtml(build.isFavorite ? t('saved.unfavorite') : t('saved.favorite')) + '</button>' +
-        (currentUser ? '<button class="button ghost" type="button" data-visibility="' + escapeHtml(build.id) + '">' + escapeHtml(build.visibility === 'public' ? t('saved.makePrivate') : t('saved.makePublic')) + '</button>' : '') +
-        '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.delete')) + '</button></div>' +
+        '<div class="saved-actions">' +
+          '<button class="button ghost" type="button" data-compare="' + escapeHtml(build.id) + '">' + escapeHtml(t('compare.select')) + '</button>' +
+          '<button class="button ghost" type="button" data-open="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.open')) + '</button>' +
+          '<button class="button ghost" type="button" data-share="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.share')) + '</button>' +
+          '<details class="saved-more"><summary>' + escapeHtml(t('saved.moreActions')) + '</summary><div class="saved-more-menu">' +
+            '<button class="button ghost" type="button" data-rename="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.rename')) + '</button>' +
+            '<button class="button ghost" type="button" data-duplicate="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.duplicate')) + '</button>' +
+            '<button class="button ghost" type="button" data-export-text="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.exportText')) + '</button>' +
+            '<button class="button ghost" type="button" data-export-image="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.exportImage')) + '</button>' +
+            '<button class="button ghost" type="button" data-favorite="' + escapeHtml(build.id) + '">' + escapeHtml(build.isFavorite ? t('saved.unfavorite') : t('saved.favorite')) + '</button>' +
+            (currentUser ? '<button class="button ghost" type="button" data-visibility="' + escapeHtml(build.id) + '">' + escapeHtml(build.visibility === 'public' ? t('saved.makePrivate') : t('saved.makePublic')) + '</button>' : '') +
+            '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.delete')) + '</button>' +
+          '</div></details>' +
+        '</div>' +
       '</article>'
     ).join('')
     : '<div class="saved-empty"><strong>' + escapeHtml(t('saved.emptyTitle')) + '</strong><span>' + escapeHtml(t('saved.emptyCopy')) + '</span></div>';
