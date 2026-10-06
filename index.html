@@ -162,6 +162,29 @@
 
             <div id="compatibility-list" class="compatibility-list"></div>
 
+            <section class="performance-panel" aria-labelledby="performance-title">
+              <div class="performance-head">
+                <div>
+                  <p class="eyebrow" data-i18n="performance.title">Estimativa de desempenho</p>
+                  <h3 id="performance-title" data-i18n="performance.copy">Modelo interno comparativo, não benchmark medido. Serve para comparar builds do próprio MontaPC.</h3>
+                </div>
+                <label>
+                  <span data-i18n="performance.quality">Qualidade</span>
+                  <select id="performance-quality">
+                    <option value="low" data-i18n="performance.low">Baixa</option>
+                    <option value="medium" data-i18n="performance.medium">Média</option>
+                    <option value="high" selected data-i18n="performance.high">Alta</option>
+                    <option value="ultra" data-i18n="performance.ultra">Ultra</option>
+                  </select>
+                </label>
+              </div>
+              <div id="performance-grid" class="performance-grid"></div>
+              <details class="performance-method">
+                <summary data-i18n="performance.method">Metodologia</summary>
+                <p data-i18n="performance.methodText">A estimativa combina os índices internos de CPU e GPU, resolução, perfil do jogo e preset gráfico. Use como referência relativa e confirme benchmarks do hardware exato antes da compra.</p>
+              </details>
+            </section>
+
             <div class="parts-heading">
               <div><h3 data-i18n="result.parts">Peças selecionadas</h3><p data-i18n="result.partsCopy">Troque qualquer item para testar outra combinação.</p></div>
             </div>
