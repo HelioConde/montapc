@@ -171,6 +171,17 @@ async function runSmokeChecks(page, profileName) {
     const expectedMax = page.viewportSize()?.width && page.viewportSize().width <= 650 ? 6 : 12;
     await assertUi(initialCatalogCards > 0 && initialCatalogCards <= expectedMax, 'catálogo inicial não está paginado');
 
+    const sortSelect = page.locator('#catalog-sort');
+    if (await sortSelect.count() && initialCatalogCards > 1) {
+      const firstBeforeSort = (await page.locator('#catalog-grid .catalog-card>strong').first().textContent())?.trim();
+      await sortSelect.selectOption('price-desc');
+      await page.waitForTimeout(100);
+      const firstAfterSort = (await page.locator('#catalog-grid .catalog-card>strong').first().textContent())?.trim();
+      await assertUi(firstBeforeSort !== firstAfterSort, 'ordenação do catálogo não alterou os resultados');
+      await sortSelect.selectOption('price-asc');
+      await page.waitForTimeout(100);
+    }
+
     const gpuShortcut = page.locator('.catalog-category-shortcuts [data-catalog-type="gpu"]');
     if (await gpuShortcut.count()) {
       await gpuShortcut.click();
