@@ -1231,7 +1231,20 @@ function renderComparison() {
       buildUpgradePotential(b)]
   ];
 
+  const priceWinner = a.totalCents === b.totalCents ? t('compare.same') : (a.totalCents < b.totalCents ? a.name : b.name);
+  const perfA = buildPerformanceIndex(a);
+  const perfB = buildPerformanceIndex(b);
+  const performanceWinner = perfA === perfB ? t('compare.same') : (perfA > perfB ? a.name : b.name);
+  const powerA = estimatedBuildPower(a);
+  const powerB = estimatedBuildPower(b);
+  const powerWinner = powerA === powerB ? t('compare.same') : (powerA < powerB ? a.name : b.name);
+
   compareContent.innerHTML =
+    '<section class="compare-summary" aria-label="' + escapeHtml(t('compare.quickSummary')) + '">' +
+      '<article><span>' + escapeHtml(t('compare.cheaper')) + '</span><strong>' + escapeHtml(priceWinner) + '</strong></article>' +
+      '<article><span>' + escapeHtml(t('compare.faster')) + '</span><strong>' + escapeHtml(performanceWinner) + '</strong></article>' +
+      '<article><span>' + escapeHtml(t('compare.lowerPower')) + '</span><strong>' + escapeHtml(powerWinner) + '</strong></article>' +
+    '</section>' +
     '<div class="compare-grid compare-grid-head"><span></span><strong>' + escapeHtml(a.name) + '</strong><strong>' + escapeHtml(b.name) + '</strong></div>' +
     rows.map(row => {
       const differs = String(row[1]) !== String(row[2]);
