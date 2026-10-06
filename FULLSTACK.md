@@ -47,7 +47,11 @@ O catálogo é leitura pública; builds e itens pertencem ao usuário e são pro
 - UI própria responsiva;
 - atualização de versão em tempo real;
 - CI dedicado;
-- infraestrutura de anúncios desacoplada e desativada por padrão.
+- infraestrutura de anúncios desacoplada e desativada por padrão;
+- i18n completo de base com seletor PT-BR/EN, persistência e fallback PT-BR;
+- mensagens dinâmicas de compatibilidade traduzidas;
+- SEO/title/description atualizados conforme idioma;
+- explicação da recomendação com foco, plataforma e uso do orçamento.
 
 ## Idiomas
 
@@ -83,14 +87,14 @@ Arquitetura:
 
 ## Próximas entregas de produto
 
-1. finalizar i18n PT-BR/EN na interface e mensagens dinâmicas;
-2. ampliar catálogo com SKU exato e dimensões de fabricante;
-3. placa-mãe ATX e Mini-ITX;
-4. mais coolers e gabinetes;
-5. conectores PCIe/12VHPWR;
-6. slots M.2/SATA e clearance de radiador;
-7. estimativa de desempenho por jogo com metodologia explícita;
-8. alternativas equivalentes quando uma peça sair de estoque;
+1. ampliar catálogo com SKU exato e dimensões de fabricante;
+2. placa-mãe ATX e Mini-ITX;
+3. mais coolers e gabinetes;
+4. conectores PCIe/12VHPWR;
+5. slots M.2/SATA e clearance de radiador;
+6. estimativa de desempenho por jogo com metodologia explícita;
+7. alternativas equivalentes quando uma peça sair de estoque;
+8. comparação lado a lado entre builds salvas;
 9. integração permitida com preços reais por loja e histórico de preço;
 10. QA com usuários reais antes de ativar anúncios.
 
