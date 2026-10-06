@@ -48,6 +48,7 @@ const catalogBrandFilter = document.querySelector('#catalog-brand-filter');
 const catalogMaxPrice = document.querySelector('#catalog-max-price');
 const catalogGrid = document.querySelector('#catalog-grid');
 const catalogResultsCount = document.querySelector('#catalog-results-count');
+const catalogLoadMore = document.querySelector('#catalog-load-more');
 const componentDialog = document.querySelector('#component-dialog');
 const componentDialogBody = document.querySelector('#component-dialog-body');
 const feedbackDialog = document.querySelector('#feedback-dialog');
@@ -63,6 +64,7 @@ let cloudLoading = false;
 let compareSelection = [];
 let livePrices = new Map();
 let partsCollapsed = false;
+let catalogVisibleLimit = 0;
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, char => ({
@@ -185,8 +187,18 @@ function populateCatalogBrands() {
   if (brands.includes(selected)) catalogBrandFilter.value = selected;
 }
 
+function catalogPageSize() {
+  return window.matchMedia('(max-width: 650px)').matches ? 6 : 12;
+}
+
+function resetCatalogVisibleLimit() {
+  catalogVisibleLimit = catalogPageSize();
+}
+
 function renderCatalogExplorer() {
   if (!catalogGrid || !catalogSearch || !catalogTypeFilter) return;
+  if (!catalogVisibleLimit) resetCatalogVisibleLimit();
+
   const query = catalogSearch.value.trim().toLowerCase();
   const type = catalogTypeFilter.value;
   const brand = catalogBrandFilter?.value || '';
@@ -201,9 +213,17 @@ function renderCatalogExplorer() {
     return matchesType && matchesBrand && matchesPrice && (!query || haystack.includes(query));
   });
 
-  catalogResultsCount.textContent = t('catalog.results', { count: items.length });
+  const visibleItems = items.slice(0, catalogVisibleLimit);
+  catalogResultsCount.textContent = items.length
+    ? t('catalog.showing', { visible: visibleItems.length, total: items.length })
+    : t('catalog.results', { count: 0 });
+
+  if (catalogLoadMore) {
+    catalogLoadMore.hidden = visibleItems.length >= items.length;
+  }
+
   catalogGrid.innerHTML = items.length
-    ? items.map(item =>
+    ? visibleItems.map(item =>
         '<article class="catalog-card">' +
           (String(item.image_url || '').startsWith('https://')
             ? '<img class="catalog-card-image" src="' + escapeHtml(item.image_url) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">'
@@ -2059,10 +2079,18 @@ document.querySelector('#compare-clear')?.addEventListener('click', () => {
   renderSavedBuilds();
 });
 
-catalogSearch?.addEventListener('input', renderCatalogExplorer);
-catalogTypeFilter?.addEventListener('change', renderCatalogExplorer);
-catalogBrandFilter?.addEventListener('change', renderCatalogExplorer);
-catalogMaxPrice?.addEventListener('input', renderCatalogExplorer);
+const resetCatalogFilters = () => {
+  resetCatalogVisibleLimit();
+  renderCatalogExplorer();
+};
+catalogSearch?.addEventListener('input', resetCatalogFilters);
+catalogTypeFilter?.addEventListener('change', resetCatalogFilters);
+catalogBrandFilter?.addEventListener('change', resetCatalogFilters);
+catalogMaxPrice?.addEventListener('input', resetCatalogFilters);
+catalogLoadMore?.addEventListener('click', () => {
+  catalogVisibleLimit += catalogPageSize();
+  renderCatalogExplorer();
+});
 catalogGrid?.addEventListener('click', event => {
   const button = event.target.closest('[data-component-details]');
   if (button) openComponentDialog(button.dataset.componentDetails);
