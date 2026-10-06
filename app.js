@@ -370,10 +370,27 @@ async function openComponentDialog(id) {
     (source.startsWith('https://')
       ? '<a class="component-source" href="' + escapeHtml(source) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t('catalog.source')) + ' ↗</a>'
       : '') +
-    '<button class="button ghost component-share" type="button" data-share-component="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.share')) + '</button>' +
+    '<div class="component-actions">' +
+      (currentBuild
+        ? '<button class="button primary" type="button" data-use-component="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.useInBuild')) + '</button>'
+        : '') +
+      '<button class="button ghost component-share" type="button" data-share-component="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.share')) + '</button>' +
+    '</div>' +
     '<section class="price-history"><h3>' + escapeHtml(t('catalog.history')) + '</h3><div id="price-history-list"></div></section>';
 
   componentDialog.showModal();
+
+  componentDialogBody.querySelector('[data-use-component]')?.addEventListener('click', () => {
+    if (!currentBuild) return;
+    currentBuild.selection[item.component_type] = item.id;
+    currentBuild.updatedAt = Date.now();
+    renderBuild();
+    componentDialog.close();
+    showToast(t('catalog.usedInBuild'));
+    window.setTimeout(() => {
+      document.querySelector('.result-panel')?.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 60);
+  });
 
   componentDialogBody.querySelector('[data-share-component]')?.addEventListener('click', async () => {
     const url = new URL(window.location.href.split('#')[0]);
