@@ -87,6 +87,12 @@ async function runSmokeChecks(page, profileName) {
   await page.locator('#name-dialog').waitFor({ state: 'hidden', timeout: 5000 });
   await assertUi((await page.locator('#saved-builds').textContent())?.includes(smokeName), 'salvamento local falhou');
 
+  const firstMoreActions = page.locator('#saved-builds .saved-more').first();
+  if (await firstMoreActions.count()) {
+    await firstMoreActions.evaluate(element => { element.open = true; });
+    await page.waitForTimeout(80);
+  }
+
   const duplicateButton = page.locator('#saved-builds [data-duplicate]').first();
   await duplicateButton.click();
   await page.waitForTimeout(150);
@@ -141,7 +147,13 @@ async function runSmokeChecks(page, profileName) {
     await catalogDetails.evaluate(element => { element.open = false; });
   }
 
-  while (await page.locator('#saved-builds [data-delete]').count()) {
+  while (await page.locator('#saved-builds .saved-card').count()) {
+    const moreActions = page.locator('#saved-builds .saved-more').first();
+    if (await moreActions.count()) {
+      await moreActions.evaluate(element => { element.open = true; });
+      await page.waitForTimeout(60);
+    }
+
     const savedDelete = page.locator('#saved-builds [data-delete]').first();
     page.once('dialog', dialog => dialog.accept());
     await savedDelete.click();
