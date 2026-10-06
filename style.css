@@ -765,3 +765,12 @@ input,select,button{max-width:100%;min-width:0}
   .catalog-grid{grid-template-columns:1fr}
   .catalog-card-image{height:96px}
 }
+
+.price-history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:9px}
+.price-history-summary article{padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.price-history-summary span,.price-history-summary strong{display:block}
+.price-history-summary span{color:var(--muted);font-size:8px;font-weight:700}
+.price-history-summary strong{margin-top:3px;font:700 11px Manrope,sans-serif}
+.price-history-summary .positive{color:var(--ok)}
+.price-history-summary .negative{color:var(--danger)}
+@media(max-width:650px){.price-history-summary{grid-template-columns:1fr}}
