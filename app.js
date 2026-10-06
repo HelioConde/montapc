@@ -156,6 +156,19 @@ function humanSpecValue(value) {
   return String(value);
 }
 
+function componentTypeMark(type) {
+  return {
+    cpu: 'CPU',
+    motherboard: 'MB',
+    gpu: 'GPU',
+    memory: 'RAM',
+    storage: 'SSD',
+    psu: 'PSU',
+    case: 'CASE',
+    cooler: 'COOL'
+  }[type] || 'PC';
+}
+
 function componentHighlights(item) {
   const specs = item?.specs || {};
   const strengths = [];
@@ -227,7 +240,7 @@ function renderCatalogExplorer() {
         '<article class="catalog-card">' +
           (String(item.image_url || '').startsWith('https://')
             ? '<img class="catalog-card-image" src="' + escapeHtml(item.image_url) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">'
-            : '<div class="catalog-card-image catalog-card-placeholder" aria-hidden="true">' + escapeHtml((item.brand || '?').slice(0, 1)) + '</div>') +
+            : '<div class="catalog-card-image catalog-card-placeholder" aria-hidden="true">' + escapeHtml(componentTypeMark(item.component_type)) + '</div>') +
           '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
           '<strong>' + escapeHtml(item.brand + ' ' + item.model) + '</strong>' +
           '<div class="part-meta">' + componentMeta(item, item.component_type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>' +
