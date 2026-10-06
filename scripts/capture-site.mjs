@@ -76,10 +76,24 @@ async function runSmokeChecks(page) {
   await page.locator('#name-dialog').waitFor({ state: 'hidden', timeout: 5000 });
   await assertUi((await page.locator('#saved-builds').textContent())?.includes(smokeName), 'salvamento local falhou');
 
-  const savedDelete = page.locator('#saved-builds [data-delete]').first();
-  page.once('dialog', dialog => dialog.accept());
-  await savedDelete.click();
+  const duplicateButton = page.locator('#saved-builds [data-duplicate]').first();
+  await duplicateButton.click();
   await page.waitForTimeout(150);
+  await assertUi((await page.locator('#saved-builds .saved-card').count()) >= 2, 'duplicação de build falhou');
+
+  const compareButtons = page.locator('#saved-builds [data-compare]');
+  await compareButtons.nth(0).click();
+  await compareButtons.nth(1).click();
+  await page.waitForTimeout(150);
+  await assertUi(await page.locator('#compare-panel').isVisible(), 'painel de comparação não abriu');
+  await assertUi((await page.locator('#compare-content .compare-grid').count()) >= 2, 'comparação não foi renderizada');
+
+  while (await page.locator('#saved-builds [data-delete]').count()) {
+    const savedDelete = page.locator('#saved-builds [data-delete]').first();
+    page.once('dialog', dialog => dialog.accept());
+    await savedDelete.click();
+    await page.waitForTimeout(100);
+  }
 }
 
 try {
