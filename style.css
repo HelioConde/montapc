@@ -416,3 +416,11 @@ input,select,button{max-width:100%;min-width:0}
   .compare-placeholder-visual{grid-template-columns:82px 1fr;gap:10px}
   .compare-placeholder-visual img{width:82px;height:60px}
 }
+
+.catalog-card{content-visibility:auto;contain-intrinsic-size:260px}
+.catalog-card-image,.component-hero-image,.part-type-image{image-rendering:auto}
+@media(max-width:650px){
+  .hero-visual{min-height:170px}
+  .hero-visual>img{min-height:170px}
+  .result-empty-image{height:90px}
+}
