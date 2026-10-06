@@ -43,7 +43,7 @@ jobs:
 
       - name: Commit snapshots
         run: |
-          if git diff --quiet -- screenshots/; then
+          if [ -z "$(git status --porcelain -- screenshots/)" ]; then
             echo "No visual changes to commit."
             exit 0
           fi
