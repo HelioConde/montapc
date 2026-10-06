@@ -2192,6 +2192,16 @@ catalogLoadMore?.addEventListener('click', () => {
   catalogVisibleLimit += catalogPageSize();
   renderCatalogExplorer();
 });
+
+document.querySelector('.catalog-category-shortcuts')?.addEventListener('click', event => {
+  const button = event.target.closest('[data-catalog-type]');
+  if (!button || !catalogTypeFilter) return;
+  catalogTypeFilter.value = button.dataset.catalogType || '';
+  resetCatalogFilters();
+  document.querySelectorAll('.catalog-category-shortcuts [data-catalog-type]').forEach(item => {
+    item.classList.toggle('active', item === button);
+  });
+});
 catalogGrid?.addEventListener('click', event => {
   const button = event.target.closest('[data-component-details]');
   if (button) openComponentDialog(button.dataset.componentDetails);
