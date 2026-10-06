@@ -262,8 +262,50 @@
     <footer class="footer">
       <strong>MontaPC</strong>
       <span data-i18n="footer.copy">Compatibilidade explicável primeiro; conteúdo comercial futuro será sempre identificado.</span>
+      <button id="feedback-open" class="button text" type="button" data-i18n="feedback.open">Enviar feedback</button>
     </footer>
   </div>
+
+  <dialog id="feedback-dialog" class="dialog small-dialog" aria-labelledby="feedback-title">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow" data-i18n="feedback.open">Enviar feedback</p>
+        <h2 id="feedback-title" data-i18n="feedback.title">Ajude a melhorar o MontaPC</h2>
+      </div>
+      <button id="feedback-close" class="icon-button" type="button" data-i18n-aria="account.close" aria-label="Fechar">×</button>
+    </div>
+    <p class="dialog-copy" data-i18n="feedback.copy">Conte rapidamente o que funcionou, o que confundiu ou o que precisa melhorar.</p>
+    <form id="feedback-form">
+      <div class="form-grid">
+        <label class="field">
+          <span data-i18n="feedback.rating">Nota</span>
+          <select name="rating" required>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+          </select>
+        </label>
+        <label class="field">
+          <span data-i18n="feedback.category">Categoria</span>
+          <select name="category" required>
+            <option value="usability" data-i18n="feedback.usability">Usabilidade</option>
+            <option value="recommendation" data-i18n="feedback.recommendation">Recomendação</option>
+            <option value="compatibility" data-i18n="feedback.compatibility">Compatibilidade</option>
+            <option value="bug" data-i18n="feedback.bug">Bug</option>
+            <option value="idea" data-i18n="feedback.idea">Ideia</option>
+          </select>
+        </label>
+      </div>
+      <label class="field">
+        <span data-i18n="feedback.comment">Comentário</span>
+        <textarea name="comment" minlength="2" maxlength="1000" required></textarea>
+      </label>
+      <button class="button primary full" type="submit" data-i18n="feedback.submit">Enviar feedback</button>
+      <p id="feedback-message" class="form-message" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
 
   <dialog id="component-dialog" class="dialog component-dialog" aria-labelledby="component-dialog-title">
     <div class="dialog-head">
