@@ -95,3 +95,10 @@ a{color:inherit;text-decoration:none}
 .ad-slot.compact{margin-top:18px;min-height:90px}
 .ad-label{display:block;margin-bottom:7px;color:var(--muted);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
 .ad-slot .adsbygoogle{min-height:80px}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.language-control select{border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--accent);padding:8px 9px;font-size:10px;font-weight:800;outline:none}
+.language-control select:focus{border-color:#86a9ba;box-shadow:0 0 0 3px #315d7215}
+@media(max-width:650px){
+  .language-control{margin-right:auto}
+}
