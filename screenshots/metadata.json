@@ -1,7 +1,7 @@
 {
   "url": "https://helioconde.github.io/montapc/",
-  "generatedAt": "2026-10-06T16:37:41.891Z",
-  "commitSha": "5de85682512e707962ecc9ba7b5eaaa1523b04c8",
+  "generatedAt": "2026-10-06T16:42:47.918Z",
+  "commitSha": "dbe65560626f16656ede2d10f9e1407eafb1b9d7",
   "captures": [
     {
       "profile": "desktop",
@@ -9,6 +9,8 @@
       "buildFile": "latest-desktop-build.png",
       "englishBuildFile": "latest-desktop-build-en.png",
       "catalogFile": "latest-desktop-catalog.png",
+      "compareFile": "latest-desktop-compare.png",
+      "componentFile": "latest-desktop-component.png",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -22,6 +24,8 @@
       "buildFile": "latest-mobile-build.png",
       "englishBuildFile": "latest-mobile-build-en.png",
       "catalogFile": "latest-mobile-catalog.png",
+      "compareFile": "latest-mobile-compare.png",
+      "componentFile": "latest-mobile-component.png",
       "viewport": {
         "width": 390,
         "height": 844
