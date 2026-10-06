@@ -15,9 +15,10 @@
   <link rel="alternate" hreflang="x-default" href="https://helioconde.github.io/montapc/">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <meta property="og:image" content="https://helioconde.github.io/montapc/icon.svg">
+  <meta property="og:image" content="https://helioconde.github.io/montapc/img/assets/hero-build.png">
   <meta property="og:locale" content="pt_BR">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://helioconde.github.io/montapc/img/assets/hero-build.png">
   <title>MontaPC — Monte um PC compatível por orçamento</title>
   <link rel="stylesheet" href="style.css">
   <script type="application/ld+json">
@@ -62,10 +63,13 @@
           <h1><span data-i18n="hero.title">Monte pelo orçamento.</span><br><span data-i18n="hero.titleAccent">Entenda por que combina.</span></h1>
           <p class="hero-copy" data-i18n="hero.copy">O MontaPC cruza socket, tipo de memória, potência da fonte e espaço do gabinete para explicar os conflitos antes de você comprar.</p>
         </div>
-        <aside class="hero-card">
-          <span data-i18n="hero.catalog">Catálogo inicial</span>
-          <strong id="catalog-count">—</strong>
-          <small data-i18n="hero.parts">peças de referência</small>
+        <aside class="hero-card hero-visual">
+          <img src="img/assets/hero-build.png" alt="" aria-hidden="true" fetchpriority="high">
+          <div class="hero-stat">
+            <span data-i18n="hero.catalog">Catálogo inicial</span>
+            <strong id="catalog-count">—</strong>
+            <small data-i18n="hero.parts">peças de referência</small>
+          </div>
         </aside>
       </section>
 
@@ -126,7 +130,8 @@
 
         <section class="panel result-panel">
           <div id="result-empty" class="result-empty">
-            <span class="empty-icon">▦</span>
+            <img class="result-empty-image" src="img/assets/pc-light.png" alt="" aria-hidden="true" loading="eager">
+            <span class="empty-icon" aria-hidden="true">▦</span>
             <h2 data-i18n="result.emptyTitle">Sua configuração aparece aqui</h2>
             <p data-i18n="result.emptyCopy">Defina orçamento e objetivo. O MontaPC procura a combinação compatível com melhor equilíbrio dentro do catálogo atual.</p>
             <div class="empty-checks">
