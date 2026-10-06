@@ -993,6 +993,8 @@ function renderSavedBuilds() {
         '<button class="button ghost" type="button" data-rename="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.rename')) + '</button>' +
         '<button class="button ghost" type="button" data-duplicate="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.duplicate')) + '</button>' +
         '<button class="button ghost" type="button" data-share="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.share')) + '</button>' +
+        '<button class="button ghost" type="button" data-export-text="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.exportText')) + '</button>' +
+        '<button class="button ghost" type="button" data-export-image="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.exportImage')) + '</button>' +
         '<button class="button ghost" type="button" data-favorite="' + escapeHtml(build.id) + '">' + escapeHtml(build.isFavorite ? t('saved.unfavorite') : t('saved.favorite')) + '</button>' +
         (currentUser ? '<button class="button ghost" type="button" data-visibility="' + escapeHtml(build.id) + '">' + escapeHtml(build.visibility === 'public' ? t('saved.makePrivate') : t('saved.makePublic')) + '</button>' : '') +
         '<button class="button text danger-text" type="button" data-delete="' + escapeHtml(build.id) + '">' + escapeHtml(t('saved.delete')) + '</button></div>' +
@@ -1304,6 +1306,150 @@ async function shareSavedBuild(id) {
   }
 }
 
+function safeFilename(value) {
+  return String(value || 'montapc-build')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9-_]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || 'montapc-build';
+}
+
+function buildToText(build) {
+  const normalized = normalizeSavedBuild(build);
+  const state = compatibility(normalized);
+  const lines = [
+    t('export.title'),
+    '='.repeat(32),
+    normalized.name || t('saved.defaultName'),
+    settingsLabel(normalized.settings),
+    '',
+    t('result.total') + ': ' + formatMoney(normalized.totalCents),
+    t('result.budget') + ': ' + formatMoney(normalized.budgetCents),
+    t('result.psu') + ': ' + state.requiredPsu + ' W',
+    t('result.compatible') + ': ' + (state.ok ? '✓' : '×'),
+    ''
+  ];
+
+  for (const type of TYPE_ORDER) {
+    const item = component(type, normalized.selection?.[type]);
+    if (!item) continue;
+    lines.push(typeLabel(type) + ': ' + item.brand + ' ' + item.model + ' — ' + formatMoney(item.price_cents));
+  }
+
+  lines.push('', t('export.generatedBy') + ' — https://helioconde.github.io/montapc/');
+  return lines.join('\n');
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportBuildText(build) {
+  triggerDownload(
+    new Blob([buildToText(build)], { type: 'text/plain;charset=utf-8' }),
+    safeFilename(build.name) + '.txt'
+  );
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+  const words = String(text).split(/\s+/);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const next = line ? line + ' ' + word : word;
+    if (ctx.measureText(next).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function exportBuildImage(build) {
+  const normalized = normalizeSavedBuild(build);
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200;
+  canvas.height = 1500;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#f5f7f8';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#182126';
+  ctx.font = '700 34px Arial';
+  ctx.fillText('MontaPC', 72, 82);
+
+  ctx.fillStyle = '#315d72';
+  ctx.font = '700 58px Arial';
+  const titleLines = wrapCanvasText(ctx, normalized.name || t('saved.defaultName'), 1040);
+  titleLines.slice(0, 2).forEach((line, index) => ctx.fillText(line, 72, 170 + index * 66));
+
+  let y = 330;
+  ctx.fillStyle = '#6e7a80';
+  ctx.font = '24px Arial';
+  ctx.fillText(settingsLabel(normalized.settings), 72, y);
+  y += 64;
+
+  ctx.fillStyle = '#182126';
+  ctx.font = '700 30px Arial';
+  ctx.fillText(t('result.total') + ': ' + formatMoney(normalized.totalCents), 72, y);
+  ctx.fillText(t('result.budget') + ': ' + formatMoney(normalized.budgetCents), 620, y);
+  y += 70;
+
+  for (const type of TYPE_ORDER) {
+    const item = component(type, normalized.selection?.[type]);
+    if (!item) continue;
+
+    ctx.fillStyle = '#6e7a80';
+    ctx.font = '700 19px Arial';
+    ctx.fillText(typeLabel(type).toUpperCase(), 72, y);
+
+    ctx.fillStyle = '#182126';
+    ctx.font = '700 25px Arial';
+    const itemName = item.brand + ' ' + item.model;
+    const lines = wrapCanvasText(ctx, itemName, 820);
+    ctx.fillText(lines[0], 72, y + 34);
+
+    ctx.fillStyle = '#315d72';
+    ctx.font = '700 22px Arial';
+    ctx.fillText(formatMoney(item.price_cents), 930, y + 34);
+
+    const meta = componentMeta(item, type);
+    if (meta.length) {
+      ctx.fillStyle = '#6e7a80';
+      ctx.font = '18px Arial';
+      ctx.fillText(meta.join(' · '), 72, y + 64);
+      y += 106;
+    } else {
+      y += 80;
+    }
+
+    ctx.strokeStyle = '#dfe5e8';
+    ctx.beginPath();
+    ctx.moveTo(72, y - 18);
+    ctx.lineTo(1128, y - 18);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#6e7a80';
+  ctx.font = '18px Arial';
+  ctx.fillText(t('export.generatedBy') + ' · helioconde.github.io/montapc', 72, 1430);
+
+  canvas.toBlob(blob => {
+    if (blob) triggerDownload(blob, safeFilename(normalized.name) + '.png');
+  }, 'image/png');
+}
+
 async function updateSavedBuildMeta(id, patch) {
   const builds = visibleSavedBuilds().map(normalizeSavedBuild);
   const build = builds.find(item => item.id === id);
@@ -1599,6 +1745,13 @@ partsList.addEventListener('change', event => {
   trackEvent('part_swapped', { type: select.dataset.part });
 });
 
+document.querySelector('#print-build')?.addEventListener('click', () => {
+  if (!currentBuild) return;
+  document.body.classList.add('printing-build');
+  window.print();
+  window.setTimeout(() => document.body.classList.remove('printing-build'), 300);
+});
+
 document.querySelector('#reset-build').addEventListener('click', () => {
   const result = generateBestBuild(settingsFromForm());
   currentBuild = result.build;
@@ -1709,6 +1862,20 @@ savedBuilds.addEventListener('click', async event => {
   const share = event.target.closest('[data-share]');
   if (share) {
     await shareSavedBuild(share.dataset.share);
+    return;
+  }
+
+  const exportText = event.target.closest('[data-export-text]');
+  if (exportText) {
+    const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === exportText.dataset.exportText);
+    if (build) exportBuildText(build);
+    return;
+  }
+
+  const exportImage = event.target.closest('[data-export-image]');
+  if (exportImage) {
+    const build = visibleSavedBuilds().map(normalizeSavedBuild).find(item => item.id === exportImage.dataset.exportImage);
+    if (build) exportBuildImage(build);
     return;
   }
 
