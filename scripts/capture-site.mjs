@@ -163,6 +163,17 @@ async function runSmokeChecks(page, profileName) {
     const expectedMax = page.viewportSize()?.width && page.viewportSize().width <= 650 ? 6 : 12;
     await assertUi(initialCatalogCards > 0 && initialCatalogCards <= expectedMax, 'catálogo inicial não está paginado');
 
+    const gpuShortcut = page.locator('.catalog-category-shortcuts [data-catalog-type="gpu"]');
+    if (await gpuShortcut.count()) {
+      await gpuShortcut.click();
+      await page.waitForTimeout(100);
+      await assertUi((await page.locator('#catalog-type-filter').inputValue()) === 'gpu', 'atalho visual de categoria não aplicou o filtro');
+      await assertUi((await page.locator('#catalog-grid .catalog-card').count()) > 0, 'atalho visual de categoria não retornou componentes');
+      await page.locator('#catalog-type-filter').selectOption('');
+      await page.locator('#catalog-type-filter').dispatchEvent('change');
+      await page.waitForTimeout(100);
+    }
+
     if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
       const catalogWidth = await catalogDetails.evaluate(element => element.getBoundingClientRect().width);
       const viewportWidth = page.viewportSize().width;
