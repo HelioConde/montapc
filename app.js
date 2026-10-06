@@ -623,14 +623,38 @@ function compatibility(build = currentBuild) {
 
   if (parts.gpu && parts.psu) {
     const connector = String(parts.gpu.specs?.power_connector || '');
+    const connectorCount = Math.max(1, Number(parts.gpu.specs?.power_connector_count || 1));
     const connectors = Array.isArray(parts.psu.specs?.connectors) ? parts.psu.specs.connectors.map(String) : [];
+    const normalizePowerConnector = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const connectorCompatible = (required, available) => {
+      const need = normalizePowerConnector(required);
+      const have = normalizePowerConnector(available);
+      if (!need || !have) return false;
+      if (need === have) return true;
+      const modern12v = new Set(['12vhpwr','12v2x6']);
+      return modern12v.has(need) && modern12v.has(have);
+    };
+
     if (connector && connectors.length) {
+      const hasConnector = connectors.some(available => connectorCompatible(connector, available));
       push(
-        connectors.includes(connector),
-        connectors.includes(connector)
+        hasConnector,
+        hasConnector
           ? t('compat.gpuPowerOk', { connector })
           : t('compat.gpuPowerError', { connector })
       );
+
+      if (hasConnector && normalizePowerConnector(connector) === 'pcie62') {
+        const availableCount = Number(parts.psu.specs?.pcie_connector_count || 0);
+        if (availableCount) {
+          push(
+            availableCount >= connectorCount,
+            availableCount >= connectorCount
+              ? t('compat.gpuPowerCountOk', { available: availableCount, required: connectorCount })
+              : t('compat.gpuPowerCountError', { available: availableCount, required: connectorCount })
+          );
+        }
+      }
     }
   }
 
@@ -798,7 +822,7 @@ function candidateScore(selection, settings, total, budget) {
   if (settings.strategy === 'fps') score += gpu * .16;
   if (settings.strategy === 'cpu') score += cpu * .18;
   if (settings.strategy === 'upgrade') {
-    if (p.cpu?.socket === 'AM5') score += 10;
+    if (p.cpu?.socket === 'AM5' || p.cpu?.socket === 'LGA1851') score += 10;
     if (p.memory?.specs?.memory_type === 'DDR5') score += 5;
     if (Number(p.psu?.specs?.wattage || 0) >= requiredPsuWatts(selection) + 100) score += 3;
   }
@@ -808,10 +832,47 @@ function candidateScore(selection, settings, total, budget) {
     score -= draw / 24;
     if (/Gold|Platinum|Titanium/i.test(String(p.psu?.specs?.efficiency || ''))) score += 4;
   }
+
+  // Evita gastar mais apenas para preencher o orçamento quando há uma peça quase
+  // tão rápida por bem menos. O limiar de 96% preserva upgrades perceptíveis.
+  const valuePenalty = (item, type, weight = 1) => {
+    if (!item) return 0;
+    const itemPerformance = performance(item);
+    const itemPrice = priceOf(item);
+    if (!itemPerformance || !itemPrice) return 0;
+    const comparable = (byType[type] || []).filter(candidate =>
+      performance(candidate) >= itemPerformance * .96 &&
+      priceOf(candidate) > 0
+    );
+    if (!comparable.length) return 0;
+    const cheapestComparable = Math.min(...comparable.map(priceOf));
+    if (cheapestComparable >= itemPrice) return 0;
+    const premiumRatio = (itemPrice - cheapestComparable) / cheapestComparable;
+    return Math.max(0, premiumRatio - .08) * 9 * weight;
+  };
+
+  score -= valuePenalty(p.cpu, 'cpu', 1.2);
+  score -= valuePenalty(p.gpu, 'gpu', 1.35);
+  score -= valuePenalty(p.memory, 'memory', .55);
+  score -= valuePenalty(p.storage, 'storage', .45);
+  score -= valuePenalty(p.psu, 'psu', .35);
+  score -= valuePenalty(p.case, 'case', .25);
+
+  // Penaliza desequilíbrios CPU/GPU fora da faixa útil do perfil escolhido.
+  const gamingLike = ['gaming','competitive','aaa','streaming','mixed'].includes(settings.usage);
+  if (gamingLike && cpu && gpu) {
+    const gpuLeadTarget = settings.resolution === '4k' ? 34 : settings.resolution === '1440p' ? 22 : 12;
+    const actualLead = gpu - cpu;
+    const excess = Math.abs(actualLead - gpuLeadTarget);
+    if (excess > 22) score -= (excess - 22) * .22;
+  }
+
   if (settings.strategy === 'economy') {
-    score += (1 - Math.min(utilization, 1)) * 30;
+    score += (1 - Math.min(utilization, 1)) * 24;
   } else {
-    score += Math.min(utilization, 1) * 12;
+    const targetUtilization = settings.strategy === 'upgrade' ? .92 : .90;
+    score += Math.max(0, 12 - Math.abs(utilization - targetUtilization) * 28);
+    if (utilization > .985) score -= (utilization - .985) * 55;
   }
 
   return score;
