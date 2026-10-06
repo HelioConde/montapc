@@ -308,8 +308,10 @@ function renderCatalogExplorer() {
   }
 
   catalogGrid.innerHTML = items.length
-    ? visibleItems.map(item =>
-        '<article class="catalog-card">' +
+    ? visibleItems.map(item => {
+        const selected = Boolean(currentBuild && currentBuild.selection?.[item.component_type] === item.id);
+        return '<article class="catalog-card' + (selected ? ' is-selected' : '') + '">' +
+          (selected ? '<span class="catalog-selected-badge">' + escapeHtml(t('catalog.inBuild')) + '</span>' : '') +
           '<img class="catalog-card-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" decoding="async" fetchpriority="low">' +
           '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
           '<strong>' + escapeHtml(item.brand + ' ' + item.model) + '</strong>' +
@@ -323,8 +325,8 @@ function renderCatalogExplorer() {
               '</small>'
             : '') +
           '<button class="button ghost" type="button" data-component-details="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.details')) + '</button>' +
-        '</article>'
-      ).join('')
+        '</article>';
+      }).join('')
     : '<div class="catalog-no-results">' + escapeHtml(t('catalog.noResults')) + '</div>';
 }
 
@@ -337,6 +339,7 @@ async function openComponentDialog(id) {
   const source = String(item.specs?.spec_source || '');
   const live = livePriceFor(item);
   const highlights = componentHighlights(item);
+  const alreadySelected = Boolean(currentBuild && currentBuild.selection?.[item.component_type] === item.id);
 
   componentDialogBody.innerHTML =
     '<img class="component-hero-image" src="' + escapeHtml(componentImage(item)) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" decoding="async">' +
@@ -372,7 +375,9 @@ async function openComponentDialog(id) {
       : '') +
     '<div class="component-actions">' +
       (currentBuild
-        ? '<button class="button primary" type="button" data-use-component="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.useInBuild')) + '</button>'
+        ? '<button class="button primary" type="button" data-use-component="' + escapeHtml(item.id) + '"' + (alreadySelected ? ' disabled' : '') + '>' +
+            escapeHtml(alreadySelected ? t('catalog.alreadyInBuild') : t('catalog.useInBuild')) +
+          '</button>'
         : '') +
       '<button class="button ghost component-share" type="button" data-share-component="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.share')) + '</button>' +
     '</div>' +
@@ -385,6 +390,7 @@ async function openComponentDialog(id) {
     currentBuild.selection[item.component_type] = item.id;
     currentBuild.updatedAt = Date.now();
     renderBuild();
+    renderCatalogExplorer();
     componentDialog.close();
     showToast(t('catalog.usedInBuild'));
     window.setTimeout(() => {
@@ -1151,6 +1157,7 @@ function renderBuild() {
   renderCompatibility();
   renderPerformanceEstimate();
   renderParts();
+  if (catalog.length) renderCatalogExplorer();
 }
 
 function normalizeSavedBuild(build) {
