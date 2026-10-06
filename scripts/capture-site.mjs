@@ -97,6 +97,26 @@ async function runSmokeChecks(page) {
   await assertUi(await page.locator('#compare-panel').isVisible(), 'painel de comparação não abriu');
   await assertUi((await page.locator('#compare-content .compare-grid').count()) >= 2, 'comparação não foi renderizada');
 
+  const catalogDetails = page.locator('.catalog-explorer');
+  if (await catalogDetails.count()) {
+    await catalogDetails.evaluate(element => { element.open = true; });
+    await page.waitForTimeout(120);
+
+    const initialCatalogCards = await page.locator('#catalog-grid .catalog-card').count();
+    const expectedMax = page.viewportSize()?.width && page.viewportSize().width <= 650 ? 6 : 12;
+    await assertUi(initialCatalogCards > 0 && initialCatalogCards <= expectedMax, 'catálogo inicial não está paginado');
+
+    const moreButton = page.locator('#catalog-load-more');
+    if (await moreButton.isVisible().catch(() => false)) {
+      await moreButton.click();
+      await page.waitForTimeout(120);
+      const expandedCatalogCards = await page.locator('#catalog-grid .catalog-card').count();
+      await assertUi(expandedCatalogCards > initialCatalogCards, 'carregamento progressivo do catálogo falhou');
+    }
+
+    await catalogDetails.evaluate(element => { element.open = false; });
+  }
+
   while (await page.locator('#saved-builds [data-delete]').count()) {
     const savedDelete = page.locator('#saved-builds [data-delete]').first();
     page.once('dialog', dialog => dialog.accept());
