@@ -458,6 +458,46 @@ function optionLabel(item) {
   return `${item.brand} ${item.model} · ${formatMoney(item.price_cents)}`;
 }
 
+function componentMeta(item, type) {
+  if (!item) return [];
+  const specs = item.specs || {};
+  const values = [];
+
+  if (type === 'cpu' && item.socket) values.push(item.socket);
+  if (type === 'motherboard') {
+    if (item.socket) values.push(item.socket);
+    if (specs.memory_type) values.push(specs.memory_type);
+    if (specs.form_factor) values.push(specs.form_factor);
+  }
+  if (type === 'gpu') {
+    if (specs.vram_gb) values.push(specs.vram_gb + ' GB VRAM');
+    if (specs.recommended_psu_watts) values.push(specs.recommended_psu_watts + ' W PSU');
+  }
+  if (type === 'memory') {
+    if (specs.capacity_gb) values.push(specs.capacity_gb + ' GB');
+    if (specs.memory_type) values.push(specs.memory_type);
+    if (specs.speed_mt) values.push(specs.speed_mt + ' MT/s');
+  }
+  if (type === 'storage') {
+    if (specs.capacity_gb) values.push((specs.capacity_gb >= 1000 ? (specs.capacity_gb / 1000) + ' TB' : specs.capacity_gb + ' GB'));
+    if (specs.interface) values.push(specs.interface);
+  }
+  if (type === 'psu') {
+    if (specs.wattage) values.push(specs.wattage + ' W');
+    if (specs.efficiency) values.push(specs.efficiency);
+  }
+  if (type === 'case') {
+    if (Array.isArray(specs.form_factors) && specs.form_factors.length) values.push(specs.form_factors.join(' / '));
+    if (specs.max_gpu_mm) values.push(specs.max_gpu_mm + ' mm GPU');
+  }
+  if (type === 'cooler') {
+    if (specs.height_mm) values.push(specs.height_mm + ' mm');
+    if (Array.isArray(specs.supported_sockets) && specs.supported_sockets.length) values.push(specs.supported_sockets.join(' / '));
+  }
+
+  return values.slice(0, 3);
+}
+
 function renderParts() {
   const parts = selectedComponents();
   const cpuHasCooler = Boolean(parts.cpu?.specs?.cooler_included);
@@ -478,6 +518,9 @@ function renderParts() {
     return '<article class="part-row">' +
       '<div class="part-label"><span>' + escapeHtml(typeLabel(type)) + '</span>' +
         '<strong>' + (selected ? escapeHtml(selected.brand + ' ' + selected.model) : t('part.notSelected', { type: typeLabel(type) })) + '</strong>' +
+        (selected && componentMeta(selected, type).length
+          ? '<div class="part-meta">' + componentMeta(selected, type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>'
+          : '') +
         '<small>' + (selected ? escapeHtml(formatMoney(selected.price_cents)) : t('part.choose')) + '</small></div>' +
       '<select data-part="' + type + '">' +
         (type === 'cooler' ? '<option value="">' + escapeHtml(t('part.noSeparateCooler')) + '</option>' : '') +
