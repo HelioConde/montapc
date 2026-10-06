@@ -965,7 +965,10 @@ function renderCompatibility() {
 
   compatibilityList.innerHTML =
     '<div class="compatibility-summary ' + (issues.length ? 'has-issues' : 'all-ok') + '">' +
-      '<strong>' + escapeHtml(summaryText) + '</strong>' +
+      '<div class="compatibility-visual">' +
+        '<img src="' + (issues.length ? 'img/assets/compatibility-error.png' : 'img/assets/compatibility-ok.png') + '" alt="" aria-hidden="true" loading="lazy">' +
+        '<strong>' + escapeHtml(summaryText) + '</strong>' +
+      '</div>' +
       (issues.length ? issues.map(renderCheck).join('') : '') +
       (passed.length
         ? '<details class="compatibility-details">' +
@@ -1225,7 +1228,11 @@ function renderComparison() {
   comparePanel.hidden = builds.length === 0;
 
   if (builds.length !== 2) {
-    compareContent.innerHTML = '<div class="compare-placeholder">' + escapeHtml(t('compare.needTwo')) + '</div>';
+    compareContent.innerHTML =
+      '<div class="compare-placeholder compare-placeholder-visual">' +
+        '<img src="img/assets/compare-builds.png" alt="" aria-hidden="true" loading="lazy">' +
+        '<span>' + escapeHtml(t('compare.needTwo')) + '</span>' +
+      '</div>';
     return;
   }
 
