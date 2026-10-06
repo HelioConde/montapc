@@ -5,6 +5,14 @@ on:
     branches: [main]
     paths-ignore:
       - 'screenshots/**'
+      - 'scripts/**'
+      - 'supabase/**'
+      - 'README.md'
+      - 'ROADMAP.md'
+      - 'FULLSTACK.md'
+      - 'CATALOG.md'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 permissions:
