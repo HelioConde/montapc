@@ -429,13 +429,26 @@ async function openComponentDialog(id) {
     return;
   }
 
-  historyList.innerHTML = history.map(entry =>
-    '<div class="price-history-row">' +
-      '<span>' + escapeHtml(formatObservedDate(entry.observed_at)) + '</span>' +
-      '<strong>' + escapeHtml(formatMoney(entry.price_cents)) + '</strong>' +
-      '<small>' + escapeHtml(entry.store_name) + (entry.in_stock ? '' : ' · ' + escapeHtml(t('catalog.outOfStock'))) + '</small>' +
-    '</div>'
-  ).join('');
+  const observedPrices = history.map(entry => Number(entry.price_cents || 0)).filter(value => value > 0);
+  const minimumPrice = Math.min(...observedPrices);
+  const averagePrice = Math.round(observedPrices.reduce((sum, value) => sum + value, 0) / observedPrices.length);
+  const latestPrice = observedPrices[0] || 0;
+  const oldestPrice = observedPrices[observedPrices.length - 1] || latestPrice;
+  const variation = oldestPrice > 0 ? ((latestPrice - oldestPrice) / oldestPrice) * 100 : 0;
+
+  historyList.innerHTML =
+    '<div class="price-history-summary">' +
+      '<article><span>' + escapeHtml(t('catalog.historyMin')) + '</span><strong>' + escapeHtml(formatMoney(minimumPrice)) + '</strong></article>' +
+      '<article><span>' + escapeHtml(t('catalog.historyAverage')) + '</span><strong>' + escapeHtml(formatMoney(averagePrice)) + '</strong></article>' +
+      '<article><span>' + escapeHtml(t('catalog.historyVariation')) + '</span><strong class="' + (variation <= 0 ? 'positive' : 'negative') + '">' + escapeHtml((variation > 0 ? '+' : '') + variation.toFixed(1) + '%') + '</strong></article>' +
+    '</div>' +
+    history.map(entry =>
+      '<div class="price-history-row">' +
+        '<span>' + escapeHtml(formatObservedDate(entry.observed_at)) + '</span>' +
+        '<strong>' + escapeHtml(formatMoney(entry.price_cents)) + '</strong>' +
+        '<small>' + escapeHtml(entry.store_name) + (entry.in_stock ? '' : ' · ' + escapeHtml(t('catalog.outOfStock'))) + '</small>' +
+      '</div>'
+    ).join('');
 }
 
 function priceOf(item) {
