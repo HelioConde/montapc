@@ -41,6 +41,8 @@ const nameForm = document.querySelector('#name-form');
 const nameMessage = document.querySelector('#name-message');
 const catalogSearch = document.querySelector('#catalog-search');
 const catalogTypeFilter = document.querySelector('#catalog-type-filter');
+const catalogBrandFilter = document.querySelector('#catalog-brand-filter');
+const catalogMaxPrice = document.querySelector('#catalog-max-price');
 const catalogGrid = document.querySelector('#catalog-grid');
 const catalogResultsCount = document.querySelector('#catalog-results-count');
 const componentDialog = document.querySelector('#component-dialog');
@@ -145,15 +147,51 @@ function humanSpecValue(value) {
   return String(value);
 }
 
+function componentHighlights(item) {
+  const specs = item?.specs || {};
+  const strengths = [];
+  const attention = [];
+
+  if (specs.cooler_included) strengths.push(t('catalog.strength.coolerIncluded'));
+  if (Number(specs.performance_score || 0) >= 85) strengths.push(t('catalog.strength.highPerformance'));
+  if (Number(specs.vram_gb || 0) >= 12) strengths.push(t('catalog.strength.vram'));
+  if (Number(specs.capacity_gb || 0) >= 32 && item.component_type === 'memory') strengths.push(t('catalog.strength.memory32'));
+  if (Number(specs.speed_mt || 0) >= 5600) strengths.push(t('catalog.strength.fastMemory'));
+  if (/Gold|Platinum|Titanium/i.test(String(specs.efficiency || ''))) strengths.push(t('catalog.strength.gold'));
+  if (specs.modular) strengths.push(t('catalog.strength.modular'));
+  if (item.component_type === 'case' && (Number(specs.max_gpu_mm || 0) >= 350 || Number(specs.max_cooler_mm || 0) >= 165)) strengths.push(t('catalog.strength.clearance'));
+
+  if (Number(item?.tdp_watts || 0) >= 200) attention.push(t('catalog.attention.highPower'));
+  if (Number(specs.recommended_psu_watts || 0) >= 700) attention.push(t('catalog.attention.psuDemand'));
+  if (item.component_type === 'memory' && Number(specs.capacity_gb || 0) > 0 && Number(specs.capacity_gb || 0) < 16) attention.push(t('catalog.attention.lowMemory'));
+
+  return { strengths: strengths.slice(0, 3), attention: attention.slice(0, 3) };
+}
+
+function populateCatalogBrands() {
+  if (!catalogBrandFilter) return;
+  const selected = catalogBrandFilter.value;
+  const brands = [...new Set(catalog.map(item => item.brand).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+  catalogBrandFilter.innerHTML =
+    '<option value="">' + escapeHtml(t('catalog.allBrands')) + '</option>' +
+    brands.map(brand => '<option value="' + escapeHtml(brand) + '">' + escapeHtml(brand) + '</option>').join('');
+  if (brands.includes(selected)) catalogBrandFilter.value = selected;
+}
+
 function renderCatalogExplorer() {
   if (!catalogGrid || !catalogSearch || !catalogTypeFilter) return;
   const query = catalogSearch.value.trim().toLowerCase();
   const type = catalogTypeFilter.value;
+  const brand = catalogBrandFilter?.value || '';
+  const maxPriceValue = Number(catalogMaxPrice?.value || 0);
+  const maxPriceCents = maxPriceValue > 0 ? Math.round(maxPriceValue * 100) : 0;
 
   const items = catalog.filter(item => {
     const matchesType = !type || item.component_type === type;
+    const matchesBrand = !brand || item.brand === brand;
+    const matchesPrice = !maxPriceCents || Number(item.price_cents || 0) <= maxPriceCents;
     const haystack = [item.brand, item.model, item.socket, item.component_type].filter(Boolean).join(' ').toLowerCase();
-    return matchesType && (!query || haystack.includes(query));
+    return matchesType && matchesBrand && matchesPrice && (!query || haystack.includes(query));
   });
 
   catalogResultsCount.textContent = t('catalog.results', { count: items.length });
@@ -185,6 +223,7 @@ async function openComponentDialog(id) {
   const specs = catalogSpecEntries(item);
   const source = String(item.specs?.spec_source || '');
   const live = livePriceFor(item);
+  const highlights = componentHighlights(item);
 
   componentDialogBody.innerHTML =
     '<div class="component-detail-summary">' +
@@ -202,6 +241,18 @@ async function openComponentDialog(id) {
         '<div><span>' + escapeHtml(humanSpecKey(key)) + '</span><strong>' + escapeHtml(humanSpecValue(value)) + '</strong></div>'
       ).join('') +
     '</div>' +
+    ((highlights.strengths.length || highlights.attention.length)
+      ? '<div class="component-highlights">' +
+          (highlights.strengths.length
+            ? '<section><h3>' + escapeHtml(t('catalog.strengths')) + '</h3>' +
+              highlights.strengths.map(text => '<p class="highlight-positive">✓ ' + escapeHtml(text) + '</p>').join('') + '</section>'
+            : '') +
+          (highlights.attention.length
+            ? '<section><h3>' + escapeHtml(t('catalog.attention')) + '</h3>' +
+              highlights.attention.map(text => '<p class="highlight-attention">! ' + escapeHtml(text) + '</p>').join('') + '</section>'
+            : '') +
+        '</div>'
+      : '') +
     (source.startsWith('https://')
       ? '<a class="component-source" href="' + escapeHtml(source) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t('catalog.source')) + ' ↗</a>'
       : '') +
@@ -1443,6 +1494,7 @@ async function loadCatalog() {
   catalog = data || [];
   groupCatalog();
   document.querySelector('#catalog-count').textContent = String(catalog.length);
+  populateCatalogBrands();
   renderCatalogExplorer();
 }
 
@@ -1652,6 +1704,8 @@ document.querySelector('#compare-clear')?.addEventListener('click', () => {
 
 catalogSearch?.addEventListener('input', renderCatalogExplorer);
 catalogTypeFilter?.addEventListener('change', renderCatalogExplorer);
+catalogBrandFilter?.addEventListener('change', renderCatalogExplorer);
+catalogMaxPrice?.addEventListener('input', renderCatalogExplorer);
 catalogGrid?.addEventListener('click', event => {
   const button = event.target.closest('[data-component-details]');
   if (button) openComponentDialog(button.dataset.componentDetails);
@@ -1773,6 +1827,7 @@ document.addEventListener('montapc:languagechange', event => {
   updateAccountUi();
   renderBuild();
   renderSavedBuilds();
+  populateCatalogBrands();
   renderCatalogExplorer();
   trackEvent('language_changed', { locale: event.detail?.locale || i18n?.locale || 'pt-BR' });
 });
