@@ -81,7 +81,7 @@ async function runSmokeChecks(page, profileName) {
 
   await page.locator('#save-build').click();
   await page.locator('#name-dialog').waitFor({ state: 'visible', timeout: 5000 });
-  const smokeName = 'QA Snapshot ' + Date.now();
+  const smokeName = 'Build equilibrada';
   await page.locator('#name-form input[name="name"]').fill(smokeName);
   await page.locator('#name-form').evaluate(form => form.requestSubmit());
   await page.locator('#name-dialog').waitFor({ state: 'hidden', timeout: 5000 });
@@ -122,7 +122,7 @@ async function runSmokeChecks(page, profileName) {
     if (await page.locator('#save-build').isEnabled()) {
       await page.locator('#save-build').click();
       await page.locator('#name-dialog').waitFor({ state: 'visible', timeout: 5000 });
-      await page.locator('#name-form input[name="name"]').fill(smokeName + ' alternativa');
+      await page.locator('#name-form input[name="name"]').fill('Build com GPU alternativa');
       await page.locator('#name-form').evaluate(form => form.requestSubmit());
       await page.locator('#name-dialog').waitFor({ state: 'hidden', timeout: 5000 });
     }
@@ -135,6 +135,14 @@ async function runSmokeChecks(page, profileName) {
   await assertUi(await page.locator('#compare-panel').isVisible(), 'painel de comparação não abriu');
   await assertUi((await page.locator('#compare-content .compare-grid').count()) >= 2, 'comparação não foi renderizada');
   await assertUi((await page.locator('#compare-content .compare-summary article').count()) === 3, 'resumo rápido da comparação não foi renderizado');
+  const diffToggle = page.locator('#compare-diff-toggle');
+  await assertUi(await diffToggle.isVisible(), 'filtro de diferenças do comparador não apareceu');
+
+  if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
+    await assertUi((await diffToggle.getAttribute('aria-pressed')) === 'true', 'mobile não iniciou mostrando apenas diferenças');
+  }
+
+  await page.waitForFunction(() => !document.querySelector('#toast')?.classList.contains('on'), null, { timeout: 3000 }).catch(() => {});
 
   if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
     const comparePartsToggle = page.locator('#parts-toggle');
