@@ -176,7 +176,7 @@ function renderCatalogExplorer() {
     : '<div class="catalog-no-results">' + escapeHtml(t('catalog.noResults')) + '</div>';
 }
 
-function openComponentDialog(id) {
+async function openComponentDialog(id) {
   const item = catalog.find(componentItem => componentItem.id === id);
   if (!item || !componentDialog || !componentDialogBody) return;
 
@@ -203,9 +203,38 @@ function openComponentDialog(id) {
     '</div>' +
     (source.startsWith('https://')
       ? '<a class="component-source" href="' + escapeHtml(source) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t('catalog.source')) + ' ↗</a>'
-      : '');
+      : '') +
+    '<section class="price-history"><h3>' + escapeHtml(t('catalog.history')) + '</h3><div id="price-history-list"></div></section>';
 
   componentDialog.showModal();
+
+  const historyList = componentDialogBody.querySelector('#price-history-list');
+  if (!historyList) return;
+
+  if (!supabaseClient) {
+    historyList.innerHTML = '<p>' + escapeHtml(t('catalog.historyEmpty')) + '</p>';
+    return;
+  }
+
+  const { data: history, error } = await supabaseClient
+    .from('montapc_price_snapshots')
+    .select('store_name,price_cents,in_stock,observed_at,product_url')
+    .eq('component_id', item.id)
+    .order('observed_at', { ascending: false })
+    .limit(12);
+
+  if (error || !history?.length) {
+    historyList.innerHTML = '<p>' + escapeHtml(t('catalog.historyEmpty')) + '</p>';
+    return;
+  }
+
+  historyList.innerHTML = history.map(entry =>
+    '<div class="price-history-row">' +
+      '<span>' + escapeHtml(formatObservedDate(entry.observed_at)) + '</span>' +
+      '<strong>' + escapeHtml(formatMoney(entry.price_cents)) + '</strong>' +
+      '<small>' + escapeHtml(entry.store_name) + (entry.in_stock ? '' : ' · ' + escapeHtml(t('catalog.outOfStock'))) + '</small>' +
+    '</div>'
+  ).join('');
 }
 
 function priceOf(item) {
