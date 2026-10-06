@@ -2215,11 +2215,41 @@ const resetCatalogFilters = () => {
   resetCatalogVisibleLimit();
   renderCatalogExplorer();
 };
+
+function syncBudgetPresets() {
+  const currentBudget = Number(plannerForm?.elements?.budget?.value || 0);
+  document.querySelectorAll('.budget-presets [data-budget]').forEach(button => {
+    const active = Number(button.dataset.budget || 0) === currentBudget;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
+document.querySelector('.budget-presets')?.addEventListener('click', event => {
+  const button = event.target.closest('[data-budget]');
+  if (!button || !plannerForm?.elements?.budget) return;
+  plannerForm.elements.budget.value = button.dataset.budget;
+  syncBudgetPresets();
+  plannerForm.elements.budget.dispatchEvent(new Event('input', { bubbles:true }));
+});
+
+plannerForm?.elements?.budget?.addEventListener('input', syncBudgetPresets);
 catalogSearch?.addEventListener('input', resetCatalogFilters);
 catalogTypeFilter?.addEventListener('change', resetCatalogFilters);
 catalogBrandFilter?.addEventListener('change', resetCatalogFilters);
 catalogMaxPrice?.addEventListener('input', resetCatalogFilters);
 catalogSort?.addEventListener('change', resetCatalogFilters);
+
+document.querySelector('#catalog-reset')?.addEventListener('click', () => {
+  if (catalogSearch) catalogSearch.value = '';
+  if (catalogTypeFilter) catalogTypeFilter.value = '';
+  if (catalogBrandFilter) catalogBrandFilter.value = '';
+  if (catalogMaxPrice) catalogMaxPrice.value = '';
+  if (catalogSort) catalogSort.value = 'price-asc';
+  resetCatalogVisibleLimit();
+  syncCatalogShortcutState();
+  renderCatalogExplorer();
+});
 catalogLoadMore?.addEventListener('click', () => {
   catalogVisibleLimit += catalogPageSize();
   renderCatalogExplorer();
@@ -2412,6 +2442,7 @@ async function init() {
 
   try {
     await loadCatalog();
+    syncBudgetPresets();
     await loadLivePrices();
     renderCatalogExplorer();
     const componentId = new URLSearchParams(window.location.search).get('component');
