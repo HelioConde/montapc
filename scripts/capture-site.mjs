@@ -41,6 +41,15 @@ async function runSmokeChecks(page) {
     await page.locator('#build-result').waitFor({ state: 'visible', timeout: 15_000 });
   }
 
+  const partsToggle = page.locator('#parts-toggle');
+  if (await partsToggle.count()) {
+    const partsHidden = await page.locator('#parts-list').evaluate(element => element.hidden);
+    if (partsHidden) {
+      await partsToggle.click();
+      await page.waitForTimeout(120);
+    }
+  }
+
   await assertUi((await page.locator('#parts-list .part-row').count()) >= 7, 'lista de peças incompleta');
 
   const languageSelect = page.locator('#language-select');
