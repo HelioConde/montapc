@@ -18,10 +18,12 @@ jobs:
           test -f supabase-config.js
           test -f ads-config.js
           test -f ads.js
+          test -f i18n.js
           node --check app.js
           node --check supabase-config.js
           node --check ads-config.js
           node --check ads.js
+          node --check i18n.js
           grep -qi '<title' index.html
           grep -qi 'name="description"' index.html
           grep -qi 'rel="canonical"' index.html
@@ -29,6 +31,10 @@ jobs:
           grep -qi 'src="supabase-config.js"' index.html
           grep -qi 'src="ads-config.js"' index.html
           grep -qi 'src="ads.js"' index.html
+          grep -qi 'src="i18n.js"' index.html
+          grep -q 'id="language-select"' index.html
+          grep -q "'pt-BR'" i18n.js
+          grep -q "'en'" i18n.js
           grep -q 'enabled: false' ads-config.js
           ! grep -q 'ideias-ia-lab/04-monta-pc' index.html
           ! grep -qi 'service_role' supabase-config.js
