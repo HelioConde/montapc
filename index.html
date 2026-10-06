@@ -221,6 +221,13 @@
               <option value="case" data-i18n="type.case">Gabinete</option>
               <option value="cooler" data-i18n="type.cooler">Cooler</option>
             </select>
+            <select id="catalog-brand-filter" aria-label="Marca">
+              <option value="" data-i18n="catalog.allBrands">Todas as marcas</option>
+            </select>
+            <label class="catalog-price-filter">
+              <span data-i18n="catalog.maxPrice">Preço máximo</span>
+              <input id="catalog-max-price" type="number" min="0" step="100" placeholder="5000">
+            </label>
             <span id="catalog-results-count" class="catalog-results-count"></span>
           </div>
           <div id="catalog-grid" class="catalog-grid"></div>
