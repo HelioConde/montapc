@@ -524,6 +524,66 @@ function compatibility(build = currentBuild) {
           : t('compat.cpuFamilyError', { family })
       );
     }
+
+    const biosFamilies = Array.isArray(parts.motherboard.specs?.bios_update_families)
+      ? parts.motherboard.specs.bios_update_families.map(String)
+      : [];
+    if (family && biosFamilies.includes(family)) {
+      push(true, t('compat.biosWarning', { family }), 'warning');
+    }
+  }
+
+  if (parts.motherboard && parts.storage && String(parts.storage.specs?.interface || '').toUpperCase().includes('SATA')) {
+    const ports = Number(parts.motherboard.specs?.sata_ports || 0);
+    push(
+      ports > 0,
+      ports > 0 ? t('compat.sataOk', { ports }) : t('compat.sataError')
+    );
+  }
+
+  if (parts.memory && parts.cooler) {
+    const ramHeight = Number(parts.memory.specs?.height_mm || 0);
+    const clearance = Number(parts.cooler.specs?.ram_clearance_mm || 0);
+    if (ramHeight && clearance) {
+      push(
+        ramHeight <= clearance,
+        ramHeight <= clearance
+          ? t('compat.ramClearanceOk', { height: ramHeight, clearance })
+          : t('compat.ramClearanceError', { height: ramHeight, clearance })
+      );
+    }
+  }
+
+  if (parts.case && parts.motherboard) {
+    const requiredHeaders = Array.isArray(parts.case.specs?.required_usb_headers)
+      ? parts.case.specs.required_usb_headers.map(String)
+      : [];
+    const availableHeaders = Array.isArray(parts.motherboard.specs?.usb_headers)
+      ? parts.motherboard.specs.usb_headers.map(String)
+      : [];
+    if (requiredHeaders.length && availableHeaders.length) {
+      const missing = requiredHeaders.filter(header => !availableHeaders.includes(header));
+      push(
+        missing.length === 0,
+        missing.length === 0
+          ? t('compat.usbHeadersOk')
+          : t('compat.usbHeadersError', { headers: missing.join(', ') })
+      );
+    }
+  }
+
+  if (parts.gpu && parts.motherboard) {
+    const gpuPcie = Number(parts.gpu.specs?.pcie_version || 0);
+    const boardPcie = Number(parts.motherboard.specs?.pcie_x16_version || 0);
+    if (gpuPcie && boardPcie) {
+      push(
+        true,
+        boardPcie >= gpuPcie
+          ? t('compat.pcieOk')
+          : t('compat.pcieOlder', { gpu: gpuPcie, board: boardPcie }),
+        boardPcie >= gpuPcie ? 'ok' : 'warning'
+      );
+    }
   }
 
   const hardErrors = checks.filter(check => check.level === 'error' && !check.ok);
