@@ -461,3 +461,10 @@ input,select,button{max-width:100%;min-width:0}
   .catalog-toolbar-actions{grid-column:1/-1;justify-content:space-between}
   .catalog-toolbar-actions .button{padding:7px 4px}
 }
+
+.component-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.component-actions .button{flex:0 0 auto}
+@media(max-width:650px){
+  .component-actions{display:grid;grid-template-columns:1fr}
+  .component-actions .button{width:100%}
+}
