@@ -1011,6 +1011,34 @@ function comparePartName(build, type) {
   return item ? item.brand + ' ' + item.model : '—';
 }
 
+function estimatedBuildPower(build) {
+  const parts = selectedComponents(build);
+  return TYPE_ORDER.reduce((sum, type) => sum + wattageOf(parts[type]), 0) + 80;
+}
+
+function buildPerformanceIndex(build) {
+  const parts = selectedComponents(build);
+  const cpu = performance(parts.cpu);
+  const gpu = performance(parts.gpu);
+  const memory = performance(parts.memory);
+  const storage = performance(parts.storage);
+  return Math.round(cpu * .30 + gpu * .50 + memory * .12 + storage * .08);
+}
+
+function buildUpgradePotential(build) {
+  const parts = selectedComponents(build);
+  let score = 0;
+  if (parts.cpu?.socket === 'AM5') score += 3;
+  if (parts.memory?.specs?.memory_type === 'DDR5') score += 2;
+  if (Number(parts.motherboard?.specs?.m2_slots || 0) >= 2) score += 1;
+  if (Number(parts.psu?.specs?.wattage || 0) >= requiredPsuWatts(build.selection) + 100) score += 2;
+  if (Number(parts.case?.specs?.max_gpu_mm || 0) >= 350) score += 1;
+
+  if (score >= 6) return t('compare.upgrade.high');
+  if (score >= 3) return t('compare.upgrade.medium');
+  return t('compare.upgrade.low');
+}
+
 function renderComparison() {
   if (!comparePanel || !compareContent) return;
   const builds = visibleSavedBuilds().map(normalizeSavedBuild)
@@ -1036,7 +1064,16 @@ function renderComparison() {
       [component('cpu', b.selection?.cpu)?.socket, component('memory', b.selection?.memory)?.specs?.memory_type].filter(Boolean).join(' · ') || '—'],
     [t('compare.headroom'),
       formatMoney(a.budgetCents - a.totalCents),
-      formatMoney(b.budgetCents - b.totalCents)]
+      formatMoney(b.budgetCents - b.totalCents)],
+    [t('compare.power'),
+      estimatedBuildPower(a) + ' W',
+      estimatedBuildPower(b) + ' W'],
+    [t('compare.performance'),
+      String(buildPerformanceIndex(a)),
+      String(buildPerformanceIndex(b))],
+    [t('compare.upgrade'),
+      buildUpgradePotential(a),
+      buildUpgradePotential(b)]
   ];
 
   compareContent.innerHTML =
