@@ -52,6 +52,16 @@ jobs:
           grep -q 'sitemap.xml' robots.txt
           grep -q 'hreflang="en"' index.html
           grep -q 'analytics.js' index.html
+
+          test "$(git hash-object img/assets/cpu.png)" = "e9b5aa389a7febb75e863b6f967f8c29dbfbfe8d"
+          test "$(git hash-object img/assets/gpu.png)" = "a331a1777bf10fa871798de62f3cfd844016c231"
+          test "$(git hash-object img/assets/motherboard.png)" = "51ef39bcb1512ebffd85c6fdcda0b857551dcfd6"
+          test "$(git hash-object img/assets/ram.png)" = "58295d5fcd29b79eaca53799fc64cd71acee42fb"
+          test "$(git hash-object img/assets/ssd-nvme.png)" = "17b3cdaf43d75bd8f7e9ae0983a1a4ef6ec83a12"
+          test "$(git hash-object img/assets/psu.png)" = "696c6213280a8ff73681ee7b319c1d39c4fb743b"
+          test "$(git hash-object img/assets/case.png)" = "5cc01bc945c5ac5b42ea02ddb9c23c7c19a26a1f"
+          test "$(git hash-object img/assets/cpu-cooler.png)" = "e200964cdb81d4f289cc70327ee326851efc6ff7"
+          test "$(git hash-object img/assets/hero-build.png)" = "df517804b8602eae70b60778fff9b26f7c0d6f37"
           grep -q "'pt-BR'" i18n.js
           grep -q "'en'" i18n.js
           grep -q 'enabled: false' ads-config.js
