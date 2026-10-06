@@ -46,6 +46,7 @@ const catalogSearch = document.querySelector('#catalog-search');
 const catalogTypeFilter = document.querySelector('#catalog-type-filter');
 const catalogBrandFilter = document.querySelector('#catalog-brand-filter');
 const catalogMaxPrice = document.querySelector('#catalog-max-price');
+const catalogSort = document.querySelector('#catalog-sort');
 const catalogGrid = document.querySelector('#catalog-grid');
 const catalogResultsCount = document.querySelector('#catalog-results-count');
 const catalogLoadMore = document.querySelector('#catalog-load-more');
@@ -216,9 +217,7 @@ function localComponentImage(item) {
   if (type === 'memory') return 'img/assets/ram.png';
   if (type === 'psu') return 'img/assets/psu.png';
   if (type === 'case') return 'img/assets/case.png';
-  if (type === 'cooler') {
-    return item?.specs?.cooler_type === 'aio' ? 'img/assets/aio-cooler.png' : 'img/assets/cpu-cooler.png';
-  }
+  if (type === 'cooler') return 'img/assets/cpu-cooler.png';
   if (type === 'storage') {
     const interfaceName = String(item?.specs?.interface || '').toLowerCase();
     return interfaceName.includes('sata') && !interfaceName.includes('nvme')
@@ -289,6 +288,14 @@ function renderCatalogExplorer() {
     const matchesPrice = !maxPriceCents || Number(item.price_cents || 0) <= maxPriceCents;
     const haystack = [item.brand, item.model, item.socket, item.component_type].filter(Boolean).join(' ').toLowerCase();
     return matchesType && matchesBrand && matchesPrice && (!query || haystack.includes(query));
+  });
+
+  const sortMode = catalogSort?.value || 'price-asc';
+  items.sort((a, b) => {
+    if (sortMode === 'price-desc') return Number(b.price_cents || 0) - Number(a.price_cents || 0);
+    if (sortMode === 'performance-desc') return performance(b) - performance(a) || Number(a.price_cents || 0) - Number(b.price_cents || 0);
+    if (sortMode === 'name-asc') return (a.brand + ' ' + a.model).localeCompare(b.brand + ' ' + b.model, i18n?.locale === 'en' ? 'en' : 'pt-BR');
+    return Number(a.price_cents || 0) - Number(b.price_cents || 0);
   });
 
   const visibleItems = items.slice(0, catalogVisibleLimit);
@@ -2212,6 +2219,7 @@ catalogSearch?.addEventListener('input', resetCatalogFilters);
 catalogTypeFilter?.addEventListener('change', resetCatalogFilters);
 catalogBrandFilter?.addEventListener('change', resetCatalogFilters);
 catalogMaxPrice?.addEventListener('input', resetCatalogFilters);
+catalogSort?.addEventListener('change', resetCatalogFilters);
 catalogLoadMore?.addEventListener('click', () => {
   catalogVisibleLimit += catalogPageSize();
   renderCatalogExplorer();
