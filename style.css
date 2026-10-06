@@ -204,3 +204,13 @@ a{color:inherit;text-decoration:none}
 .component-live-price strong,.component-live-price span{display:block}
 .component-live-price strong{font-size:10px}.component-live-price span{font-size:9px}
 @media(max-width:650px){.component-live-price{align-items:flex-start;flex-direction:column}}
+
+.price-history{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.price-history h3{margin:0 0 9px;font:700 12px Manrope,sans-serif}
+.price-history>div{display:grid;gap:6px}
+.price-history>div>p{margin:0;color:var(--muted);font-size:10px}
+.price-history-row{display:grid;grid-template-columns:90px 90px 1fr;gap:8px;align-items:center;padding:8px 10px;border-radius:9px;background:#fbfcfd;font-size:9px}
+.price-history-row>span{color:var(--muted)}
+.price-history-row>strong{font-size:10px}
+.price-history-row>small{color:var(--accent)}
+@media(max-width:650px){.price-history-row{grid-template-columns:1fr 1fr}.price-history-row>small{grid-column:1/-1}}
