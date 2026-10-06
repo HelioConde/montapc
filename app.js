@@ -52,6 +52,7 @@ let currentUser = null;
 let cloudBuilds = [];
 let cloudLoading = false;
 let compareSelection = [];
+let livePrices = new Map();
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, char => ({
@@ -162,6 +163,13 @@ function renderCatalogExplorer() {
           '<strong>' + escapeHtml(item.brand + ' ' + item.model) + '</strong>' +
           '<div class="part-meta">' + componentMeta(item, item.component_type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>' +
           '<small>' + escapeHtml(t('catalog.referencePrice')) + ': ' + escapeHtml(formatMoney(item.price_cents)) + '</small>' +
+          (livePriceFor(item)
+            ? '<small class="catalog-live-price">' +
+                escapeHtml(livePriceFor(item).in_stock
+                  ? t('catalog.liveAt', { store: livePriceFor(item).store_name, price: formatMoney(livePriceFor(item).price_cents) })
+                  : t('catalog.outOfStock')) +
+              '</small>'
+            : '') +
           '<button class="button ghost" type="button" data-component-details="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.details')) + '</button>' +
         '</article>'
       ).join('')
@@ -175,12 +183,19 @@ function openComponentDialog(id) {
   document.querySelector('#component-dialog-title').textContent = item.brand + ' ' + item.model;
   const specs = catalogSpecEntries(item);
   const source = String(item.specs?.spec_source || '');
+  const live = livePriceFor(item);
 
   componentDialogBody.innerHTML =
     '<div class="component-detail-summary">' +
       '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
       '<strong>' + escapeHtml(formatMoney(item.price_cents)) + '</strong>' +
     '</div>' +
+    (live
+      ? '<div class="component-live-price">' +
+          '<strong>' + escapeHtml(live.in_stock ? t('catalog.liveAt', { store: live.store_name, price: formatMoney(live.price_cents) }) : t('catalog.outOfStock')) + '</strong>' +
+          '<span>' + escapeHtml(t('catalog.observed', { date: formatObservedDate(live.observed_at) })) + '</span>' +
+        '</div>'
+      : '') +
     '<div class="component-spec-grid">' +
       specs.map(([key, value]) =>
         '<div><span>' + escapeHtml(humanSpecKey(key)) + '</span><strong>' + escapeHtml(humanSpecValue(value)) + '</strong></div>'
@@ -195,6 +210,35 @@ function openComponentDialog(id) {
 
 function priceOf(item) {
   return Number(item?.price_cents || 0);
+}
+
+function livePriceFor(item) {
+  return item?.id ? livePrices.get(item.id) || null : null;
+}
+
+function formatObservedDate(value) {
+  const locale = i18n?.locale === 'en' ? 'en-US' : 'pt-BR';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString(locale);
+}
+
+async function loadLivePrices() {
+  if (!supabaseClient || !catalog.length) return;
+  const { data, error } = await supabaseClient
+    .from('montapc_price_snapshots')
+    .select('component_id,store_name,price_cents,product_url,in_stock,observed_at')
+    .order('observed_at', { ascending: false })
+    .limit(500);
+
+  if (error) {
+    console.warn('MontaPC live prices unavailable', error);
+    return;
+  }
+
+  livePrices = new Map();
+  for (const row of data || []) {
+    if (!livePrices.has(row.component_id)) livePrices.set(row.component_id, row);
+  }
 }
 
 function wattageOf(item) {
@@ -665,7 +709,9 @@ function renderCompatibility() {
 }
 
 function optionLabel(item) {
-  return `${item.brand} ${item.model} · ${formatMoney(item.price_cents)}`;
+  const live = livePriceFor(item);
+  return `${item.brand} ${item.model} · ${formatMoney(item.price_cents)}` +
+    (live?.in_stock ? ` · ${formatMoney(live.price_cents)} @ ${live.store_name}` : '');
 }
 
 function componentMeta(item, type) {
@@ -1568,6 +1614,8 @@ async function init() {
 
   try {
     await loadCatalog();
+    await loadLivePrices();
+    renderCatalogExplorer();
     await migrateLegacyRequests();
     loadSharedBuildFromHash();
     renderSavedBuilds();
