@@ -176,10 +176,13 @@ async function runSmokeChecks(page, profileName) {
       await gpuShortcut.click();
       await page.waitForTimeout(100);
       await assertUi((await page.locator('#catalog-type-filter').inputValue()) === 'gpu', 'atalho visual de categoria não aplicou o filtro');
+      await assertUi((await gpuShortcut.getAttribute('aria-pressed')) === 'true', 'atalho visual ativo não foi marcado');
       await assertUi((await page.locator('#catalog-grid .catalog-card').count()) > 0, 'atalho visual de categoria não retornou componentes');
-      await page.locator('#catalog-type-filter').selectOption('');
-      await page.locator('#catalog-type-filter').dispatchEvent('change');
+
+      await gpuShortcut.click();
       await page.waitForTimeout(100);
+      await assertUi((await page.locator('#catalog-type-filter').inputValue()) === '', 'segundo toque no atalho não limpou o filtro');
+      await assertUi((await gpuShortcut.getAttribute('aria-pressed')) === 'false', 'atalho visual continuou ativo após limpar o filtro');
     }
 
     if (page.viewportSize()?.width && page.viewportSize().width <= 650) {
@@ -296,7 +299,12 @@ try {
     if (await generateButton.isEnabled().catch(() => false)) {
       await generateButton.click();
       await page.locator('#build-result').waitFor({ state: 'visible', timeout: 15_000 }).catch(() => {});
-      await page.waitForTimeout(2300);
+      if (profile.viewport.width <= 650) {
+        await page.waitForTimeout(450);
+        const resultTop = await page.locator('.result-panel').evaluate(element => element.getBoundingClientRect().top);
+        await assertUi(resultTop < profile.viewport.height * 0.45, 'mobile não focou a configuração gerada');
+      }
+      await page.waitForTimeout(1850);
     }
 
     const buildFilename = `latest-${profile.name}-build.png`;
