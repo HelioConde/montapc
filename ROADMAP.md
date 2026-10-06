@@ -59,7 +59,9 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 
 ## P2 — UX e conteúdo
 
-- [ ] Cards de peças mais visuais
+- [x] Cards de peças mais visuais
+- [x] Catálogo mobile compactado para navegação mais rápida
+- [x] Atalhos de categorias mobile sem corte horizontal
 - [ ] Imagens dos componentes
 - [x] Chips técnicos: socket, DDR, potência, VRAM etc.
 - [ ] Pontos fortes/fracos
