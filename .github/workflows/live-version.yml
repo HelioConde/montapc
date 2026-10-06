@@ -6,6 +6,9 @@ on:
       - version.json
       - 'screenshots/**'
 permissions: { contents: write }
+concurrency:
+  group: live-version-main
+  cancel-in-progress: true
 jobs:
   version:
     runs-on: ubuntu-latest
