@@ -98,6 +98,36 @@ async function runSmokeChecks(page, profileName) {
   await page.waitForTimeout(150);
   await assertUi((await page.locator('#saved-builds .saved-card').count()) >= 2, 'duplicação de build falhou');
 
+  const copyOpen = page.locator('#saved-builds [data-open]').first();
+  await copyOpen.click();
+  await page.waitForTimeout(120);
+
+  const copyPartsToggle = page.locator('#parts-toggle');
+  if (await copyPartsToggle.count()) {
+    const copyPartsHidden = await page.locator('#parts-list').evaluate(element => element.hidden);
+    if (copyPartsHidden) {
+      await copyPartsToggle.click();
+      await page.waitForTimeout(80);
+    }
+  }
+
+  const gpuSelect = page.locator('select[data-part="gpu"]');
+  const currentGpu = await gpuSelect.inputValue();
+  const gpuValues = await gpuSelect.locator('option').evaluateAll(options => options.map(option => option.value).filter(Boolean));
+  const alternativeGpu = gpuValues.find(value => value !== currentGpu);
+
+  if (alternativeGpu) {
+    await gpuSelect.selectOption(alternativeGpu);
+    await page.waitForTimeout(120);
+    if (await page.locator('#save-build').isEnabled()) {
+      await page.locator('#save-build').click();
+      await page.locator('#name-dialog').waitFor({ state: 'visible', timeout: 5000 });
+      await page.locator('#name-form input[name="name"]').fill(smokeName + ' alternativa');
+      await page.locator('#name-form').evaluate(form => form.requestSubmit());
+      await page.locator('#name-dialog').waitFor({ state: 'hidden', timeout: 5000 });
+    }
+  }
+
   const compareButtons = page.locator('#saved-builds [data-compare]');
   await compareButtons.nth(0).click();
   await compareButtons.nth(1).click();
