@@ -203,6 +203,9 @@ function renderCatalogExplorer() {
   catalogGrid.innerHTML = items.length
     ? items.map(item =>
         '<article class="catalog-card">' +
+          (String(item.image_url || '').startsWith('https://')
+            ? '<img class="catalog-card-image" src="' + escapeHtml(item.image_url) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">'
+            : '<div class="catalog-card-image catalog-card-placeholder" aria-hidden="true">' + escapeHtml((item.brand || '?').slice(0, 1)) + '</div>') +
           '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
           '<strong>' + escapeHtml(item.brand + ' ' + item.model) + '</strong>' +
           '<div class="part-meta">' + componentMeta(item, item.component_type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>' +
@@ -231,6 +234,9 @@ async function openComponentDialog(id) {
   const highlights = componentHighlights(item);
 
   componentDialogBody.innerHTML =
+    (String(item.image_url || '').startsWith('https://')
+      ? '<img class="component-hero-image" src="' + escapeHtml(item.image_url) + '" alt="' + escapeHtml(item.brand + ' ' + item.model) + '" loading="lazy" referrerpolicy="no-referrer">'
+      : '') +
     '<div class="component-detail-summary">' +
       '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
       '<strong>' + escapeHtml(formatMoney(item.price_cents)) + '</strong>' +
