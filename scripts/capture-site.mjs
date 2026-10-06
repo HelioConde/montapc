@@ -131,7 +131,7 @@ try {
     if (await generateButton.isEnabled().catch(() => false)) {
       await generateButton.click();
       await page.locator('#build-result').waitFor({ state: 'visible', timeout: 15_000 }).catch(() => {});
-      await page.waitForTimeout(800);
+      await page.waitForTimeout(2300);
     }
 
     const buildFilename = `latest-${profile.name}-build.png`;
@@ -154,6 +154,22 @@ try {
         fullPage: true,
         animations: 'disabled'
       });
+      await languageSelect.selectOption('pt-BR');
+      await page.waitForTimeout(250);
+    }
+
+    let catalogFile = null;
+    const catalogDetails = page.locator('.catalog-explorer');
+    if (await catalogDetails.count()) {
+      await catalogDetails.evaluate(element => { element.open = true; });
+      await page.waitForTimeout(250);
+      catalogFile = `latest-${profile.name}-catalog.png`;
+      await page.screenshot({
+        path: path.join(outputDir, catalogFile),
+        fullPage: true,
+        animations: 'disabled'
+      });
+      await catalogDetails.evaluate(element => { element.open = false; });
     }
 
     await runSmokeChecks(page);
@@ -163,6 +179,7 @@ try {
       emptyFile: emptyFilename,
       buildFile: buildFilename,
       englishBuildFile,
+      catalogFile,
       viewport: profile.viewport,
       title: await page.title(),
       smokeTest: 'passed'
