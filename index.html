@@ -179,6 +179,33 @@
 
         <aside class="ad-slot compact" data-ad-slot="beforeSavedBuilds" hidden aria-label="Publicidade"></aside>
       </section>
+
+      <section class="catalog-section">
+        <details class="catalog-explorer">
+          <summary>
+            <div>
+              <p class="eyebrow" data-i18n="catalog.title">Explorar componentes</p>
+              <h2 data-i18n="catalog.copy">Pesquise o catálogo técnico usado pelo montador.</h2>
+            </div>
+          </summary>
+          <div class="catalog-toolbar">
+            <input id="catalog-search" type="search" data-i18n-placeholder="catalog.search" placeholder="Buscar por marca ou modelo">
+            <select id="catalog-type-filter" aria-label="Tipo de componente">
+              <option value="" data-i18n="catalog.allTypes">Todos os tipos</option>
+              <option value="cpu" data-i18n="type.cpu">Processador</option>
+              <option value="motherboard" data-i18n="type.motherboard">Placa-mãe</option>
+              <option value="gpu" data-i18n="type.gpu">Placa de vídeo</option>
+              <option value="memory" data-i18n="type.memory">Memória</option>
+              <option value="storage" data-i18n="type.storage">Armazenamento</option>
+              <option value="psu" data-i18n="type.psu">Fonte</option>
+              <option value="case" data-i18n="type.case">Gabinete</option>
+              <option value="cooler" data-i18n="type.cooler">Cooler</option>
+            </select>
+            <span id="catalog-results-count" class="catalog-results-count"></span>
+          </div>
+          <div id="catalog-grid" class="catalog-grid"></div>
+        </details>
+      </section>
     </main>
 
     <footer class="footer">
@@ -186,6 +213,17 @@
       <span data-i18n="footer.copy">Compatibilidade explicável primeiro; conteúdo comercial futuro será sempre identificado.</span>
     </footer>
   </div>
+
+  <dialog id="component-dialog" class="dialog component-dialog" aria-labelledby="component-dialog-title">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow" data-i18n="catalog.specs">Especificações</p>
+        <h2 id="component-dialog-title"></h2>
+      </div>
+      <button id="component-dialog-close" class="icon-button" type="button" data-i18n-aria="account.close" aria-label="Fechar">×</button>
+    </div>
+    <div id="component-dialog-body"></div>
+  </dialog>
 
   <dialog id="account-dialog" class="dialog" aria-labelledby="account-title">
     <div class="dialog-head">
