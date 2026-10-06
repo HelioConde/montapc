@@ -228,8 +228,9 @@ function localComponentImage(item) {
 }
 
 function componentImage(item) {
+  if (item?.component_type) return localComponentImage(item);
   const remote = String(item?.image_url || '');
-  return remote.startsWith('https://') ? remote : localComponentImage(item);
+  return remote.startsWith('https://') ? remote : 'img/assets/pc-light.png';
 }
 
 function componentHighlights(item) {
@@ -965,10 +966,7 @@ function renderCompatibility() {
 
   compatibilityList.innerHTML =
     '<div class="compatibility-summary ' + (issues.length ? 'has-issues' : 'all-ok') + '">' +
-      '<div class="compatibility-visual">' +
-        '<img src="' + (issues.length ? 'img/assets/compatibility-error.png' : 'img/assets/compatibility-ok.png') + '" alt="" aria-hidden="true" loading="lazy">' +
-        '<strong>' + escapeHtml(summaryText) + '</strong>' +
-      '</div>' +
+      '<strong>' + escapeHtml(summaryText) + '</strong>' +
       (issues.length ? issues.map(renderCheck).join('') : '') +
       (passed.length
         ? '<details class="compatibility-details">' +
