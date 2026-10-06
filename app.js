@@ -62,6 +62,7 @@ let currentUser = null;
 let cloudBuilds = [];
 let cloudLoading = false;
 let compareSelection = [];
+let compareOnlyDifferences = window.matchMedia('(max-width: 650px)').matches;
 let livePrices = new Map();
 let partsCollapsed = false;
 let catalogVisibleLimit = 0;
@@ -1226,6 +1227,8 @@ function renderComparison() {
   comparePanel.hidden = builds.length === 0;
 
   if (builds.length !== 2) {
+    const diffToggle = document.querySelector('#compare-diff-toggle');
+    if (diffToggle) diffToggle.hidden = true;
     compareContent.innerHTML =
       '<div class="compare-placeholder compare-placeholder-visual">' +
         '<img src="img/assets/compare-builds.png" alt="" aria-hidden="true" loading="lazy">' +
@@ -1267,6 +1270,17 @@ function renderComparison() {
   const powerB = estimatedBuildPower(b);
   const powerWinner = powerA === powerB ? t('compare.same') : (powerA < powerB ? a.name : b.name);
 
+  const visibleRows = compareOnlyDifferences
+    ? rows.filter(row => String(row[1]) !== String(row[2]))
+    : rows;
+
+  const diffToggle = document.querySelector('#compare-diff-toggle');
+  if (diffToggle) {
+    diffToggle.hidden = false;
+    diffToggle.textContent = compareOnlyDifferences ? t('compare.showAll') : t('compare.onlyDifferences');
+    diffToggle.setAttribute('aria-pressed', compareOnlyDifferences ? 'true' : 'false');
+  }
+
   compareContent.innerHTML =
     '<section class="compare-summary" aria-label="' + escapeHtml(t('compare.quickSummary')) + '">' +
       '<article><span>' + escapeHtml(t('compare.cheaper')) + '</span><strong>' + escapeHtml(priceWinner) + '</strong></article>' +
@@ -1274,7 +1288,7 @@ function renderComparison() {
       '<article><span>' + escapeHtml(t('compare.lowerPower')) + '</span><strong>' + escapeHtml(powerWinner) + '</strong></article>' +
     '</section>' +
     '<div class="compare-grid compare-grid-head"><span></span><strong>' + escapeHtml(a.name) + '</strong><strong>' + escapeHtml(b.name) + '</strong></div>' +
-    rows.map(row => {
+    visibleRows.map(row => {
       const differs = String(row[1]) !== String(row[2]);
       return '<div class="compare-grid' + (differs ? ' has-difference' : '') + '">' +
         '<span>' + escapeHtml(row[0]) + '</span>' +
@@ -2173,6 +2187,11 @@ savedBuilds.addEventListener('click', async event => {
   } finally {
     remove.disabled = false;
   }
+});
+
+document.querySelector('#compare-diff-toggle')?.addEventListener('click', () => {
+  compareOnlyDifferences = !compareOnlyDifferences;
+  renderComparison();
 });
 
 document.querySelector('#compare-clear')?.addEventListener('click', () => {
