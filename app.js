@@ -38,6 +38,12 @@ const importLocalButton = document.querySelector('#import-local');
 const nameDialog = document.querySelector('#name-dialog');
 const nameForm = document.querySelector('#name-form');
 const nameMessage = document.querySelector('#name-message');
+const catalogSearch = document.querySelector('#catalog-search');
+const catalogTypeFilter = document.querySelector('#catalog-type-filter');
+const catalogGrid = document.querySelector('#catalog-grid');
+const catalogResultsCount = document.querySelector('#catalog-results-count');
+const componentDialog = document.querySelector('#component-dialog');
+const componentDialogBody = document.querySelector('#component-dialog-body');
 
 let catalog = [];
 let byType = {};
@@ -115,6 +121,76 @@ function groupCatalog() {
     byType[item.component_type].push(item);
   }
   Object.values(byType).forEach(items => items.sort((a,b) => Number(a.price_cents || 0) - Number(b.price_cents || 0)));
+}
+
+function catalogSpecEntries(item) {
+  const specs = item?.specs || {};
+  const hidden = new Set(['performance_score','price_kind','price_updated','price_live','spec_source']);
+  return Object.entries(specs)
+    .filter(([key, value]) => !hidden.has(key) && value !== null && value !== '' && value !== false)
+    .slice(0, 14);
+}
+
+function humanSpecKey(key) {
+  return String(key || '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function humanSpecValue(value) {
+  if (Array.isArray(value)) return value.join(' · ');
+  if (typeof value === 'boolean') return value ? '✓' : '—';
+  return String(value);
+}
+
+function renderCatalogExplorer() {
+  if (!catalogGrid || !catalogSearch || !catalogTypeFilter) return;
+  const query = catalogSearch.value.trim().toLowerCase();
+  const type = catalogTypeFilter.value;
+
+  const items = catalog.filter(item => {
+    const matchesType = !type || item.component_type === type;
+    const haystack = [item.brand, item.model, item.socket, item.component_type].filter(Boolean).join(' ').toLowerCase();
+    return matchesType && (!query || haystack.includes(query));
+  });
+
+  catalogResultsCount.textContent = t('catalog.results', { count: items.length });
+  catalogGrid.innerHTML = items.length
+    ? items.map(item =>
+        '<article class="catalog-card">' +
+          '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
+          '<strong>' + escapeHtml(item.brand + ' ' + item.model) + '</strong>' +
+          '<div class="part-meta">' + componentMeta(item, item.component_type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>' +
+          '<small>' + escapeHtml(t('catalog.referencePrice')) + ': ' + escapeHtml(formatMoney(item.price_cents)) + '</small>' +
+          '<button class="button ghost" type="button" data-component-details="' + escapeHtml(item.id) + '">' + escapeHtml(t('catalog.details')) + '</button>' +
+        '</article>'
+      ).join('')
+    : '<div class="catalog-no-results">' + escapeHtml(t('catalog.noResults')) + '</div>';
+}
+
+function openComponentDialog(id) {
+  const item = catalog.find(componentItem => componentItem.id === id);
+  if (!item || !componentDialog || !componentDialogBody) return;
+
+  document.querySelector('#component-dialog-title').textContent = item.brand + ' ' + item.model;
+  const specs = catalogSpecEntries(item);
+  const source = String(item.specs?.spec_source || '');
+
+  componentDialogBody.innerHTML =
+    '<div class="component-detail-summary">' +
+      '<span>' + escapeHtml(typeLabel(item.component_type)) + '</span>' +
+      '<strong>' + escapeHtml(formatMoney(item.price_cents)) + '</strong>' +
+    '</div>' +
+    '<div class="component-spec-grid">' +
+      specs.map(([key, value]) =>
+        '<div><span>' + escapeHtml(humanSpecKey(key)) + '</span><strong>' + escapeHtml(humanSpecValue(value)) + '</strong></div>'
+      ).join('') +
+    '</div>' +
+    (source.startsWith('https://')
+      ? '<a class="component-source" href="' + escapeHtml(source) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(t('catalog.source')) + ' ↗</a>'
+      : '');
+
+  componentDialog.showModal();
 }
 
 function priceOf(item) {
@@ -1148,6 +1224,7 @@ async function loadCatalog() {
   catalog = data || [];
   groupCatalog();
   document.querySelector('#catalog-count').textContent = String(catalog.length);
+  renderCatalogExplorer();
 }
 
 plannerForm.addEventListener('submit', event => {
@@ -1283,6 +1360,17 @@ document.querySelector('#compare-clear')?.addEventListener('click', () => {
   renderSavedBuilds();
 });
 
+catalogSearch?.addEventListener('input', renderCatalogExplorer);
+catalogTypeFilter?.addEventListener('change', renderCatalogExplorer);
+catalogGrid?.addEventListener('click', event => {
+  const button = event.target.closest('[data-component-details]');
+  if (button) openComponentDialog(button.dataset.componentDetails);
+});
+document.querySelector('#component-dialog-close')?.addEventListener('click', () => componentDialog.close());
+componentDialog?.addEventListener('click', event => {
+  if (event.target === componentDialog) componentDialog.close();
+});
+
 accountOpen.addEventListener('click', () => accountDialog.showModal());
 document.querySelector('#account-close').addEventListener('click', () => accountDialog.close());
 accountDialog.addEventListener('click', event => {
@@ -1395,6 +1483,7 @@ document.addEventListener('montapc:languagechange', () => {
   updateAccountUi();
   renderBuild();
   renderSavedBuilds();
+  renderCatalogExplorer();
 });
 
 async function init() {
