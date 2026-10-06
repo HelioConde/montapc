@@ -200,10 +200,30 @@ async function runSmokeChecks(page, profileName) {
     await catalogDetails.evaluate(element => { element.open = false; });
   }
 
-  const pageWidths = await page.evaluate(() => ({
-    viewport: document.documentElement.clientWidth,
-    scroll: document.documentElement.scrollWidth
-  }));
+  const pageWidths = await page.evaluate(() => {
+    const viewport = document.documentElement.clientWidth;
+    const scroll = document.documentElement.scrollWidth;
+    const offenders = scroll > viewport + 2
+      ? Array.from(document.querySelectorAll('body *'))
+          .map(element => {
+            const rect = element.getBoundingClientRect();
+            return {
+              tag: element.tagName.toLowerCase(),
+              id: element.id || '',
+              className: typeof element.className === 'string' ? element.className : '',
+              left: Math.round(rect.left),
+              right: Math.round(rect.right),
+              width: Math.round(rect.width)
+            };
+          })
+          .filter(item => item.right > viewport + 2 || item.left < -2)
+          .slice(0, 15)
+      : [];
+    return { viewport, scroll, offenders };
+  });
+  if (pageWidths.offenders.length) {
+    console.log('Horizontal overflow offenders:', JSON.stringify(pageWidths, null, 2));
+  }
   await assertUi(pageWidths.scroll <= pageWidths.viewport + 2, 'há overflow horizontal no documento');
 
   while (await page.locator('#saved-builds .saved-card').count()) {
