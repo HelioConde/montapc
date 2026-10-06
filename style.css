@@ -303,3 +303,14 @@ a{color:inherit;text-decoration:none}
   .empty-checks{gap:5px;margin-top:14px}
   .empty-checks span{font-size:8px;padding:5px 7px}
 }
+
+.catalog-more-row{display:flex;justify-content:center;padding:0 20px 20px}
+.catalog-more-row .button{min-width:220px}
+@media(max-width:650px){
+  .catalog-more-row{padding:0 14px 14px}
+  .catalog-more-row .button{width:100%}
+  .catalog-card{padding:12px;gap:5px}
+  .catalog-card-image{height:82px}
+  .catalog-card>strong{font-size:11px}
+  .catalog-card>.button{width:100%}
+}
