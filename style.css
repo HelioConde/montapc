@@ -436,3 +436,14 @@ input,select,button{max-width:100%;min-width:0}
   .catalog-category-shortcuts button{flex:0 0 78px;grid-template-rows:38px auto;scroll-snap-align:start}
   .catalog-category-shortcuts img{width:38px;height:38px}
 }
+
+.compare-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#compare-diff-toggle[aria-pressed="true"]{border-color:#9ab7c5;background:var(--soft);color:var(--accent)}
+@media(max-width:650px){
+  .compare-head-actions{width:100%;justify-content:space-between}
+  .compare-head-actions .button{flex:1 1 auto;text-align:center}
+  .compare-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .compare-summary article{padding:8px}
+  .compare-summary span{font-size:7px}
+  .compare-summary strong{font-size:9px}
+}
