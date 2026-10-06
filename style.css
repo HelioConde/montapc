@@ -119,3 +119,18 @@ a{color:inherit;text-decoration:none}
 .recommendation-insight{display:grid;grid-template-columns:20px 1fr;gap:7px;align-items:start;color:var(--muted);font-size:10px}
 .recommendation-insight>span{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:800}
 .recommendation-insight p{margin:1px 0 0;line-height:1.5}
+
+.compatibility-summary{display:grid;gap:8px}
+.compatibility-summary>strong{font:700 10px Manrope,sans-serif;color:var(--muted)}
+.compatibility-summary.has-issues>strong{color:var(--danger)}
+.compatibility-details{border:1px solid var(--line);border-radius:10px;background:#fbfcfd;overflow:hidden}
+.compatibility-details summary{cursor:pointer;list-style:none;padding:10px 12px;color:var(--accent);font-size:10px;font-weight:800}
+.compatibility-details summary::-webkit-details-marker{display:none}
+.compatibility-details summary::after{content:'+';float:right;font-size:14px;line-height:1}
+.compatibility-details[open] summary::after{content:'−'}
+.compatibility-details-list{display:grid;gap:6px;padding:0 8px 8px}
+.compatibility-details .compatibility-item{margin:0}
+@media(max-width:650px){
+  .compatibility-list{margin-bottom:14px}
+  .compatibility-details summary{padding:11px 12px}
+}
