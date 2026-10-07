@@ -1,0 +1,1646 @@
+{
+  "generated_at": "2026-10-07",
+  "source": "pizzaria-db/public.montapc_components",
+  "purpose": "production fallback snapshot; live Supabase remains primary",
+  "components": [
+    {
+      "id": "8106ba2a-a8c1-4d8f-bad1-062399c18aea",
+      "component_type": "case",
+      "brand": "Montech",
+      "model": "Air 100 Lite",
+      "socket": null,
+      "price_cents": 32900,
+      "tdp_watts": null,
+      "active": true,
+      "specs": {
+        "max_gpu_mm": 330,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "form_factors": [
+          "mATX",
+          "Mini-ITX"
+        ],
+        "max_cooler_mm": 161,
+        "price_updated": "2026-10-06",
+        "performance_score": 65
+      },
+      "image_url": null
+    },
+    {
+      "id": "bfa89d3b-df30-4d4b-a90d-98ffb8daa046",
+      "component_type": "case",
+      "brand": "Montech",
+      "model": "Air 903 Base",
+      "socket": null,
+      "price_cents": 46900,
+      "tdp_watts": null,
+      "active": true,
+      "specs": {
+        "max_gpu_mm": 400,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "spec_source": "https://www.montechpc.com/air-903-base",
+        "form_factors": [
+          "E-ATX",
+          "ATX",
+          "mATX",
+          "Mini-ITX"
+        ],
+        "max_cooler_mm": 180,
+        "max_gpu_slots": 7,
+        "price_updated": "2026-10-06",
+        "performance_score": 85,
+        "radiator_support_mm": [
+          120,
+          140,
+          240,
+          280,
+          360
+        ],
+        "required_usb_headers": [
+          "USB-C",
+          "USB 3.0"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "4d562e7f-cec7-407b-ae8f-02fa5ad7bbc4",
+      "component_type": "case",
+      "brand": "Corsair",
+      "model": "4000D Airflow",
+      "socket": null,
+      "price_cents": 59900,
+      "tdp_watts": 0,
+      "active": true,
+      "specs": {
+        "max_gpu_mm": 360,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "form_factors": [
+          "ATX",
+          "mATX",
+          "Mini-ITX"
+        ],
+        "max_cooler_mm": 170,
+        "max_gpu_slots": 7,
+        "price_updated": "2026-10-06",
+        "performance_score": 88,
+        "radiator_support_mm": [
+          120,
+          240,
+          280,
+          360
+        ],
+        "required_usb_headers": [
+          "USB 3.0"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "4769d550-d931-46fc-82e5-9880e9b83451",
+      "component_type": "case",
+      "brand": "Cooler Master",
+      "model": "NR200P",
+      "socket": null,
+      "price_cents": 64900,
+      "tdp_watts": 0,
+      "active": true,
+      "specs": {
+        "max_gpu_mm": 330,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "form_factors": [
+          "Mini-ITX"
+        ],
+        "max_cooler_mm": 155,
+        "max_gpu_slots": 3,
+        "price_updated": "2026-10-06",
+        "performance_score": 82,
+        "radiator_support_mm": [
+          120,
+          240,
+          280
+        ],
+        "required_usb_headers": [
+          "USB 3.0"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "6e871a31-621f-4d38-8861-031e88e5dc86",
+      "component_type": "cooler",
+      "brand": "DeepCool",
+      "model": "AG400",
+      "socket": null,
+      "price_cents": 18900,
+      "tdp_watts": 5,
+      "active": true,
+      "specs": {
+        "height_mm": 150,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "price_updated": "2026-10-06",
+        "performance_score": 75,
+        "supported_sockets": [
+          "AM4",
+          "AM5",
+          "LGA1700"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "5c72d105-682a-4ddf-8a9c-762fb598caf7",
+      "component_type": "cooler",
+      "brand": "Thermalright",
+      "model": "Peerless Assassin 120 SE",
+      "socket": null,
+      "price_cents": 32900,
+      "tdp_watts": 5,
+      "active": true,
+      "specs": {
+        "height_mm": 155,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "cooler_type": "air",
+        "price_updated": "2026-10-06",
+        "ram_clearance_mm": 42,
+        "performance_score": 91,
+        "supported_sockets": [
+          "AM4",
+          "AM5",
+          "LGA115x",
+          "LGA1200",
+          "LGA1700",
+          "LGA1851"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "4b793a31-a0c1-41da-ab36-79ed38c700f4",
+      "component_type": "cooler",
+      "brand": "DeepCool",
+      "model": "LE520 240mm AIO",
+      "socket": null,
+      "price_cents": 38999,
+      "tdp_watts": 9,
+      "active": true,
+      "specs": {
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "cooler_type": "aio",
+        "radiator_mm": 240,
+        "spec_source": "https://global.deepcool.com/products/Cooling/cpuliquidcoolers/LE520-240mm-Liquid-CPU-Cooler-1851-1700-AM5/2024/16608.shtml",
+        "price_updated": "2026-10-06",
+        "performance_score": 88,
+        "supported_sockets": [
+          "AM4",
+          "AM5",
+          "LGA1150",
+          "LGA1151",
+          "LGA1155",
+          "LGA1200",
+          "LGA1700",
+          "LGA1851"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "72f04e91-bfc8-4f91-ab49-de93a66f1869",
+      "component_type": "cooler",
+      "brand": "DeepCool",
+      "model": "AK620",
+      "socket": null,
+      "price_cents": 42900,
+      "tdp_watts": 5,
+      "active": true,
+      "specs": {
+        "height_mm": 160,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "cooler_type": "air",
+        "price_updated": "2026-10-06",
+        "ram_clearance_mm": 43,
+        "performance_score": 94,
+        "supported_sockets": [
+          "AM4",
+          "AM5",
+          "LGA1200",
+          "LGA1700",
+          "LGA1851"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "41a8416f-e3d1-4eb0-8785-cdb8e627d19a",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 5 5500",
+      "socket": "AM4",
+      "price_cents": 52900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 6,
+        "family": "Ryzen 5000",
+        "threads": 12,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4",
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 58
+      },
+      "image_url": null
+    },
+    {
+      "id": "f1128907-b8cd-4fb2-803c-a22cdc020612",
+      "component_type": "cpu",
+      "brand": "Intel",
+      "model": "Core i3-12100F",
+      "socket": "LGA1700",
+      "price_cents": 59900,
+      "tdp_watts": 58,
+      "active": true,
+      "specs": {
+        "cores": 4,
+        "family": "Intel Core 12th Gen",
+        "threads": 8,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4_DDR5",
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 58
+      },
+      "image_url": null
+    },
+    {
+      "id": "cb78465d-7121-4635-8c78-bed022fa54f6",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 5 5600",
+      "socket": "AM4",
+      "price_cents": 69900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 6,
+        "family": "Ryzen 5000",
+        "threads": 12,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4",
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 68
+      },
+      "image_url": null
+    },
+    {
+      "id": "3cf97bc2-c9ed-435e-986f-685e8c0c7f79",
+      "component_type": "cpu",
+      "brand": "Intel",
+      "model": "Core i5-12400F",
+      "socket": "LGA1700",
+      "price_cents": 79900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 6,
+        "family": "Intel Core 12th Gen",
+        "threads": 12,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4_DDR5",
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 72
+      },
+      "image_url": null
+    },
+    {
+      "id": "03f36672-4607-40d8-ae96-ff197db521d1",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 7 5700X",
+      "socket": "AM4",
+      "price_cents": 89900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 8,
+        "family": "Ryzen 5000",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4",
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 76
+      },
+      "image_url": null
+    },
+    {
+      "id": "8f11469c-f478-46fb-affb-00b704ab3bf9",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 5 7500F",
+      "socket": "AM5",
+      "price_cents": 99900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 6,
+        "family": "Ryzen 7000",
+        "threads": 12,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "pcie_version": 5,
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 80
+      },
+      "image_url": null
+    },
+    {
+      "id": "f2fb7cab-9d47-44a9-a692-a9ec32b72dc2",
+      "component_type": "cpu",
+      "brand": "Intel",
+      "model": "Core i5-13400F",
+      "socket": "LGA1700",
+      "price_cents": 109900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 10,
+        "family": "Intel Core 13th Gen",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4_DDR5",
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 82
+      },
+      "image_url": null
+    },
+    {
+      "id": "9289c9e1-791d-46bd-93d1-df7dc480b8ec",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 5 7600",
+      "socket": "AM5",
+      "price_cents": 119900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 6,
+        "family": "Ryzen 7000",
+        "threads": 12,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 84
+      },
+      "image_url": null
+    },
+    {
+      "id": "69ae295d-79c7-4c01-8e78-1eb6f124bd8b",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 7 5700X3D",
+      "socket": "AM4",
+      "price_cents": 129900,
+      "tdp_watts": 105,
+      "active": true,
+      "specs": {
+        "cores": 8,
+        "family": "Ryzen 5000",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4",
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 86
+      },
+      "image_url": null
+    },
+    {
+      "id": "77f60a0c-524f-4235-9284-f392ba293c80",
+      "component_type": "cpu",
+      "brand": "Intel",
+      "model": "Core i5-14400F",
+      "socket": "LGA1700",
+      "price_cents": 129900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 10,
+        "family": "Intel Core 14th Gen",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR4_DDR5",
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 86
+      },
+      "image_url": null
+    },
+    {
+      "id": "93beae21-7ba9-42dc-adf1-642bfd32fead",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 5 9600X",
+      "socket": "AM5",
+      "price_cents": 129999,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 6,
+        "family": "Ryzen 9000",
+        "threads": 12,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "spec_source": "https://www.amd.com/pt/products/processors/desktops/ryzen/9000-series/amd-ryzen-5-9600x.html",
+        "pcie_version": 5,
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 90
+      },
+      "image_url": null
+    },
+    {
+      "id": "1369ab4d-c0ce-45a6-bb95-b62dfbebe075",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 7 7700",
+      "socket": "AM5",
+      "price_cents": 169900,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 8,
+        "family": "Ryzen 7000",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "pcie_version": 5,
+        "price_updated": "2026-10-06",
+        "cooler_included": true,
+        "performance_score": 91
+      },
+      "image_url": null
+    },
+    {
+      "id": "8a93bf54-f2ba-45cd-8c30-d2d5cc026d41",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 7 9700X",
+      "socket": "AM5",
+      "price_cents": 189999,
+      "tdp_watts": 65,
+      "active": true,
+      "specs": {
+        "cores": 8,
+        "family": "Ryzen 9000",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "spec_source": "https://www.amd.com/pt/products/processors/desktops/ryzen/9000-series/amd-ryzen-7-9700x.html",
+        "pcie_version": 5,
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 96
+      },
+      "image_url": null
+    },
+    {
+      "id": "429d8bb2-17ca-49e6-aecc-47defd043beb",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 7 7800X3D",
+      "socket": "AM5",
+      "price_cents": 239900,
+      "tdp_watts": 120,
+      "active": true,
+      "specs": {
+        "cores": 8,
+        "family": "Ryzen 7000",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 100
+      },
+      "image_url": null
+    },
+    {
+      "id": "c00f392a-5ef6-405e-b0ef-ba464f9b6e00",
+      "component_type": "cpu",
+      "brand": "Intel",
+      "model": "Core Ultra 5 245K",
+      "socket": "LGA1851",
+      "price_cents": 263060,
+      "tdp_watts": 125,
+      "active": true,
+      "specs": {
+        "cores": 14,
+        "family": "Intel Core Ultra Series 2",
+        "threads": 14,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "spec_source": "https://www.intel.com/content/www/us/en/products/sku/241067/intel-core-ultra-5-processor-245k-24m-cache-up-to-5-20-ghz/specifications.html",
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 94
+      },
+      "image_url": null
+    },
+    {
+      "id": "d0ed0dd6-6950-4a1b-92ae-335e28b74435",
+      "component_type": "cpu",
+      "brand": "AMD",
+      "model": "Ryzen 7 9800X3D",
+      "socket": "AM5",
+      "price_cents": 319900,
+      "tdp_watts": 120,
+      "active": true,
+      "specs": {
+        "cores": 8,
+        "family": "Ryzen 9000",
+        "threads": 16,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "pcie_version": 5,
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 112
+      },
+      "image_url": null
+    },
+    {
+      "id": "62c701cd-9224-41c0-80c1-a6159117bf02",
+      "component_type": "cpu",
+      "brand": "Intel",
+      "model": "Core Ultra 7 265K",
+      "socket": "LGA1851",
+      "price_cents": 339900,
+      "tdp_watts": 125,
+      "active": true,
+      "specs": {
+        "cores": 20,
+        "family": "Intel Core Ultra Series 2",
+        "threads": 20,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "memory_type": "DDR5",
+        "price_updated": "2026-10-06",
+        "cooler_included": false,
+        "performance_score": 108
+      },
+      "image_url": null
+    },
+    {
+      "id": "a3dc586f-d443-4947-b168-e0be0ecd2b77",
+      "component_type": "gpu",
+      "brand": "AMD",
+      "model": "Radeon RX 6600 8GB",
+      "socket": null,
+      "price_cents": 139900,
+      "tdp_watts": 132,
+      "active": true,
+      "specs": {
+        "tier": "1080p",
+        "vram_gb": 8,
+        "length_mm": 269,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 52,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 500
+      },
+      "image_url": null
+    },
+    {
+      "id": "3e9b43fa-2935-4da9-a851-5bb1d882ab65",
+      "component_type": "gpu",
+      "brand": "Intel",
+      "model": "Arc A750 8GB",
+      "socket": null,
+      "price_cents": 149900,
+      "tdp_watts": 225,
+      "active": true,
+      "specs": {
+        "tier": "1080p",
+        "vram_gb": 8,
+        "length_mm": 280,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 56,
+        "power_connector_count": 2,
+        "recommended_psu_watts": 600
+      },
+      "image_url": null
+    },
+    {
+      "id": "1cb84d9a-dbdb-47bf-959c-9520dfa96b7a",
+      "component_type": "gpu",
+      "brand": "AMD",
+      "model": "Radeon RX 7600 8GB",
+      "socket": null,
+      "price_cents": 169900,
+      "tdp_watts": 165,
+      "active": true,
+      "specs": {
+        "tier": "1080p_high",
+        "vram_gb": 8,
+        "length_mm": 267,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 62,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 550
+      },
+      "image_url": null
+    },
+    {
+      "id": "c49ba55b-497e-4763-b49f-0b239186e315",
+      "component_type": "gpu",
+      "brand": "NVIDIA",
+      "model": "GeForce RTX 3060 12GB",
+      "socket": null,
+      "price_cents": 169900,
+      "tdp_watts": 170,
+      "active": true,
+      "specs": {
+        "tier": "1080p_high",
+        "vram_gb": 12,
+        "length_mm": 242,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 58,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 550
+      },
+      "image_url": null
+    },
+    {
+      "id": "7cb7a5a3-1205-496b-8242-9e0a6de1f77c",
+      "component_type": "gpu",
+      "brand": "NVIDIA",
+      "model": "GeForce RTX 4060 8GB",
+      "socket": null,
+      "price_cents": 209900,
+      "tdp_watts": 115,
+      "active": true,
+      "specs": {
+        "tier": "1080p_high",
+        "vram_gb": 8,
+        "length_mm": 250,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 65,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 550
+      },
+      "image_url": null
+    },
+    {
+      "id": "ed3ab973-c451-477d-ac2b-ed0fa11d9cbd",
+      "component_type": "gpu",
+      "brand": "Intel",
+      "model": "Arc B580 12GB",
+      "socket": null,
+      "price_cents": 219900,
+      "tdp_watts": 190,
+      "active": true,
+      "specs": {
+        "tier": "1080p_ultra_1440p",
+        "vram_gb": 12,
+        "length_mm": 272,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 70,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 600
+      },
+      "image_url": null
+    },
+    {
+      "id": "e23f4d9e-07ad-4b1e-9c37-ca145e700dfd",
+      "component_type": "gpu",
+      "brand": "NVIDIA",
+      "model": "GeForce RTX 4060 Ti 16GB",
+      "socket": null,
+      "price_cents": 289900,
+      "tdp_watts": 165,
+      "active": true,
+      "specs": {
+        "tier": "1080p_ultra_1440p",
+        "vram_gb": 16,
+        "length_mm": 272,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2.2,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 78,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 550
+      },
+      "image_url": null
+    },
+    {
+      "id": "59b6aed8-50c3-4e45-b225-0dcbccf6c362",
+      "component_type": "gpu",
+      "brand": "AMD",
+      "model": "Radeon RX 7800 XT 16GB",
+      "socket": null,
+      "price_cents": 359900,
+      "tdp_watts": 263,
+      "active": true,
+      "specs": {
+        "tier": "1440p_high",
+        "vram_gb": 16,
+        "length_mm": 320,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2.5,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 90,
+        "power_connector_count": 2,
+        "recommended_psu_watts": 700
+      },
+      "image_url": null
+    },
+    {
+      "id": "893736d3-4e08-466a-8f09-d07117c80c6a",
+      "component_type": "gpu",
+      "brand": "AMD",
+      "model": "Radeon RX 7900 GRE 16GB",
+      "socket": null,
+      "price_cents": 399900,
+      "tdp_watts": 260,
+      "active": true,
+      "specs": {
+        "tier": "1440p_ultra",
+        "vram_gb": 16,
+        "length_mm": 320,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2.5,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 97,
+        "power_connector_count": 2,
+        "recommended_psu_watts": 700
+      },
+      "image_url": null
+    },
+    {
+      "id": "bf339f6e-fd59-45f5-ad35-8949f5b7c4e8",
+      "component_type": "gpu",
+      "brand": "NVIDIA",
+      "model": "GeForce RTX 4070 SUPER 12GB",
+      "socket": null,
+      "price_cents": 409900,
+      "tdp_watts": 220,
+      "active": true,
+      "specs": {
+        "tier": "1440p_high",
+        "vram_gb": 12,
+        "length_mm": 300,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2.5,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "power_connector": "12VHPWR",
+        "performance_score": 94,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 650
+      },
+      "image_url": null
+    },
+    {
+      "id": "32ff0ce5-5168-4aa9-aa73-800ea32af876",
+      "component_type": "gpu",
+      "brand": "NVIDIA",
+      "model": "GeForce RTX 5070 12GB",
+      "socket": null,
+      "price_cents": 539999,
+      "tdp_watts": 250,
+      "active": true,
+      "specs": {
+        "tier": "1440p_ultra",
+        "vram_gb": 12,
+        "length_mm": 242,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2,
+        "spec_source": "https://www.nvidia.com/pt-br/geforce/graphics-cards/50-series/rtx-5070-family/",
+        "pcie_version": 5,
+        "price_updated": "2026-10-06",
+        "power_connector": "12V-2x6",
+        "performance_score": 104,
+        "power_connector_count": 1,
+        "recommended_psu_watts": 650
+      },
+      "image_url": null
+    },
+    {
+      "id": "2909c883-e049-4564-9769-9fcace171535",
+      "component_type": "gpu",
+      "brand": "AMD",
+      "model": "Radeon RX 9070 XT 16GB",
+      "socket": null,
+      "price_cents": 589999,
+      "tdp_watts": 304,
+      "active": true,
+      "specs": {
+        "tier": "1440p_ultra_4k",
+        "vram_gb": 16,
+        "length_mm": 304,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "slot_width": 2.5,
+        "spec_source": "https://www.amd.com/pt/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070xt.html",
+        "pcie_version": 5,
+        "price_updated": "2026-10-06",
+        "power_connector": "PCIe 6+2",
+        "performance_score": 112,
+        "power_connector_count": 2,
+        "recommended_psu_watts": 750
+      },
+      "image_url": null
+    },
+    {
+      "id": "fc10ad1f-1551-4119-a0fd-f630f3542d45",
+      "component_type": "memory",
+      "brand": "Kingston",
+      "model": "Fury Beast 16GB (2x8) DDR4-3200",
+      "socket": null,
+      "price_cents": 29900,
+      "tdp_watts": 8,
+      "active": true,
+      "specs": {
+        "modules": 2,
+        "speed_mt": 3200,
+        "height_mm": 34,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 16,
+        "memory_type": "DDR4",
+        "price_updated": "2026-10-06",
+        "performance_score": 55
+      },
+      "image_url": null
+    },
+    {
+      "id": "d846428c-a7f7-4e42-8b0d-68d7e343ea07",
+      "component_type": "memory",
+      "brand": "Kingston",
+      "model": "Fury Beast 16GB (2x8) DDR5-6000",
+      "socket": null,
+      "price_cents": 39900,
+      "tdp_watts": 8,
+      "active": true,
+      "specs": {
+        "modules": 2,
+        "speed_mt": 6000,
+        "height_mm": 34,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 16,
+        "memory_type": "DDR5",
+        "price_updated": "2026-10-06",
+        "performance_score": 72
+      },
+      "image_url": null
+    },
+    {
+      "id": "a817c9fc-68c5-4977-8a3b-651a6a035de6",
+      "component_type": "memory",
+      "brand": "Kingston",
+      "model": "Fury Beast 32GB (2x16) DDR4-3200",
+      "socket": null,
+      "price_cents": 52900,
+      "tdp_watts": 10,
+      "active": true,
+      "specs": {
+        "modules": 2,
+        "speed_mt": 3200,
+        "height_mm": 34,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 32,
+        "memory_type": "DDR4",
+        "price_updated": "2026-10-06",
+        "performance_score": 75
+      },
+      "image_url": null
+    },
+    {
+      "id": "08670cf3-c539-4db5-9a7b-4fc9d627f95e",
+      "component_type": "memory",
+      "brand": "Corsair",
+      "model": "Vengeance 32GB (2x16) DDR5-5600",
+      "socket": null,
+      "price_cents": 62900,
+      "tdp_watts": 10,
+      "active": true,
+      "specs": {
+        "modules": 2,
+        "speed_mt": 5600,
+        "height_mm": 35,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 32,
+        "memory_type": "DDR5",
+        "price_updated": "2026-10-06",
+        "performance_score": 84
+      },
+      "image_url": null
+    },
+    {
+      "id": "b2bf7f0e-7c80-4030-96b4-6e7e3b2d91e9",
+      "component_type": "memory",
+      "brand": "Kingston",
+      "model": "Fury Beast 32GB (2x16) DDR5-6000",
+      "socket": null,
+      "price_cents": 69900,
+      "tdp_watts": 10,
+      "active": true,
+      "specs": {
+        "modules": 2,
+        "speed_mt": 6000,
+        "height_mm": 34,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 32,
+        "memory_type": "DDR5",
+        "price_updated": "2026-10-06",
+        "performance_score": 90
+      },
+      "image_url": null
+    },
+    {
+      "id": "52465280-d422-4f55-97d0-5a13aabe7835",
+      "component_type": "memory",
+      "brand": "Kingston",
+      "model": "Fury Beast 64GB (2x32) DDR5-6000",
+      "socket": null,
+      "price_cents": 129900,
+      "tdp_watts": 12,
+      "active": true,
+      "specs": {
+        "modules": 2,
+        "speed_mt": 6000,
+        "height_mm": 34,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 64,
+        "memory_type": "DDR5",
+        "price_updated": "2026-10-06",
+        "performance_score": 98
+      },
+      "image_url": null
+    },
+    {
+      "id": "d437269a-4120-4634-8873-3f7305505d6a",
+      "component_type": "motherboard",
+      "brand": "Gigabyte",
+      "model": "B550M DS3H",
+      "socket": "AM4",
+      "price_cents": 64900,
+      "tdp_watts": 35,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "mATX",
+        "memory_type": "DDR4",
+        "spec_source": "https://www.gigabyte.com/br/Motherboard/B550M-DS3H-rev-10-11-12-13/sp",
+        "memory_slots": 4,
+        "max_memory_gb": 128,
+        "price_updated": "2026-10-06",
+        "supported_cpu_families": [
+          "Ryzen 3000",
+          "Ryzen 4000G",
+          "Ryzen 5000",
+          "Ryzen 5000G"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "13401525-d897-4907-9209-d605060dd40e",
+      "component_type": "motherboard",
+      "brand": "MSI",
+      "model": "B550M PRO-VDH WIFI",
+      "socket": "AM4",
+      "price_cents": 79900,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "mATX",
+        "memory_type": "DDR4",
+        "usb_headers": [
+          "USB 3.2 Gen 1",
+          "USB 2.0"
+        ],
+        "memory_slots": 4,
+        "max_memory_gb": 128,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 4,
+        "supported_cpu_families": [
+          "Ryzen 3000",
+          "Ryzen 4000G",
+          "Ryzen 5000",
+          "Ryzen 5000G"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "a0af506d-9fbe-4c3f-bc88-3be72e9a38f3",
+      "component_type": "motherboard",
+      "brand": "Gigabyte",
+      "model": "B760M DS3H DDR4",
+      "socket": "LGA1700",
+      "price_cents": 89900,
+      "tdp_watts": 40,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "mATX",
+        "memory_type": "DDR4",
+        "spec_source": "https://www.gigabyte.com/br/Motherboard/B760M-DS3H-DDR4-rev-10/sp",
+        "memory_slots": 4,
+        "max_memory_gb": 128,
+        "price_updated": "2026-10-06",
+        "supported_cpu_families": [
+          "Intel Core 12th Gen",
+          "Intel Core 13th Gen",
+          "Intel Core 14th Gen"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "627e87d8-1a4e-4794-ac5b-d36491af9eab",
+      "component_type": "motherboard",
+      "brand": "Gigabyte",
+      "model": "B650M D3HP",
+      "socket": "AM5",
+      "price_cents": 94900,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "mATX",
+        "memory_type": "DDR5",
+        "spec_source": "https://www.gigabyte.com/pt/Motherboard/B650M-D3HP-rev-13/sp",
+        "memory_slots": 4,
+        "max_memory_gb": 192,
+        "price_updated": "2026-10-06",
+        "supported_cpu_families": [
+          "Ryzen 7000",
+          "Ryzen 8000",
+          "Ryzen 9000"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "e9aeebf5-4365-4c9f-afa0-dbcba994b6fc",
+      "component_type": "motherboard",
+      "brand": "Gigabyte",
+      "model": "B850M DS3H",
+      "socket": "AM5",
+      "price_cents": 99999,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "mATX",
+        "memory_type": "DDR5",
+        "spec_source": "https://www.gigabyte.com/br/Motherboard/B850M-DS3H-rev-10/sp",
+        "memory_slots": 4,
+        "max_memory_gb": 256,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 5,
+        "supported_cpu_families": [
+          "Ryzen 7000",
+          "Ryzen 8000",
+          "Ryzen 9000"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "88dccd3a-a786-46ec-a14a-bb5bf229db11",
+      "component_type": "motherboard",
+      "brand": "MSI",
+      "model": "PRO B760-P WIFI DDR4",
+      "socket": "LGA1700",
+      "price_cents": 119900,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "ATX",
+        "memory_type": "DDR4",
+        "usb_headers": [
+          "USB-C 3.2 Gen 2",
+          "USB 3.2 Gen 1",
+          "USB 2.0"
+        ],
+        "memory_slots": 4,
+        "max_memory_gb": 128,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 4,
+        "supported_cpu_families": [
+          "Intel Core 12th Gen",
+          "Intel Core 13th Gen",
+          "Intel Core 14th Gen"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "de960047-0368-40f1-97c6-2a8897615749",
+      "component_type": "motherboard",
+      "brand": "Gigabyte",
+      "model": "B860M DS3H",
+      "socket": "LGA1851",
+      "price_cents": 148499,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "mATX",
+        "memory_type": "DDR5",
+        "spec_source": "https://www.gigabyte.com/br/Motherboard/B860M-DS3H-rev-22/sp",
+        "usb_headers": [
+          "USB-C 3.2 Gen 1",
+          "USB 3.2 Gen 1",
+          "USB 2.0"
+        ],
+        "memory_slots": 4,
+        "max_memory_gb": 256,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 5,
+        "supported_cpu_families": [
+          "Intel Core Ultra Series 2"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "eabae677-140b-496f-8a48-f5ad59c46f77",
+      "component_type": "motherboard",
+      "brand": "ASUS",
+      "model": "TUF Gaming B650M-PLUS WIFI",
+      "socket": "AM5",
+      "price_cents": 149900,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "mATX",
+        "memory_type": "DDR5",
+        "usb_headers": [
+          "USB-C 3.2 Gen 1",
+          "USB 3.2 Gen 1",
+          "USB 2.0"
+        ],
+        "memory_slots": 4,
+        "max_memory_gb": 192,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 4,
+        "supported_cpu_families": [
+          "Ryzen 7000",
+          "Ryzen 8000",
+          "Ryzen 9000"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "bc004d0b-56fc-46a8-8dfa-b83d36e6690a",
+      "component_type": "motherboard",
+      "brand": "Gigabyte",
+      "model": "B850I AORUS PRO",
+      "socket": "AM5",
+      "price_cents": 177990,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 2,
+        "form_factor": "Mini-ITX",
+        "memory_type": "DDR5",
+        "spec_source": "https://www.gigabyte.com/br/Motherboard/B850I-AORUS-PRO-rev-11/sp",
+        "memory_slots": 2,
+        "max_memory_gb": 128,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 5,
+        "supported_cpu_families": [
+          "Ryzen 7000",
+          "Ryzen 8000",
+          "Ryzen 9000"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "16fa5a4f-f775-4ccc-82b6-5350ca3d2b63",
+      "component_type": "motherboard",
+      "brand": "Gigabyte",
+      "model": "B850 AORUS ELITE WIFI7",
+      "socket": "AM5",
+      "price_cents": 218499,
+      "tdp_watts": 50,
+      "active": true,
+      "specs": {
+        "m2_slots": 3,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 4,
+        "form_factor": "ATX",
+        "memory_type": "DDR5",
+        "spec_source": "https://www.gigabyte.com/br/Motherboard/B850-AORUS-ELITE-WIFI7-rev-1x/sp",
+        "usb_headers": [
+          "USB-C 3.2 Gen 2x2",
+          "USB 3.2 Gen 1",
+          "USB 2.0"
+        ],
+        "memory_slots": 4,
+        "max_memory_gb": 256,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 5,
+        "supported_cpu_families": [
+          "Ryzen 7000",
+          "Ryzen 8000",
+          "Ryzen 9000"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "436d32cd-656e-4bb2-aac0-5afa6c05c13d",
+      "component_type": "motherboard",
+      "brand": "ASUS",
+      "model": "ROG Strix B860-I Gaming WIFI",
+      "socket": "LGA1851",
+      "price_cents": 239900,
+      "tdp_watts": 45,
+      "active": true,
+      "specs": {
+        "m2_slots": 2,
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "sata_ports": 2,
+        "form_factor": "Mini-ITX",
+        "memory_type": "DDR5",
+        "usb_headers": [
+          "USB-C 3.2 Gen 2",
+          "USB 3.2 Gen 1",
+          "USB 2.0"
+        ],
+        "memory_slots": 2,
+        "max_memory_gb": 128,
+        "price_updated": "2026-10-06",
+        "pcie_x16_version": 5,
+        "supported_cpu_families": [
+          "Intel Core Ultra Series 2"
+        ]
+      },
+      "image_url": null
+    },
+    {
+      "id": "e098c779-891e-4037-b396-c5a23957f8e9",
+      "component_type": "psu",
+      "brand": "MSI",
+      "model": "MAG A550BN 550W",
+      "socket": null,
+      "price_cents": 36900,
+      "tdp_watts": null,
+      "active": true,
+      "specs": {
+        "modular": false,
+        "wattage": 550,
+        "connectors": [
+          "PCIe 6+2"
+        ],
+        "efficiency": "80 Plus Bronze",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "spec_source": "https://www.msi.com/Power-Supply/MAG-A550BN/Specification",
+        "price_updated": "2026-10-06",
+        "performance_score": 55,
+        "pcie_connector_count": 2,
+        "sata_connector_count": 5
+      },
+      "image_url": null
+    },
+    {
+      "id": "08cc8a49-ca8a-42c3-a9dd-05c29792c813",
+      "component_type": "psu",
+      "brand": "MSI",
+      "model": "MAG A650BN 650W",
+      "socket": null,
+      "price_cents": 44900,
+      "tdp_watts": null,
+      "active": true,
+      "specs": {
+        "modular": false,
+        "wattage": 650,
+        "connectors": [
+          "PCIe 6+2"
+        ],
+        "efficiency": "80 Plus Bronze",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "spec_source": "https://br.msi.com/Power-Supply/MAG-A650BN/Specification",
+        "price_updated": "2026-10-06",
+        "performance_score": 70,
+        "pcie_connector_count": 2,
+        "sata_connector_count": 5
+      },
+      "image_url": null
+    },
+    {
+      "id": "2a997412-678e-43c0-80c2-613ef54e44eb",
+      "component_type": "psu",
+      "brand": "MSI",
+      "model": "MAG A750GL PCIE5 750W",
+      "socket": null,
+      "price_cents": 59900,
+      "tdp_watts": 0,
+      "active": true,
+      "specs": {
+        "modular": true,
+        "wattage": 750,
+        "connectors": [
+          "PCIe 6+2",
+          "12V-2x6"
+        ],
+        "efficiency": "80 Plus Gold",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "atx_version": "3.0",
+        "price_updated": "2026-10-06",
+        "performance_score": 90,
+        "pcie_connector_count": 3,
+        "sata_connector_count": 8
+      },
+      "image_url": null
+    },
+    {
+      "id": "b75d7b09-13d7-4b3f-8ba8-97aacb45a072",
+      "component_type": "psu",
+      "brand": "Corsair",
+      "model": "RM750e 750W",
+      "socket": null,
+      "price_cents": 69900,
+      "tdp_watts": null,
+      "active": true,
+      "specs": {
+        "modular": true,
+        "wattage": 750,
+        "connectors": [
+          "PCIe 6+2",
+          "12V-2x6"
+        ],
+        "efficiency": "80 Plus Gold",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "atx_version": "3.1",
+        "spec_source": "https://www.corsair.com/br/pt/p/psu/cp-9020292-br/rme-series-rm750e-fully-modular-low-noise-atx-power-supply-white-br-cp-9020292-br",
+        "price_updated": "2026-10-06",
+        "performance_score": 92,
+        "pcie_connector_count": 3,
+        "sata_connector_count": 6
+      },
+      "image_url": null
+    },
+    {
+      "id": "0d473cfc-5dbb-4d5a-924e-ffc6e938ebe5",
+      "component_type": "psu",
+      "brand": "Corsair",
+      "model": "RM850e 850W",
+      "socket": null,
+      "price_cents": 79900,
+      "tdp_watts": 0,
+      "active": true,
+      "specs": {
+        "modular": true,
+        "wattage": 850,
+        "connectors": [
+          "PCIe 6+2",
+          "12V-2x6"
+        ],
+        "efficiency": "80 Plus Gold",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "atx_version": "3.1",
+        "price_updated": "2026-10-06",
+        "performance_score": 97,
+        "pcie_connector_count": 4,
+        "sata_connector_count": 7
+      },
+      "image_url": null
+    },
+    {
+      "id": "87eb9af7-4b94-4654-88f0-198b6efbb878",
+      "component_type": "storage",
+      "brand": "Crucial",
+      "model": "BX500 1TB SATA",
+      "socket": null,
+      "price_cents": 34900,
+      "tdp_watts": 4,
+      "active": true,
+      "specs": {
+        "interface": "SATA",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 1000,
+        "price_updated": "2026-10-06",
+        "performance_score": 48
+      },
+      "image_url": null
+    },
+    {
+      "id": "56fb4b3a-b958-463d-b24b-4cc718b65c72",
+      "component_type": "storage",
+      "brand": "Kingston",
+      "model": "NV3 1TB NVMe",
+      "socket": null,
+      "price_cents": 37900,
+      "tdp_watts": 5,
+      "active": true,
+      "specs": {
+        "interface": "NVMe",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 1000,
+        "price_updated": "2026-10-06",
+        "performance_score": 70
+      },
+      "image_url": null
+    },
+    {
+      "id": "30d3f9a1-9f12-467c-8ab9-55f09453cc08",
+      "component_type": "storage",
+      "brand": "Crucial",
+      "model": "P3 Plus 1TB NVMe",
+      "socket": null,
+      "price_cents": 39900,
+      "tdp_watts": 5,
+      "active": true,
+      "specs": {
+        "interface": "NVMe",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 1000,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "performance_score": 74
+      },
+      "image_url": null
+    },
+    {
+      "id": "ab1f2889-c247-4e7d-8005-c2fcf6ab57f0",
+      "component_type": "storage",
+      "brand": "WD",
+      "model": "Black SN770 1TB NVMe",
+      "socket": null,
+      "price_cents": 49900,
+      "tdp_watts": 5,
+      "active": true,
+      "specs": {
+        "interface": "NVMe",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 1000,
+        "price_updated": "2026-10-06",
+        "performance_score": 88
+      },
+      "image_url": null
+    },
+    {
+      "id": "8976eb46-bd30-4d01-aced-3f097f1a0449",
+      "component_type": "storage",
+      "brand": "Kingston",
+      "model": "NV3 2TB NVMe",
+      "socket": null,
+      "price_cents": 69900,
+      "tdp_watts": 6,
+      "active": true,
+      "specs": {
+        "interface": "NVMe",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 2000,
+        "price_updated": "2026-10-06",
+        "performance_score": 78
+      },
+      "image_url": null
+    },
+    {
+      "id": "8cd44f93-e334-4763-b66b-d100f6705a3d",
+      "component_type": "storage",
+      "brand": "Samsung",
+      "model": "990 EVO Plus 2TB NVMe",
+      "socket": null,
+      "price_cents": 89900,
+      "tdp_watts": 6,
+      "active": true,
+      "specs": {
+        "interface": "NVMe",
+        "price_kind": "reference_estimate",
+        "price_live": false,
+        "capacity_gb": 2000,
+        "pcie_version": 4,
+        "price_updated": "2026-10-06",
+        "performance_score": 95
+      },
+      "image_url": null
+    }
+  ]
+}
