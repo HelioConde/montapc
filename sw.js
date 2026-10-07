@@ -1,4 +1,4 @@
-const CACHE = 'montapc-v1';
+const CACHE = 'montapc-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,9 @@ const ASSETS = [
   './ads-config.js',
   './ads.js',
   './live-update.js',
+  './catalog.snapshot.json',
+  './pwa.js',
+  './analytics.js',
   './manifest.webmanifest',
   './icon.svg'
 ];
