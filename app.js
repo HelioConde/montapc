@@ -57,6 +57,7 @@ const feedbackForm = document.querySelector('#feedback-form');
 const feedbackMessage = document.querySelector('#feedback-message');
 
 let catalog = [];
+let catalogSource = 'none';
 let byType = {};
 let currentBuild = null;
 let currentUser = null;
@@ -2009,9 +2010,12 @@ function updateAccountUi() {
   if (!catalog.length) {
     syncStatus.textContent = t('status.catalogUnavailable');
   } else if (currentUser) {
-    syncStatus.textContent = cloudLoading ? t('status.syncing') : t('status.cloud', { user: currentUser.email || t('account.connectedFallback') });
+    const cloudLabel = cloudLoading ? t('status.syncing') : t('status.cloud', { user: currentUser.email || t('account.connectedFallback') });
+    syncStatus.textContent = catalogSource === 'snapshot'
+      ? cloudLabel + ' · ' + t('status.snapshotSuffix')
+      : cloudLabel;
   } else {
-    syncStatus.textContent = t('status.local');
+    syncStatus.textContent = catalogSource === 'snapshot' ? t('status.snapshot') : t('status.local');
   }
 
   accountForm.hidden = Boolean(currentUser) || !supabaseClient;
@@ -2048,20 +2052,55 @@ async function importLocalBuilds() {
   }
 }
 
-async function loadCatalog() {
-  if (!supabaseClient) throw new Error('supabase_unavailable');
-  const { data, error } = await supabaseClient
-    .from('montapc_components')
-    .select('*')
-    .eq('active', true)
-    .order('component_type', { ascending:true })
-    .order('price_cents', { ascending:true });
-  if (error) throw error;
-  catalog = data || [];
+function applyCatalogRows(rows, source) {
+  const next = Array.isArray(rows) ? rows.filter(item => item && item.active !== false) : [];
+  if (!next.length) throw new Error('catalog_empty');
+
+  catalog = next;
+  catalogSource = source;
   groupCatalog();
   document.querySelector('#catalog-count').textContent = String(catalog.length);
   populateCatalogBrands();
   renderCatalogExplorer();
+}
+
+async function loadCatalogSnapshot() {
+  const response = await fetch('catalog.snapshot.json?_=' + Date.now(), {
+    cache: 'no-store',
+    credentials: 'same-origin'
+  });
+  if (!response.ok) throw new Error('catalog_snapshot_' + response.status);
+  const payload = await response.json();
+  return Array.isArray(payload) ? payload : payload?.components;
+}
+
+async function loadCatalog() {
+  let liveError = null;
+
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('montapc_components')
+        .select('*')
+        .eq('active', true)
+        .order('component_type', { ascending:true })
+        .order('price_cents', { ascending:true });
+
+      if (error) throw error;
+      applyCatalogRows(data, 'live');
+      return;
+    } catch (error) {
+      liveError = error;
+      console.warn('MontaPC live catalog unavailable; using repository snapshot.', error);
+    }
+  }
+
+  const snapshot = await loadCatalogSnapshot();
+  applyCatalogRows(snapshot, 'snapshot');
+
+  if (liveError) {
+    showToast(t('toast.catalogFallback'));
+  }
 }
 
 plannerForm.addEventListener('submit', event => {
