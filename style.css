@@ -759,3 +759,79 @@ input,select,button{max-width:100%;min-width:0}
 .price-history-summary .positive{color:var(--ok)}
 .price-history-summary .negative{color:var(--danger)}
 @media(max-width:650px){.price-history-summary{grid-template-columns:1fr}}
+
+
+/* Snapshot pass 2026-10-07 — mobile header uses two compact rows */
+@media(max-width:650px){
+  .topbar{
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-rows:auto auto;
+    align-items:center;
+    gap:8px 10px;
+    padding:10px 0 11px;
+  }
+  .topbar>.brand{
+    grid-column:1;
+    grid-row:1;
+    justify-self:start;
+    width:auto;
+  }
+  .topbar>.top-actions{
+    grid-column:2;
+    grid-row:1;
+    justify-self:end;
+    width:auto;
+    min-width:0;
+    gap:6px;
+  }
+  .topbar>.quick-nav{
+    grid-column:1/-1;
+    grid-row:2;
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    width:100%;
+    gap:6px;
+    padding:0;
+    overflow:visible;
+  }
+  .topbar>.quick-nav a{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    min-height:34px;
+    padding:6px 8px;
+    text-align:center;
+  }
+  .topbar>.top-actions .language-control select{
+    min-height:34px;
+    padding:6px 24px 6px 8px;
+  }
+  .topbar>.top-actions #account-open{
+    min-height:34px;
+    padding:7px 9px;
+  }
+  .hero{
+    padding-top:18px;
+  }
+}
+@media(max-width:360px){
+  .topbar{
+    gap:7px 6px;
+  }
+  .topbar>.top-actions{
+    gap:5px;
+  }
+  .topbar>.top-actions .language-control select{
+    font-size:9px;
+    padding-left:7px;
+  }
+  .topbar>.top-actions #account-open{
+    font-size:9px;
+    padding-inline:7px;
+  }
+  .topbar>.quick-nav a{
+    font-size:9px;
+    padding-inline:5px;
+  }
+}
