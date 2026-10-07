@@ -1162,6 +1162,113 @@ function componentMeta(item, type) {
   return values.slice(0, 3);
 }
 
+function recommendationReason(type, item, build = currentBuild) {
+  if (!item || !build) return '';
+  const specs = item.specs || {};
+  const settings = build.settings || {};
+  const parts = selectedComponents(build);
+
+  if (type === 'cpu') {
+    return t('part.reason.cpu', {
+      usage: t('settings.usage.' + (settings.usage || 'gaming')),
+      score: Math.round(performance(item)),
+      socket: item.socket || '—'
+    });
+  }
+  if (type === 'gpu') {
+    return t('part.reason.gpu', {
+      resolution: settings.resolution || '—',
+      score: Math.round(performance(item)),
+      vram: Number(specs.vram_gb || 0) || '—'
+    });
+  }
+  if (type === 'motherboard') {
+    return t('part.reason.motherboard', {
+      socket: item.socket || '—',
+      memory: specs.memory_type || '—',
+      m2: Number(specs.m2_slots || 0)
+    });
+  }
+  if (type === 'memory') {
+    return t('part.reason.memory', {
+      capacity: Number(specs.capacity_gb || 0),
+      memory: specs.memory_type || '—',
+      speed: Number(specs.speed_mt || 0)
+    });
+  }
+  if (type === 'storage') {
+    return t('part.reason.storage', {
+      capacity: Number(specs.capacity_gb || 0),
+      interface: specs.interface || '—'
+    });
+  }
+  if (type === 'psu') {
+    return t('part.reason.psu', {
+      watts: Number(specs.wattage || 0),
+      required: requiredPsuWatts(build.selection),
+      efficiency: specs.efficiency || '—'
+    });
+  }
+  if (type === 'case') {
+    return t('part.reason.case', {
+      form: parts.motherboard?.specs?.form_factor || '—',
+      gpu: Number(parts.gpu?.specs?.length_mm || 0),
+      max: Number(specs.max_gpu_mm || 0)
+    });
+  }
+  if (type === 'cooler') {
+    return t('part.reason.cooler', {
+      socket: parts.cpu?.socket || '—',
+      height: Number(specs.height_mm || 0) || Number(specs.radiator_mm || 0) || '—'
+    });
+  }
+  return '';
+}
+
+function equivalentAlternatives(type, selected, build = currentBuild) {
+  if (!selected || !build) return [];
+  const selectedPerformance = performance(selected);
+  const selectedPrice = priceOf(selected);
+
+  return (byType[type] || [])
+    .filter(candidate => candidate.id !== selected.id)
+    .map(candidate => {
+      const selection = { ...build.selection, [type]: candidate.id };
+      const candidateBuild = { ...build, selection };
+      const state = compatibility(candidateBuild);
+      const perf = performance(candidate);
+      const perfDistance = selectedPerformance
+        ? Math.abs(perf - selectedPerformance) / selectedPerformance
+        : 0;
+      const priceDistance = selectedPrice
+        ? Math.abs(priceOf(candidate) - selectedPrice) / selectedPrice
+        : 0;
+      return { candidate, state, perfDistance, priceDistance };
+    })
+    .filter(row => row.state.ok)
+    .filter(row => !selectedPerformance || row.perfDistance <= .18)
+    .sort((a, b) =>
+      a.perfDistance - b.perfDistance ||
+      priceOf(a.candidate) - priceOf(b.candidate) ||
+      a.priceDistance - b.priceDistance
+    )
+    .slice(0, 2)
+    .map(row => row.candidate);
+}
+
+function alternativeChips(type, selected) {
+  const alternatives = equivalentAlternatives(type, selected);
+  if (!alternatives.length) return '';
+  return '<div class="part-alternatives"><span>' + escapeHtml(t('part.alternatives')) + '</span>' +
+    alternatives.map(item =>
+      '<button type="button" data-equivalent-type="' + escapeHtml(type) + '" data-equivalent-id="' + escapeHtml(item.id) + '">' +
+        escapeHtml(item.brand + ' ' + item.model) +
+        ' · ' + escapeHtml(formatMoney(item.price_cents)) +
+      '</button>'
+    ).join('') +
+  '</div>';
+}
+
 function updatePartsVisibility() {
   if (!partsToggle || !partsList) return;
   const mobile = window.matchMedia('(max-width: 650px)').matches;
@@ -1197,6 +1304,8 @@ function renderParts() {
         (selected && componentMeta(selected, type).length
           ? '<div class="part-meta">' + componentMeta(selected, type).map(value => '<em>' + escapeHtml(value) + '</em>').join('') + '</div>'
           : '') +
+        (selected ? '<p class="part-reason">' + escapeHtml(recommendationReason(type, selected)) + '</p>' : '') +
+        (selected ? alternativeChips(type, selected) : '') +
         '<small>' + (selected ? escapeHtml(formatMoney(selected.price_cents)) : t('part.choose')) + '</small></div></div>' +
       '<select data-part="' + type + '">' +
         (type === 'cooler' ? '<option value="">' + escapeHtml(t('part.noSeparateCooler')) + '</option>' : '') +
@@ -2138,6 +2247,21 @@ plannerForm.addEventListener('submit', event => {
   } else {
     showToast(t('toast.generated'));
   }
+});
+
+partsList.addEventListener('click', event => {
+  const alternative = event.target.closest('[data-equivalent-id]');
+  if (!alternative || !currentBuild) return;
+  const type = alternative.dataset.equivalentType;
+  const id = alternative.dataset.equivalentId;
+  if (!type || !id || !component(type, id)) return;
+
+  currentBuild.selection[type] = id;
+  currentBuild.id = currentBuild.id || null;
+  currentBuild.updatedAt = Date.now();
+  renderBuild();
+  trackEvent('equivalent_alternative_applied', { type });
+  showToast(t('part.alternativeApplied'));
 });
 
 partsList.addEventListener('change', event => {
