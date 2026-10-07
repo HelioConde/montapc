@@ -1529,6 +1529,53 @@ function toggleCompare(id) {
   renderSavedBuilds();
 }
 
+function findCheaperEquivalentBuild(build = currentBuild) {
+  if (!build) return null;
+  const baseTotal = Number(build.totalCents || buildTotal(build.selection));
+  const basePerformance = buildPerformanceIndex(build);
+  let best = null;
+
+  for (const type of TYPE_ORDER) {
+    const selected = component(type, build.selection?.[type]);
+    if (!selected) continue;
+
+    for (const candidate of byType[type] || []) {
+      if (candidate.id === selected.id) continue;
+      if (priceOf(candidate) >= priceOf(selected)) continue;
+
+      const selectedPerf = performance(selected);
+      const candidatePerf = performance(candidate);
+      if (['cpu','gpu','memory','storage'].includes(type) && selectedPerf > 0 && candidatePerf < selectedPerf * .92) {
+        continue;
+      }
+
+      const selection = { ...build.selection, [type]: candidate.id };
+      const candidateBuild = buildCandidate(selection, build.settings, build.budgetCents);
+      if (candidateBuild.compatibilityStatus !== 'compatible') continue;
+
+      const total = Number(candidateBuild.totalCents || 0);
+      if (total >= baseTotal) continue;
+
+      const perf = buildPerformanceIndex(candidateBuild);
+      if (basePerformance > 0 && perf < basePerformance * .95) continue;
+
+      const savings = baseTotal - total;
+      if (!best || savings > best.savings || (savings === best.savings && perf > best.performance)) {
+        best = {
+          build: candidateBuild,
+          savings,
+          performance: perf,
+          type,
+          from: selected,
+          to: candidate
+        };
+      }
+    }
+  }
+
+  return best;
+}
+
 function purposeString(settings) {
   return [settings.usage, settings.resolution, settings.strategy].join('|');
 }
@@ -2311,6 +2358,18 @@ document.querySelector('.alternative-actions')?.addEventListener('click', event 
     settings.strategy = 'cpu';
   } else if (button.dataset.alternative === 'upgrade') {
     settings.strategy = 'upgrade';
+  } else if (button.dataset.alternative === 'value') {
+    const optimized = findCheaperEquivalentBuild(currentBuild);
+    if (!optimized) {
+      showToast(t('alternatives.noValue'));
+      return;
+    }
+    currentBuild = optimized.build;
+    currentBuild.name = '';
+    renderBuild();
+    showToast(t('alternatives.valueApplied', { amount: formatMoney(optimized.savings) }));
+    trackEvent('value_optimization_applied', { type: optimized.type, savings: Math.round(optimized.savings / 100) });
+    return;
   }
 
   plannerForm.elements.budget.value = settings.budget;
