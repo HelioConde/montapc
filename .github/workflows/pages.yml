@@ -34,6 +34,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Stamp deploy version
+        run: |
+          printf '{"sha":"%s","publishedAt":"%s"}\n' "$GITHUB_SHA" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > version.json
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
