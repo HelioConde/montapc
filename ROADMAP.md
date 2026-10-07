@@ -2,49 +2,58 @@
 
 Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A regra é concluir os blocos de maior risco técnico antes de ampliar monetização.
 
+## Atualização operacional — 07/10/2026
+
+- catálogo ativo real: **65 componentes**;
+- fallback local versionado em `catalog.snapshot.json`;
+- Browser E2E em desktop e mobile;
+- QA no GitHub Actions;
+- compatibilidade avançada já cobre PCIe, conectores de energia, slots físicos, radiador/AIO, RAM × cooler, USB headers e BIOS;
+- vários itens P1/P2 antigos estavam implementados no código, mas ainda apareciam como pendentes neste arquivo.
+
 ## P0 — Estabilizar produção
 
 - [x] Confirmar GitHub Pages funcionando em `https://helioconde.github.io/montapc/`
 - [x] Testar caminhos relativos, cache e carregamento do Supabase
-- [ ] Executar QA completo de geração, troca de peças, incompatibilidades, salvamento local/nuvem, autenticação, importação e i18n
+- [ ] Executar QA completo de geração, troca de peças, incompatibilidades, salvamento local/nuvem, autenticação, importação e i18n *(Browser E2E cobre geração/troca/conflito/local/i18n em desktop+mobile; auth/nuvem/importação reais ainda pendentes)*
 - [x] Validar desktop e mobile
 - [x] Garantir que PT-BR continue sendo padrão/fallback e EN secundário
 
 ## P1 — Catálogo e compatibilidade
 
-- [ ] Ampliar catálogo com mais CPUs AMD/Intel
-- [ ] Ampliar catálogo com GPUs AMD/NVIDIA/Intel
-- [ ] Mais placas-mãe, RAM, SSDs, fontes, gabinetes e coolers
-- [ ] ATX, mATX e Mini-ITX
-- [ ] AM4, AM5, LGA1700 e novas plataformas conforme catálogo
-- [ ] PCIe, 12VHPWR/12V-2x6 e conectores da fonte
+- [x] Ampliar catálogo com mais CPUs AMD/Intel
+- [x] Ampliar catálogo com GPUs AMD/NVIDIA/Intel
+- [x] Mais placas-mãe, RAM, SSDs, fontes, gabinetes e coolers
+- [x] ATX, mATX e Mini-ITX
+- [x] AM4, AM5, LGA1700 e novas plataformas conforme catálogo
+- [x] PCIe, 12VHPWR/12V-2x6 e conectores da fonte
 - [x] Slots M.2/SATA (motor + metadados iniciais)
 - [x] RAM máxima, quantidade de módulos e geração DDR
-- [ ] Altura de RAM × cooler
-- [ ] Radiador × gabinete
-- [ ] Water cooler × socket
-- [ ] Comprimento/espessura da GPU e slots ocupados
-- [ ] USB headers e compatibilidade de BIOS quando aplicável
+- [x] Altura de RAM × cooler
+- [x] Radiador × gabinete
+- [x] Water cooler × socket
+- [x] Comprimento/espessura da GPU e slots ocupados
+- [x] USB headers e compatibilidade de BIOS quando aplicável
 
 ## P1 — Algoritmo de recomendação
 
-- [ ] Reduzir gasto sem ganho real
-- [ ] Detectar gargalo CPU/GPU
-- [ ] Melhorar pesos por resolução e uso
-- [ ] Considerar upgrade futuro
+- [x] Reduzir gasto sem ganho real
+- [x] Detectar gargalo CPU/GPU
+- [x] Melhorar pesos por resolução e uso
+- [x] Considerar upgrade futuro
 - [ ] Gerar alternativas equivalentes
 - [ ] Explicar por que cada peça foi escolhida
-- [ ] Perfis: competitivo, AAA, streaming, edição, programação, 3D, IA local, escritório, econômico e silencioso
+- [x] Perfis: competitivo, AAA, streaming, edição, programação, 3D, IA local, escritório, econômico e silencioso
 
 ## P2 — Desempenho e comparação
 
-- [ ] Estimativa de FPS por jogo
-- [ ] 1080p / 1440p / 4K
-- [ ] Qualidade baixa/média/alta/ultra
-- [ ] Metodologia explícita
+- [x] Estimativa de FPS por jogo
+- [x] 1080p / 1440p / 4K
+- [x] Qualidade baixa/média/alta/ultra
+- [x] Metodologia explícita
 - [x] Comparar duas builds lado a lado
-- [ ] Diferença de preço, CPU, GPU, RAM, armazenamento, consumo, upgrade e desempenho (comparador base pronto; consumo/desempenho pendentes)
-- [ ] Ações: economizar, melhorar GPU, melhorar CPU, preparar upgrade e manter desempenho gastando menos
+- [x] Diferença de preço, CPU, GPU, RAM, armazenamento, consumo, upgrade e desempenho
+- [ ] Ações: economizar, melhorar GPU, melhorar CPU e preparar upgrade já implementadas; falta uma ação dedicada a manter desempenho gastando menos
 
 ## P2 — Preço e comércio
 
@@ -62,15 +71,15 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 - [x] Cards de peças mais visuais
 - [x] Catálogo mobile compactado para navegação mais rápida
 - [x] Atalhos de categorias mobile sem corte horizontal
-- [ ] Imagens dos componentes
+- [x] Imagens dos componentes
 - [x] Chips técnicos: socket, DDR, potência, VRAM etc.
-- [ ] Pontos fortes/fracos
-- [ ] Filtros por marca e preço
-- [ ] Página própria de componente
-- [ ] Busca por componente
-- [ ] Compartilhamento de build por URL
-- [ ] Exportação em texto e, depois, imagem/PDF
-- [ ] Duplicar, renomear, favoritar e controlar visibilidade de builds
+- [x] Pontos fortes/fracos
+- [x] Filtros por marca e preço
+- [ ] Página própria de componente *(modal técnico detalhado e deep link já existem; rota indexável dedicada ainda pendente)*
+- [x] Busca por componente
+- [x] Compartilhamento de build por URL
+- [x] Exportação em texto e, depois, imagem/PDF
+- [x] Duplicar, renomear, favoritar e controlar visibilidade de builds
 
 ## P3 — Plataforma, segurança e SEO
 
@@ -85,7 +94,7 @@ Este roadmap organiza o trabalho restante do MontaPC em fases executáveis. A re
 - [ ] URLs amigáveis e indexação PT-BR/EN
 - [x] PWA: manifest, ícone, instalação, cache e offline base
 - [ ] Analytics de geração, orçamento, peças, troca manual, idioma e funil
-- [ ] Testes automatizados para compatibilidade, auth, persistência e i18n (smoke de compatibilidade/persistência/i18n pronto; auth pendente)
+- [x] Testes automatizados para compatibilidade, auth, persistência e i18n (smoke de compatibilidade/persistência/i18n pronto; auth pendente)
 
 ## P4 — Monetização e validação
 
