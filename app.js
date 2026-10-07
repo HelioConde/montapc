@@ -1190,7 +1190,7 @@ function renderParts() {
     const selected = parts[type];
     return '<article class="part-row">' +
       '<div class="part-label">' +
-        (selected ? '<img class="part-type-image" src="' + escapeHtml(componentImage(selected)) + '" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low">' : '') +
+        (selected ? '<img class="part-type-image" src="' + escapeHtml(componentImage(selected)) + '" alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="low">' : '') +
         '<div class="part-label-copy"><span>' + escapeHtml(typeLabel(type)) + '</span>' +
         '<strong>' + (selected ? escapeHtml(selected.brand + ' ' + selected.model) : t('part.notSelected', { type: typeLabel(type) })) + '</strong>' +
         (selected && componentMeta(selected, type).length
