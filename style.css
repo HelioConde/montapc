@@ -944,3 +944,53 @@ input,select,button{max-width:100%;min-width:0}
     grid-column:1/-1;
   }
 }
+
+
+/* Desktop planner confidence block — uses the empty rail space for purchase guidance */
+.planner-confidence{
+  display:grid;
+  gap:9px;
+  margin-top:16px;
+  padding-top:15px;
+  border-top:1px solid var(--line);
+}
+.planner-confidence>.eyebrow{margin:0}
+.planner-confidence>strong{
+  font:700 11px/1.35 Manrope,sans-serif;
+}
+.planner-confidence-list{
+  display:grid;
+  gap:7px;
+}
+.planner-confidence-list span{
+  display:grid;
+  grid-template-columns:20px minmax(0,1fr);
+  gap:7px;
+  align-items:center;
+  min-height:30px;
+  padding:6px 8px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fbfcfd;
+}
+.planner-confidence-list i{
+  display:grid;
+  place-items:center;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--ok-soft);
+  color:var(--ok);
+  font-style:normal;
+  font-size:9px;
+  font-weight:800;
+}
+.planner-confidence-list b{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:700;
+  line-height:1.35;
+}
+@media(max-width:900px){
+  .planner-confidence{display:none}
+}
