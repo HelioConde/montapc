@@ -117,6 +117,14 @@ test("generates compatible build, detects manual conflict and saves locally", as
   await expect(page.locator("#compatibility-badge")).toHaveText("Compatível");
   await expect(page.locator("#save-build")).toBeEnabled();
   await expect(page.locator("#performance-grid .performance-card")).toHaveCount(6);
+  await expect(page.locator(".part-reason").first()).toBeVisible();
+  await expect(page.locator(".part-alternatives button").first()).toBeVisible();
+
+  const equivalent = page.locator('[data-equivalent-type="gpu"]').first();
+  if (await equivalent.count()) {
+    await equivalent.click();
+    await expect(page.locator("#compatibility-badge")).toHaveText("Compatível");
+  }
 
   const board = page.locator('[data-part="motherboard"]');
   await board.selectOption("mb-intel");
