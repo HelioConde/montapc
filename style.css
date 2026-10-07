@@ -1192,3 +1192,43 @@ input,select,button{max-width:100%;min-width:0}
     padding-top:10px;
   }
 }
+
+
+/* Cross-project polish — 07/10/2026 */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:35;
+  background:rgba(245,247,248,.94);
+  backdrop-filter:blur(12px);
+}
+.hero{padding-top:46px}
+.hero-card{box-shadow:0 14px 38px rgba(24,48,60,.07)}
+.panel{box-shadow:0 14px 40px rgba(24,48,60,.045)}
+.result-panel{scroll-margin-top:90px}
+.budget-summary article{min-height:68px}
+.compatibility-item{font-size:10.5px;line-height:1.45}
+.part-label strong{font-size:11.5px}
+.part-label small{line-height:1.4}
+.saved-card{transition:border-color .15s ease,box-shadow .15s ease}
+@media(hover:hover){
+  .saved-card:hover{border-color:#c9d8df;box-shadow:0 10px 28px rgba(24,48,60,.06)}
+}
+.catalog-card{min-height:132px}
+.catalog-card>strong{font-size:12.5px}
+.dialog{max-height:calc(100dvh - 28px)}
+@media(min-width:1000px){
+  .planner-grid{grid-template-columns:minmax(310px,.68fr) minmax(0,1.32fr);gap:18px}
+}
+@media(max-width:650px){
+  .topbar{position:relative}
+  .hero{padding-top:28px}
+  .hero h1{font-size:clamp(38px,12vw,54px)}
+  .planner-panel{padding:18px}
+  .budget-summary article{min-height:62px}
+  .compatibility-item{grid-template-columns:22px 1fr}
+  .catalog-toolbar{grid-template-columns:1fr}
+  .catalog-grid{grid-template-columns:1fr;padding-inline:14px}
+  .catalog-explorer>summary{padding:16px 14px}
+  .saved-card{padding:14px}
+}
