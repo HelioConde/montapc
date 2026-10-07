@@ -1085,3 +1085,110 @@ input,select,button{max-width:100%;min-width:0}
     grid-column:auto;
   }
 }
+
+
+/* Capture-driven refinement — round 4 (2026-10-07) */
+@media(min-width:901px){
+  /* Keep long generated builds scan-friendly without wasting vertical space. */
+  #build-result .parts-list{
+    border-top:1px solid var(--line);
+  }
+  #build-result .part-row{
+    min-height:64px;
+    padding:8px 0;
+    gap:14px;
+  }
+  #build-result .part-label{
+    grid-template-columns:42px minmax(0,1fr);
+    gap:8px;
+  }
+  #build-result .part-type-image{
+    width:42px;
+    height:42px;
+  }
+  #build-result .part-label-copy strong{
+    font-size:11px;
+    line-height:1.25;
+  }
+  #build-result .part-label-copy small{
+    margin-top:2px;
+  }
+  #build-result .part-meta{
+    margin-top:3px;
+    gap:4px;
+  }
+  #build-result .part-meta em{
+    padding:2px 5px;
+    font-size:7px;
+  }
+  #build-result .part-row select{
+    min-height:35px;
+    padding-block:7px;
+  }
+
+  /* Give catalog content a little more reading weight at desktop sizes. */
+  .catalog-card>strong{
+    font-size:12px;
+    line-height:1.3;
+  }
+  .catalog-card small,
+  .catalog-card .catalog-reference-price{
+    font-size:9px;
+    line-height:1.35;
+  }
+  .catalog-card .button{
+    min-height:34px;
+  }
+}
+
+@media(max-width:650px){
+  /* The screenshots showed the catalog was usable but text became too tiny. */
+  .catalog-card{
+    grid-template-columns:78px minmax(0,1fr);
+    column-gap:9px;
+    padding:10px;
+  }
+  .catalog-card-image{
+    width:78px;
+    height:74px;
+  }
+  .catalog-card>strong{
+    font-size:10px;
+    line-height:1.3;
+  }
+  .catalog-card small{
+    font-size:7.5px;
+    line-height:1.35;
+  }
+  .catalog-card .catalog-reference-price,
+  .catalog-card .catalog-live-price{
+    font-size:8px;
+    line-height:1.3;
+  }
+  .catalog-card>.button{
+    min-height:30px;
+    padding:6px 8px;
+    font-size:8px;
+  }
+
+  /* Improve visual separation of the dense comparison table. */
+  .compare-grid{
+    border-radius:7px;
+  }
+  .compare-grid.has-difference{
+    border-color:#e7d5a5;
+    box-shadow:inset 3px 0 0 #d9b861;
+  }
+  .compare-grid>span{
+    font-weight:800;
+  }
+
+  /* Keep generated-build actions prominent while reducing dead space. */
+  #build-result .result-actions{
+    margin-top:9px;
+  }
+  #build-result .price-warning{
+    margin-top:10px;
+    padding-top:10px;
+  }
+}
