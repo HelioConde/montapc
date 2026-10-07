@@ -1,11 +1,13 @@
 {
-  "name": "montapc-visual-snapshots",
+  "name": "montapc",
   "private": true,
   "type": "module",
   "scripts": {
+    "check": "node --check app.js && node --check supabase-config.js && node --check i18n.js && node --check analytics.js && node --check live-update.js",
+    "test:e2e": "playwright test",
     "capture:site": "node scripts/capture-site.mjs"
   },
   "devDependencies": {
-    "playwright": "latest"
+    "@playwright/test": "1.55.0"
   }
 }
