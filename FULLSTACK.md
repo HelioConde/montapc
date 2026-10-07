@@ -4,125 +4,134 @@ Repositório oficial: `HelioConde/montapc`.
 
 ## Produto
 
-Montador de PC por orçamento com recomendação automática, troca manual de peças e explicações de compatibilidade.
+Montador de PC por orçamento com recomendação automática, troca manual de peças, alternativas equivalentes, comparação e compatibilidade explicada.
 
 ## Backend compartilhado
 
 Supabase `pizzaria-db`.
 
-Tabelas:
-- `montapc_components`: catálogo público de peças.
-- `montapc_builds`: builds privadas do usuário.
-- `montapc_build_items`: componentes ligados à build.
-- `product_subscriptions`: legado compartilhado; não é usado para cobrar o MontaPC.
+Tabelas usadas:
 
-O catálogo é leitura pública; builds e itens pertencem ao usuário e são protegidos por RLS.
+- `montapc_components`: catálogo público;
+- `montapc_builds`: builds do usuário + builds públicas quando explicitamente compartilhadas;
+- `montapc_build_items`: peças ligadas à build;
+- `montapc_price_snapshots`: estrutura read-only para preços observados;
+- `montapc_events`: analytics;
+- `montapc_feedback`: feedback do produto.
+
+RLS está habilitada. O patch `supabase/sql/montapc_security_hardening.sql` fecha o vínculo de ownership em `montapc_build_items` e reduz grants de navegador ao mínimo necessário.
+
+## Catálogo
+
+Em 07/10/2026 o banco possui **65 componentes ativos**:
+
+| Tipo | Total |
+|---|---:|
+| CPU | 17 |
+| GPU | 12 |
+| Placa-mãe | 11 |
+| Memória | 6 |
+| SSD | 6 |
+| Fonte | 5 |
+| Gabinete | 4 |
+| Cooler | 4 |
+
+Cobertura inclui AMD/Intel, AMD/NVIDIA/Intel GPUs, AM4/AM5/LGA1700/LGA1851, DDR4/DDR5, NVMe/SATA e ATX/mATX/Mini-ITX.
+
+`catalog.snapshot.json` replica o conjunto ativo como fallback. O carregamento é Supabase primeiro → snapshot local em falha.
 
 ## Implementado
 
-- catálogo inicial com 23 peças;
-- preços internos marcados como `reference_estimate`, nunca como preço ao vivo;
-- CPUs AM4, AM5 e LGA1700;
-- placas-mãe DDR4/DDR5;
-- GPUs para faixas 1080p/1440p;
-- RAM, SSD, fontes, gabinetes e cooler;
-- geração automática por orçamento;
-- perfis Jogos, Produtividade e Uso misto;
-- alvos 1080p, 1440p e 4K;
-- estratégias Equilíbrio, FPS, Upgrade e Economia;
-- verificação explicada de socket;
-- verificação DDR4/DDR5;
-- verificação formato placa-mãe/gabinete;
-- verificação de comprimento de GPU de referência;
-- verificação altura do cooler;
-- detecção de CPU que precisa de cooler separado;
-- cálculo de potência mínima recomendada para a fonte;
-- ajuste manual de qualquer componente;
-- salvamento local sem conta;
-- Supabase Auth;
-- salvamento de build e itens na nuvem;
-- abertura e exclusão de builds;
+### Montador
+
+- geração por orçamento;
+- perfis de jogos, competitivo, AAA, streaming, edição, programação, 3D, IA local, escritório, produtividade e uso misto;
+- 1080p/1440p/4K;
+- equilíbrio, FPS, upgrade, economia, CPU e eficiência/ruído;
+- penalidade de gasto sem ganho proporcional;
+- detecção de desequilíbrio CPU/GPU;
+- ação para manter desempenho gastando menos.
+
+### Compatibilidade
+
+- CPU/socket/família;
+- aviso de BIOS;
+- DDR, capacidade e módulos;
+- placa-mãe × gabinete;
+- GPU comprimento/slots;
+- cooler/socket/altura;
+- RAM × clearance;
+- AIO/radiador;
+- potência de fonte;
+- PCIe 6+2, 12VHPWR/12V-2x6 e contagem de conectores;
+- M.2/SATA;
+- USB headers;
+- PCIe GPU/placa-mãe.
+
+### Explicabilidade
+
+- resumo “por que esta build”;
+- justificativa em cada peça;
+- até duas alternativas equivalentes por peça, filtradas novamente pelo motor de compatibilidade;
+- pontos fortes e pontos de atenção no catálogo.
+
+### Reutilização
+
+- salvamento local;
+- Supabase Auth e sincronização;
 - importação local → conta;
-- migração dos rascunhos do protótipo antigo;
-- UI própria responsiva;
-- atualização de versão em tempo real;
-- CI dedicado;
-- infraestrutura de anúncios desacoplada e desativada por padrão;
-- i18n completo de base com seletor PT-BR/EN, persistência e fallback PT-BR;
-- mensagens dinâmicas de compatibilidade traduzidas;
-- SEO/title/description atualizados conforme idioma;
-- explicação da recomendação com foco, plataforma e uso do orçamento.
+- renomear, duplicar, favoritar;
+- pública/privada;
+- link compartilhável;
+- exportar TXT/imagem;
+- imprimir/PDF;
+- comparar duas builds, inclusive consumo, desempenho e upgrade.
 
-## Idiomas
+### Produto/infra
 
-Regra obrigatória para o produto:
-- `pt-BR`: principal, padrão e fallback;
-- `en`: secundário obrigatório;
-- textos estáticos, mensagens dinâmicas, erros, estados, autenticação, metadados e SEO devem existir nos dois idiomas;
-- a escolha do usuário deve persistir localmente;
-- ausência de chave em inglês deve cair para PT-BR, nunca exibir chave técnica.
+- PT-BR padrão + EN;
+- SEO, hreflang, Open Graph, Twitter card e JSON-LD;
+- robots + sitemap;
+- PWA com instalação/offline;
+- analytics;
+- slots de anúncios desativados por padrão;
+- live update;
+- GitHub Pages;
+- QA Playwright desktop/mobile.
 
-## Regra de preço
+## Preços
 
-Os valores atuais do catálogo são referências internas datadas e servem para validar o produto. O frontend mostra explicitamente que:
+`specs.price_kind = "reference_estimate"` e `price_live = false` identificam o catálogo de referência.
 
-- não são preços de loja em tempo real;
-- medidas físicas devem ser confirmadas para o SKU exato;
-- nenhuma URL comercial é apresentada atualmente.
+A interface já suporta `montapc_price_snapshots` e consegue mostrar loja, data, estoque, mínimo, média, variação e histórico. **A tabela está vazia no ambiente atual**, portanto não há preço comercial ativo. Essa ingestão fica para depois do MVP.
 
-Quando houver integração comercial, preço ao vivo deve ficar separado do preço de referência, com fonte e data de atualização. Nenhuma remuneração pode alterar silenciosamente a ordem técnica das recomendações.
+## Segurança
 
-## Monetização
+- frontend: somente publishable key;
+- nenhum `service_role` no repositório público;
+- RLS em todas as tabelas MontaPC;
+- builds públicas são leitura explícita; privadas continuam por owner;
+- patch de hardening pendente de aplicação/validação em produção.
 
-O MontaPC será gratuito e monetizado por anúncios.
+## Gate de saída
 
-Arquitetura:
-- `ads-config.js`: configuração pública e chave geral de ativação;
-- `ads.js`: montagem dos slots e carregamento opcional do provedor;
-- slots publicitários não aparecem enquanto `enabled=false`;
-- anúncios não podem interromper geração, troca de peça, validação, login ou salvamento;
-- não usar intersticial entre entrada do orçamento e resultado;
-- preferir posições após conteúdo útil e entre blocos naturais;
-- conteúdo patrocinado futuro precisa ser rotulado explicitamente.
+- [x] fluxo local ponta a ponta;
+- [x] compatibilidade avançada;
+- [x] algoritmo e explicabilidade;
+- [x] Browser E2E desktop/mobile;
+- [x] fallback de catálogo;
+- [x] PT-BR/EN;
+- [x] PWA/SEO/analytics;
+- [ ] aplicar `supabase/sql/montapc_security_hardening.sql`;
+- [ ] validar isolamento RLS A ≠ B;
+- [ ] validar Auth, nuvem e importação com contas reais;
+- [ ] confirmar CI/Pages verdes;
+- [ ] corrigir P0/P1 eventualmente encontrados.
 
-## Próximas entregas de produto
-
-1. ampliar catálogo com SKU exato e dimensões de fabricante;
-2. placa-mãe ATX e Mini-ITX;
-3. mais coolers e gabinetes;
-4. conectores PCIe/12VHPWR;
-5. slots M.2/SATA e clearance de radiador;
-6. estimativa de desempenho por jogo com metodologia explícita;
-7. alternativas equivalentes quando uma peça sair de estoque;
-8. comparação lado a lado entre builds salvas;
-9. integração permitida com preços reais por loja e histórico de preço;
-10. QA com usuários reais antes de ativar anúncios.
-
-## QA obrigatório
-
-- socket incompatível;
-- DDR4 em placa DDR5 e vice-versa;
-- fonte abaixo da recomendação;
-- GPU maior que o gabinete;
-- cooler obrigatório ausente;
-- orçamento abaixo do mínimo;
-- orçamento muito alto;
-- preço ausente;
-- componente inativo;
-- exclusão e reabertura de build;
-- isolamento RLS entre usuários;
-- mobile;
-- fallback PT-BR quando tradução EN faltar;
-- persistência de idioma;
-- ausência de layout quebrado com anúncios desligados;
-- anúncios nunca bloquearem ações principais;
-- transparência de preço estimado e conteúdo patrocinado.
-
+Depois disso, congelar features do MVP. Preços comerciais, afiliados, rotas SEO por componente e histórico de alterações ficam para V2/integrações futuras.
 
 ## Gestão do backlog
 
-- Fonte de verdade: `ROADMAP.md`.
-- Execução rastreável: GitHub Issues #1–#12.
-- Ordem: P0 → P1 → P2 → P3 → P4.
-- Novas funcionalidades devem entrar em uma issue existente ou receber issue própria antes de ampliar o escopo.
-- Monetização permanece posterior à estabilidade, QA e validação real.
+- `ROADMAP.md` é a fonte operacional;
+- Issues #1–#12 registram gates;
+- não reabrir itens já implementados sem regressão ou feedback real.
