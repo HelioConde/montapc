@@ -36,6 +36,12 @@ jobs:
           node --check sw.js
           node --check pwa.js
           node --check analytics.js
+          node --check live-update.js
+          node --check tests/pwa-security.spec.js
+          grep -q 'montapc-v3' sw.js
+          grep -q 'ASSET_PATHS.has(url.pathname)' sw.js
+          test -f tests/pwa-security.spec.js
+          test -f supabase/migrations/20261009141528_montapc_owner_build_items_and_least_privilege.sql
           grep -qi '<title' index.html
           grep -qi 'name="description"' index.html
           grep -qi 'rel="canonical"' index.html
