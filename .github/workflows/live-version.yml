@@ -1,44 +1,28 @@
 name: Live version
+
 on:
   push:
     branches: [main]
     paths-ignore:
       - version.json
       - 'screenshots/**'
-permissions: { contents: write }
-concurrency:
-  group: live-version-main
-  cancel-in-progress: true
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  version:
+  version-contract:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - run: printf '{"sha":"%s","publishedAt":"%s"}\n' "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > version.json
-      - run: |
-          if git diff --quiet -- version.json; then exit 0; fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add version.json
-          git commit -m "chore: refresh live version"
-
-          for attempt in 1 2 3; do
-            echo "Live version push attempt $attempt"
-            git fetch origin main
-
-            if ! git rebase origin/main; then
-              git rebase --abort || true
-              exit 1
-            fi
-
-            if git push origin HEAD:main; then
-              exit 0
-            fi
-
-            sleep 2
-          done
-
-          echo "Could not push live version after retries."
-          exit 1
+      - name: Verify deploy version contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f version.json
+          node -e "const f=require('./version.json'); if (!f.sha && !f.version) process.exit(1)"
+          grep -q 'Stamp deploy version' .github/workflows/pages.yml
+          grep -q '\$GITHUB_SHA' .github/workflows/pages.yml
+          grep -q 'live-update.js' index.html
+          echo 'GitHub Pages stamps its own published revision; no bot push needed.'
