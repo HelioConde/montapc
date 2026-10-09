@@ -1,6 +1,10 @@
 name: Capture Visual Snapshot
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/capture-site.mjs'
   workflow_run:
     workflows: ["Deploy GitHub Pages"]
     types: [completed]
@@ -15,7 +19,7 @@ concurrency:
 
 jobs:
   capture:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout deployed revision
