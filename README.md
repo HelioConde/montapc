@@ -4,7 +4,7 @@ Montador de PCs por orçamento com recomendação, comparação e verificações
 
 ## Estado atual
 
-> **Núcleo técnico implementado em 07/10/2026. O produto está em gate de validação; novas features ficam congeladas até QA real.**
+> **MontaPC 1.0: desenvolvimento principal concluído em 09/10/2026.** Browser E2E **14/14**, QA estático, atualizador e deploy aprovados. Pronto para **beta controlado**, mantendo homologação com usuários e SKUs reais pendente. Consulte o [relatório de lançamento técnico](RELEASE_V1.md).
 
 O MontaPC já permite:
 
@@ -73,12 +73,12 @@ Confirme sempre o SKU exato antes da compra.
 
 O navegador usa somente a publishable key do Supabase. Nunca use `service_role` ou secret key no frontend.
 
-A auditoria de 07/10/2026 gerou `supabase/sql/montapc_security_hardening.sql`, que:
+A auditoria de segurança gerou `supabase/sql/montapc_security_hardening.sql`, aplicado no Supabase em 09/10/2026 como migration `20261009141528_montapc_owner_build_items_and_least_privilege`, que:
 
 - reduz os grants de `anon`/`authenticated` ao mínimo usado pela interface;
 - reforça que `montapc_build_items.build_id` precisa apontar para uma build do mesmo usuário.
 
-O patch deve ser aplicado e depois validado com duas contas antes de encerrar o gate de RLS.
+Os grants e policies foram verificados via SQL após a aplicação. **Ainda falta** um teste manual com duas contas autenticadas para verificar isolamento ponta a ponta.
 
 ## QA automatizado
 
@@ -108,9 +108,9 @@ O Browser E2E cobre:
 - [x] PT-BR/EN;
 - [x] PWA/SEO/analytics base;
 - [x] Browser E2E desktop/mobile;
-- [ ] aplicar e validar o hardening RLS no `pizzaria-db`;
+- [x] aplicar e verificar o hardening de grants/policies RLS no `pizzaria-db`;
 - [ ] validar Auth + nuvem + importação local → conta com duas contas reais;
-- [ ] confirmar GitHub Actions/Pages verdes na versão final;
+- [x] Browser E2E (14/14), Static QA, Live Update QA e deploy GitHub Pages aprovados em 09/10/2026;
 - [ ] corrigir qualquer P0/P1 encontrado nessa rodada.
 
 Preço real/afiliados e histórico alimentado por uma fonte comercial não bloqueiam este MVP e só entram depois de uma integração permitida e validada.
