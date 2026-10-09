@@ -1,7 +1,7 @@
 # MontaPC — encerramento técnico v1.0
 
 **Revisão:** 09/10/2026  
-**Estado:** núcleo funcional desenvolvido; **pronto para beta controlado após confirmar a suíte E2E desta revisão**, com verificações humanas ainda pendentes. Não confundir referências de preço com ofertas reais de lojas.
+**Estado:** núcleo funcional desenvolvido e **pronto para beta controlado**; Browser E2E, Static QA, Live Update e deploy aprovados em 09/10/2026. Homologação com contas e montagens reais permanece pendente. Não confundir referências de preço com ofertas reais de lojas.
 
 ## Produto implementado
 
@@ -42,13 +42,13 @@ Arquivo reproduzível: [migration aplicada](supabase/migrations/20261009141528_m
 - [QA estático da revisão](https://github.com/HelioConde/montapc/actions/runs/37943157289).
 - [Live Update QA da revisão](https://github.com/HelioConde/montapc/actions/runs/37943156891).
 - [Verificação do contrato de versão](https://github.com/HelioConde/montapc/actions/runs/37943156866).
-- [Browser E2E — execução final da revisão](https://github.com/HelioConde/montapc/actions/runs/37943157113).
-- [GitHub Pages — publicação da revisão](https://github.com/HelioConde/montapc/actions/runs/37943157089).
+- [Browser E2E — **14 de 14 testes aprovados**](https://github.com/HelioConde/montapc/actions/runs/37943157113).
+- [GitHub Pages — **publicação aprovada**](https://github.com/HelioConde/montapc/actions/runs/37943157089).
 - [Screenshots automatizados anteriores](https://github.com/HelioConde/montapc/actions/runs/37600414411).
 
 ## Dependências externas e aceite com pessoas reais
 
-- [ ] Observar o último Browser E2E **verde** depois das correções (não declarar aprovado antes do job concluir).
+- [x] Browser E2E desktop e mobile **14/14 aprovado** após as correções.
 - [ ] Conferir publicação final e capturas novas desktop/mobile após deploy.
 - [ ] Validar login do Supabase, migração local → conta, sincronização em dois dispositivos e isolamento entre dois usuários reais.
 - [ ] Submeter builds reais extremas (orçamento muito baixo, GPU de três slots, 12VHPWR/12V-2x6, AIO grande, BIOS antiga) à validação manual com SKUs reais.
