@@ -117,6 +117,11 @@ test("generates compatible build, detects manual conflict and saves locally", as
   await expect(page.locator("#compatibility-badge")).toHaveText("Compatível");
   await expect(page.locator("#save-build")).toBeEnabled();
   await expect(page.locator("#performance-grid .performance-card")).toHaveCount(6);
+  // On mobile the parts section intentionally starts collapsed to save vertical space.
+  const partsToggle = page.locator("#parts-toggle");
+  if (await partsToggle.isVisible() && await partsToggle.getAttribute("aria-expanded") === "false") {
+    await partsToggle.click();
+  }
   await expect(page.locator(".part-reason").first()).toBeVisible();
   await expect(page.locator(".part-alternatives button").first()).toBeVisible();
 
