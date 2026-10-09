@@ -14,3 +14,5 @@ jobs:
           grep -q visibilitychange live-update.js
           grep -q "cache:'no-store'" live-update.js
           node --check live-update.js
+          grep -q 'montapc-v' live-update.js
+          grep -q 'APP_SCOPE' live-update.js
