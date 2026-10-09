@@ -145,7 +145,16 @@ async function runSmokeChecks(page, profileName) {
   await page.locator('#name-form input[name="name"]').fill(smokeName);
   await page.locator('#name-form').evaluate(form => form.requestSubmit());
   await page.locator('#name-dialog').waitFor({ state: 'hidden', timeout: 5000 });
-  await assertUi((await page.locator('#saved-builds').textContent())?.includes(smokeName), 'salvamento local falhou');
+  // Let the saved-card UI settle after the asynchronous submit handler completes.
+  await page.locator('#saved-builds .saved-card')
+    .filter({ hasText: smokeName }).first()
+    .waitFor({ state: 'attached', timeout: 8000 }).catch(async () => {
+      const localCount = await page.evaluate(() => {
+        try { return JSON.parse(localStorage.getItem('montapc-builds-v2') || '[]').length; }
+        catch { return -1; }
+      });
+      throw new Error('Smoke test: salvamento local não apareceu; registros locais=' + localCount);
+    });
 
   const firstMoreActions = page.locator('#saved-builds .saved-more').first();
   if (await firstMoreActions.count()) {
@@ -360,6 +369,12 @@ try {
     });
 
     const page = await context.newPage();
+    // Production versions can change while capture runs. Suppress only the update
+    // timer in screenshot sessions, not the application's core behavior.
+    await page.route('**/live-update.js', route => route.fulfill({
+      status: 200, contentType: 'application/javascript',
+      body: '// Live updates are validated in their own CI job.'
+    }));
     const runtimeErrors = [];
     page.on('pageerror', error => runtimeErrors.push(String(error?.message || error)));
 
