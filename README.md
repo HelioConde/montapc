@@ -1,4 +1,23 @@
-# MontaPC
+# MontaPC — Monte um computador com mais segurança
+
+**Planeje uma configuração de PC por orçamento, compare alternativas e entenda os alertas de compatibilidade.**
+
+[**Relatório do beta**](RELEASE_V1.md)
+
+![Status](https://img.shields.io/badge/status-beta%20controlado-64748b)
+
+## Principais fluxos
+
+- Defina orçamento e uso para gerar uma proposta de configuração.
+- Troque componentes e confira as regras de compatibilidade disponíveis.
+- Compare montagens e salve ou compartilhe a configuração.
+- Consulte o catálogo atual; resultados dependem da atualização de preços e especificações.
+
+> Recomendações são estimativas técnicas. Verifique sempre dimensões, conectores, potência, BIOS e preços reais antes de comprar hardware.
+
+A seguir estão o catálogo documentado, a cobertura de compatibilidade, as tecnologias e os testes.
+
+---
 
 Montador de PCs por orçamento com recomendação, comparação e verificações explicáveis de compatibilidade.
 
