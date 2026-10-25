@@ -1,25 +1,34 @@
-# MontaPC — Monte um computador com mais segurança
+<div align="center">
+  <h1>🖥️ MontaPC</h1>
+  <p><strong>Monte, compare e compartilhe configurações de PC com alertas de compatibilidade explicáveis.</strong></p>
+  <p><a href="https://helioconde.github.io/montapc/"><strong>Abrir aplicativo</strong></a> · <a href="CATALOG.md"><strong>Catálogo</strong></a> · <a href="RELEASE_V1.md"><strong>Relatório do beta</strong></a></p>
+</div>
 
-**Planeje uma configuração de PC por orçamento, compare alternativas e entenda os alertas de compatibilidade.**
+## Monte seu PC com mais clareza
 
-[**Relatório do beta**](RELEASE_V1.md)
+Informe **orçamento, uso e preferências**, receba uma proposta de componentes, substitua peças e compare alternativas. O sistema explica conflitos e limitações conhecidos em vez de apenas exibir uma lista de produtos.
 
-![Status](https://img.shields.io/badge/status-beta%20controlado-64748b)
+| Modo | O que permite |
+| --- | --- |
+| **Montagem sugerida** | Configuração por orçamento e perfil de uso |
+| **Personalizar** | Trocar componentes e observar alertas |
+| **Comparar** | Comparar duas montagens |
+| **Salvar / compartilhar** | Manter e exportar builds quando os recursos estão disponíveis |
+| **Catálogo** | Dados Supabase com snapshot local de contingência |
 
-## Principais fluxos
+**Status:** MVP técnico concluído para **beta controlado**. Compatibilidade e preços dependem da atualização e precisão do catálogo — **verifique medidas, conectores, fonte, BIOS e estoque antes de comprar peças**.
 
-- Defina orçamento e uso para gerar uma proposta de configuração.
-- Troque componentes e confira as regras de compatibilidade disponíveis.
-- Compare montagens e salve ou compartilhe a configuração.
-- Consulte o catálogo atual; resultados dependem da atualização de preços e especificações.
+## Testar localmente
 
-> Recomendações são estimativas técnicas. Verifique sempre dimensões, conectores, potência, BIOS e preços reais antes de comprar hardware.
+```bash
+git clone https://github.com/HelioConde/montapc.git
+cd montapc
+python -m http.server 8000
+```
 
-A seguir estão o catálogo documentado, a cobertura de compatibilidade, as tecnologias e os testes.
+Acesse `http://localhost:8000`. Para checagens automatizadas: `npm install`, `npm run check` e `npm run test:e2e`. A execução local usa o snapshot disponível caso a integração remota falhe.
 
 ---
-
-Montador de PCs por orçamento com recomendação, comparação e verificações explicáveis de compatibilidade.
 
 ## Estado atual
 
