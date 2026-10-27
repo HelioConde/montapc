@@ -1,24 +1,50 @@
 <div align="center">
   <h1>🖥️ MontaPC</h1>
-  <p><strong>Monte, compare e compartilhe configurações de PC com alertas de compatibilidade explicáveis.</strong></p>
-  <p><a href="https://helioconde.github.io/montapc/"><strong>Abrir aplicativo</strong></a> · <a href="CATALOG.md"><strong>Catálogo</strong></a> · <a href="RELEASE_V1.md"><strong>Relatório do beta</strong></a></p>
+  <p><strong>Monte, compare e compartilhe PCs com alertas de compatibilidade explicados peça por peça.</strong></p>
+  <p><img alt="Beta controlado" src="https://img.shields.io/badge/status-beta%20controlado-64748b"> <img alt="Aplicativo web" src="https://img.shields.io/badge/aplicativo-web-2563eb"></p>
+  <p><a href="https://helioconde.github.io/montapc/"><strong>Abrir MontaPC</strong></a> · <a href="CATALOG.md"><strong>Catálogo</strong></a> · <a href="RELEASE_V1.md"><strong>Relatório técnico</strong></a></p>
 </div>
 
-## Monte seu PC com mais clareza
+---
 
-Informe **orçamento, uso e preferências**, receba uma proposta de componentes, substitua peças e compare alternativas. O sistema explica conflitos e limitações conhecidos em vez de apenas exibir uma lista de produtos.
+## Um PC completo, não apenas uma lista de preços
 
-| Modo | O que permite |
+O **MontaPC** reúne escolha de componentes e análise de compatibilidade. A partir de um orçamento e perfil de uso, permite gerar uma configuração, substituir peças, comparar alternativas e salvar as montagens.
+
+O objetivo é explicar **por que** uma combinação pode ou não funcionar, ajudando o usuário a revisar sua escolha antes da compra.
+
+## Comece por aqui
+
+1. Informe orçamento, uso pretendido e resolução de referência.
+2. Explore a configuração sugerida e os motivos de cada escolha.
+3. Troque componentes e observe alertas de compatibilidade.
+4. Compare duas configurações e salve ou compartilhe a preferida.
+5. Confira as fichas técnicas **oficiais** de cada peça antes de comprar.
+
+| Recurso | Descrição |
 | --- | --- |
-| **Montagem sugerida** | Configuração por orçamento e perfil de uso |
-| **Personalizar** | Trocar componentes e observar alertas |
-| **Comparar** | Comparar duas montagens |
-| **Salvar / compartilhar** | Manter e exportar builds quando os recursos estão disponíveis |
-| **Catálogo** | Dados Supabase com snapshot local de contingência |
+| **Assistente** | Sugestões por orçamento e perfil |
+| **Personalização** | Troca de peças e alternativas |
+| **Compatibilidade** | Socket, RAM, gabinete, GPU, fonte, conectores e BIOS conforme dados |
+| **Comparação** | Duas builds lado a lado |
+| **Catálogo** | Integração Supabase com snapshot local de contingência |
+| **Compartilhamento** | Histórico, favoritos e exportação quando disponíveis |
+| **Acesso** | Modo local e conta opcional para sincronização |
 
-**Status:** MVP técnico concluído para **beta controlado**. Compatibilidade e preços dependem da atualização e precisão do catálogo — **verifique medidas, conectores, fonte, BIOS e estoque antes de comprar peças**.
+### Limites importantes
 
-## Testar localmente
+- **Preço, estoque e SKU** precisam ser conferidos na loja no momento da compra.
+- A compatibilidade depende da qualidade dos metadados cadastrados; uma ausência de alerta **não garante** montagem física possível.
+- Estimativas de desempenho são **relativas**, não benchmarks medidos em cada PC.
+- Versões de BIOS, dimensões e conectores devem ser confirmadas junto ao fabricante.
+
+## Tecnologias
+
+HTML, CSS, JavaScript, Supabase Auth, PostgreSQL, RLS e GitHub Pages, com PWA e testes automatizados de navegador.
+
+O catálogo foi documentado com um conjunto inicial de componentes e snapshot em `catalog.snapshot.json`. Esse recorte representa um **estado histórico**, não uma contagem em tempo real de peças disponíveis.
+
+## Rodar no computador
 
 ```bash
 git clone https://github.com/HelioConde/montapc.git
@@ -26,125 +52,25 @@ cd montapc
 python -m http.server 8000
 ```
 
-Acesse `http://localhost:8000`. Para checagens automatizadas: `npm install`, `npm run check` e `npm run test:e2e`. A execução local usa o snapshot disponível caso a integração remota falhe.
+Abra `http://localhost:8000`. Para verificações de código e de interface declaradas no `package.json`:
+
+```bash
+npm install
+npm run check
+npx playwright install
+npm run test:e2e
+```
+
+O frontend pode apresentar o catálogo local quando o serviço remoto não está disponível. A sincronização de montagens depende de Supabase e permissões corretamente configuradas.
+
+## Status e documentação
+
+**v1.0 — MVP técnico concluído para beta controlado.** A homologação de SKUs reais, preços e experiência em diferentes dispositivos ainda exige validação externa.
+
+[Catálogo e proveniência](CATALOG.md) · [Relatório de versão](RELEASE_V1.md) · [Detalhes técnicos e histórico](docs/README_HISTORY_2026-10-27.md)
+
+**Antes de comprar:** verifique manualmente CPU/placa-mãe, tipo de memória, BIOS, tamanho da GPU, altura do cooler, fonte, cabos e espaço do gabinete.
 
 ---
 
-## Estado atual
-
-> **MontaPC 1.0: desenvolvimento principal concluído em 09/10/2026.** Browser E2E **14/14**, QA estático, atualizador e deploy aprovados. Pronto para **beta controlado**, mantendo homologação com usuários e SKUs reais pendente. Consulte o [relatório de lançamento técnico](RELEASE_V1.md).
-
-O MontaPC já permite:
-
-- gerar uma build por orçamento, uso, resolução e estratégia;
-- explicar por que cada peça foi escolhida;
-- trocar peças manualmente e mostrar conflitos;
-- sugerir alternativas equivalentes que continuam compatíveis;
-- procurar uma troca mais barata preservando desempenho semelhante;
-- comparar duas builds;
-- estimar desempenho relativo por jogo/preset;
-- salvar localmente ou sincronizar pela conta;
-- compartilhar, duplicar, renomear, favoritar e exportar builds;
-- explorar o catálogo por busca, tipo, marca e preço;
-- usar PT-BR ou inglês;
-- continuar montando mesmo se o catálogo online falhar, através de snapshot local.
-
-## Catálogo
-
-Fonte principal: `pizzaria-db/public.montapc_components`.
-
-Estado confirmado em 07/10/2026:
-
-- **65 componentes ativos**;
-- 17 CPUs;
-- 12 GPUs;
-- 11 placas-mãe;
-- 6 memórias;
-- 6 SSDs;
-- 5 fontes;
-- 4 gabinetes;
-- 4 coolers.
-
-O repositório mantém `catalog.snapshot.json` como fallback do último catálogo conhecido. Supabase continua sendo a fonte principal.
-
-## Compatibilidade
-
-O motor cobre, quando os metadados estão disponíveis:
-
-- socket e família da CPU;
-- DDR e limites/módulos de memória;
-- placa-mãe × gabinete;
-- GPU × comprimento/slots do gabinete;
-- cooler × socket/altura;
-- RAM × clearance do cooler;
-- AIO/radiador × gabinete;
-- potência e conectores da fonte;
-- PCIe 6+2, 12VHPWR e 12V-2x6;
-- slots M.2 e SATA;
-- USB headers frontais;
-- compatibilidade/alerta de BIOS;
-- versão PCIe, com retrocompatibilidade tratada como aviso.
-
-Confirme sempre o SKU exato antes da compra.
-
-## Stack
-
-- HTML/CSS/JavaScript
-- Supabase Auth + banco compartilhado `pizzaria-db`
-- RLS nos dados privados
-- GitHub Pages
-- GitHub Actions + Playwright desktop/mobile
-- PWA + service worker
-- atualização automática por `version.json` / `live-update.js`
-
-## Segurança
-
-O navegador usa somente a publishable key do Supabase. Nunca use `service_role` ou secret key no frontend.
-
-A auditoria de segurança gerou `supabase/sql/montapc_security_hardening.sql`, aplicado no Supabase em 09/10/2026 como migration `20261009141528_montapc_owner_build_items_and_least_privilege`, que:
-
-- reduz os grants de `anon`/`authenticated` ao mínimo usado pela interface;
-- reforça que `montapc_build_items.build_id` precisa apontar para uma build do mesmo usuário.
-
-Os grants e policies foram verificados via SQL após a aplicação. **Ainda falta** um teste manual com duas contas autenticadas para verificar isolamento ponta a ponta.
-
-## QA automatizado
-
-O Browser E2E cobre:
-
-- desktop Chromium;
-- viewport mobile;
-- geração por orçamento;
-- troca manual;
-- conflito de compatibilidade;
-- salvamento local;
-- PT-BR/EN e persistência;
-- filtros do catálogo;
-- orçamento mínimo/extremo;
-- explicações por peça e alternativas equivalentes;
-- fallback do catálogo sem Supabase/CDN.
-
-## Gate antes de encerrar o MVP
-
-- [x] núcleo do gerador;
-- [x] catálogo amplo de referência;
-- [x] compatibilidade avançada;
-- [x] explicação por peça;
-- [x] alternativas equivalentes;
-- [x] comparação e desempenho;
-- [x] salvamento local/compartilhamento;
-- [x] PT-BR/EN;
-- [x] PWA/SEO/analytics base;
-- [x] Browser E2E desktop/mobile;
-- [x] aplicar e verificar o hardening de grants/policies RLS no `pizzaria-db`;
-- [ ] validar Auth + nuvem + importação local → conta com duas contas reais;
-- [x] Browser E2E (14/14), Static QA, Live Update QA e deploy GitHub Pages aprovados em 09/10/2026;
-- [ ] corrigir qualquer P0/P1 encontrado nessa rodada.
-
-Preço real/afiliados e histórico alimentado por uma fonte comercial não bloqueiam este MVP e só entram depois de uma integração permitida e validada.
-
-## Deploy
-
-https://helioconde.github.io/montapc/
-
-Veja `FULLSTACK.md`, `CATALOG.md`, `ROADMAP.md` e as GitHub Issues para os detalhes.
+<div align="center"><strong>Desenvolvido por <a href="https://github.com/HelioConde">Hélio Conde</a></strong></div>
